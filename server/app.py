@@ -10,6 +10,7 @@ Or:
 
 from __future__ import annotations
 
+from fastapi.responses import RedirectResponse
 from openenv.core.env_server import create_app
 
 from models import ArjunaAction, ArjunaObservation
@@ -21,6 +22,10 @@ app = create_app(
     ArjunaObservation,
     env_name="arjuna_perception_env",
 )
+
+@app.get("/", include_in_schema=False)
+def root() -> RedirectResponse:
+    return RedirectResponse(url="/docs")
 
 
 def main() -> None:
