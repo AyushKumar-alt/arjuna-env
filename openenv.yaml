@@ -1,0 +1,6 @@
+spec_version: 1
+name: arjuna_perception_env
+type: space
+runtime: fastapi
+app: server.app:app
+port: 7860
