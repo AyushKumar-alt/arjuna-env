@@ -1,0 +1,8 @@
+# Server (Docker / local serve)
+openenv-core[core]>=0.2.2
+fastapi>=0.115.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.0.0
+
+# Baseline inference (install locally or add to image if you run inference in-container)
+openai>=1.0.0
