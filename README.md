@@ -1,10 +1,9 @@
 ---
-title: Arjuna Perception Env
-emoji: 🤖
-colorFrom: blue
-colorTo: green
-sdk: docker
-pinned: false
+Title: Arjuna Perception Env
+ColorFrom: Blue
+ColorTo: Green
+sdk: Docker
+Pinned: False
 ---
 
 # ARJUNA Perception Environment
