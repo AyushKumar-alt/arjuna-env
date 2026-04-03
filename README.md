@@ -1,10 +1,10 @@
 ---
-title: ARJUNA Perception Environment
-colorFrom: blue
-colorTo: green
-sdk: docker
-pinned: false
-license: mit
+Title: ARJUNA Perception Environment
+ColorFrom: Blue
+ColorTo: Green
+Sdk: Docker
+Pinned: False
+License: MIT
 ---
 
 # ARJUNA Perception Environment
@@ -172,7 +172,7 @@ arjuna_env/
 
 ## Author
 
-- **Author:** Calpol500mg  
+- **Author:** Ayush Kumar 
 - **HF Space:** [https://huggingface.co/spaces/Calpol500mg/arjuna-env](https://huggingface.co/spaces/Calpol500mg/arjuna-env)  
 - **Live app:** [https://calpol500mg-arjuna-env.hf.space](https://calpol500mg-arjuna-env.hf.space)  
 - **Framework:** [OpenEnv](https://github.com/meta-pytorch/OpenEnv) by Meta & Hugging Face  
