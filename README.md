@@ -1,9 +1,10 @@
 ---
-Title: Arjuna Perception Env
-ColorFrom: Blue
-ColorTo: Green
-sdk: Docker
-Pinned: False
+title: Arjuna Perception Env
+emoji: 🤖
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
 ---
 
 # ARJUNA Perception Environment
@@ -266,7 +267,8 @@ arjuna_env/
 ├── requirements.txt
 ├── Dockerfile
 ├── docs/
-│   └── images/               # Notes for README screenshots (PNGs via GitHub raw URLs)
+│   ├── images/               # Notes for README screenshots (PNGs via GitHub raw URLs)
+│   └── PUSH_TO_HF_SPACE.md   # How to push to HF without binary-blob history errors
 ├── demo.py                   # Offline-friendly heuristic demo (no LLM)
 ├── inference.py              # Optional LLM baseline (uses HF router + API key)
 ├── client.py                 # Thin HTTP client helper
@@ -368,7 +370,8 @@ python inference.py
 | Playground `ranked_objects` validation | Use JSON array string or comma-separated labels (see [Gradio](#gradio-playground-web)). |
 | `/web` returns **404** | Start with **`ENABLE_WEB_INTERFACE=true`** **before** importing/running the app; rebuild/restart container if needed. |
 | HF `402` on `inference.py` | Inference quota exhausted; use smaller **`N_SEEDS`** / **`MAX_TOKENS`** or run **`demo.py`** offline. |
-| **`git push space` rejected (binary files)** | Hub may block PNGs in the Space repo; either use **[Hub Xet](https://huggingface.co/docs/hub/xet)** or keep screenshots only on **GitHub** and embed with **`raw.githubusercontent.com/.../COMMIT/...`** (this README does the latter). |
+| **`git push space` rejected (binary files)** | History may still contain PNG blobs; use a **snapshot push** (see **`docs/PUSH_TO_HF_SPACE.md`**) or **[Hub Xet](https://huggingface.co/docs/hub/xet)**. README images use **GitHub raw** URLs so PNGs need not live on HF Git. |
+| **`sdk` must be one of [gradio, docker, …]** | README frontmatter must use **`sdk: docker`** (lowercase), with keys like **`title`**, **`colorFrom`**, not `Title` / `Sdk: Docker`. |
 
 ---
 
