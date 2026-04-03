@@ -50,6 +50,10 @@ class ArjunaAction(Action):
 class ArjunaObservation(Observation):
     """What the agent sees after reset or step."""
 
+    episode_id: str | None = Field(
+        default=None,
+        description="Episode id from reset; pass HTTP /step as episode_id to correlate state.",
+    )
     task_type: Literal[1, 2, 3] = Field(..., description="Which task is active.")
     scene_id: str = Field(..., description="Synthetic scene id.")
     observation_text: str = Field(

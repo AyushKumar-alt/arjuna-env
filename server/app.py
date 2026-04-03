@@ -29,15 +29,22 @@ app = create_app(
 
 def _patch_step_openapi_examples(schema: dict[str, Any]) -> None:
     """Swagger: replace generic StepRequest example with valid ArjunaAction shapes."""
-    task1: dict[str, Any] = {"action": {"task1_label": "person"}}
-    task2: dict[str, Any] = {"action": {"ranked_objects": ["person", "car", "bicycle"]}}
+    task1: dict[str, Any] = {
+        "episode_id": "<from POST /reset response observation.episode_id>",
+        "action": {"task1_label": "person"},
+    }
+    task2: dict[str, Any] = {
+        "episode_id": "<from POST /reset response observation.episode_id>",
+        "action": {"ranked_objects": ["person", "car", "bicycle"]},
+    }
     task3: dict[str, Any] = {
+        "episode_id": "<from POST /reset response observation.episode_id>",
         "action": {
             "decision": "discard",
             "reasoning": (
                 "Confidence below 0.35, object identity unclear, unsafe to log."
             ),
-        }
+        },
     }
     try:
         app_json = schema["paths"]["/step"]["post"]["requestBody"]["content"][

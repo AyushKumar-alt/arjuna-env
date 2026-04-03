@@ -125,15 +125,21 @@ def main() -> None:
                 obs = reset_out.observation
                 reply = _chat(llm, obs.observation_text)
 
+                ep_meta: dict[str, str] = {}
+                if obs.episode_id:
+                    ep_meta["episode_id"] = obs.episode_id
+
                 if task == 1:
                     label = parse_task1_label(reply)
-                    action = ArjunaAction(task1_label=label)
+                    action = ArjunaAction(task1_label=label, metadata=ep_meta)
                 elif task == 2:
                     ranked = parse_task2_ranking(reply)
-                    action = ArjunaAction(ranked_objects=ranked)
+                    action = ArjunaAction(ranked_objects=ranked, metadata=ep_meta)
                 else:
                     dec, reason = parse_task3_decision(reply)
-                    action = ArjunaAction(decision=dec, reasoning=reason)
+                    action = ArjunaAction(
+                        decision=dec, reasoning=reason, metadata=ep_meta
+                    )
 
                 step_out = env.step(action)
                 rw = episode_reward(step_out)

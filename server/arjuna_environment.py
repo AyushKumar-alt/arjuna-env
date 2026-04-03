@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import random
 import uuid
+from dataclasses import dataclass
 from typing import Any
 
 from pathlib import Path
@@ -44,6 +45,21 @@ def _load_readme_text() -> str | None:
                     return parts[2].lstrip("\n")
             return raw
     return None
+
+
+@dataclass
+class _EpisodeSession:
+    """Server-side episode state for HTTP (survives across per-request env instances)."""
+
+    task: int
+    scene1: sd.Task1Scene | None
+    scene2: sd.Task2Scene | None
+    scene3: sd.Task3Scene | None
+    scene_id: str | None
+
+
+# Keyed by episode_id; populated in reset(), consumed in step().
+SESSIONS: dict[str, _EpisodeSession] = {}
 
 
 class ArjunaEnvironment(Environment):
@@ -131,7 +147,17 @@ class ArjunaEnvironment(Environment):
             text = format_task3_prompt(self._scene3)
             sid = self._scene3.scene_id
 
+        sess = _EpisodeSession(
+            task=task,
+            scene1=self._scene1,
+            scene2=self._scene2,
+            scene3=self._scene3,
+            scene_id=self._state.scene_id,
+        )
+        SESSIONS[eid] = sess
+
         return ArjunaObservation(
+            episode_id=eid,
             task_type=task,  # type: ignore[arg-type]
             scene_id=sid,
             observation_text=text,
@@ -140,62 +166,104 @@ class ArjunaEnvironment(Environment):
             done=False,
         )
 
+    def _step_error_obs(self) -> ArjunaObservation:
+        return ArjunaObservation(
+            episode_id=None,
+            task_type=1,
+            scene_id="invalid",
+            observation_text="",
+            feedback="Call reset() before step().",
+            reward=0.0,
+            done=True,
+        )
+
+    def _grade_from_session(
+        self, sess: _EpisodeSession, action: ArjunaAction
+    ) -> tuple[float, str, str, int]:
+        task = sess.task
+        reward = 0.0
+        feedback = ""
+
+        if task == 1 and sess.scene1 is not None:
+            reward = grade_task1_identification(action.task1_label, sess.scene1)
+            feedback = (
+                f"Expected '{sess.scene1.expected_label}', "
+                f"got {action.task1_label!r}. Score={reward:.2f}."
+            )
+        elif task == 2 and sess.scene2 is not None:
+            reward = grade_task2_triage(action.ranked_objects, sess.scene2)
+            feedback = (
+                f"Ground truth order: {list(sess.scene2.expected_priority)}; "
+                f"agent: {action.ranked_objects}. Score={reward:.2f}."
+            )
+        elif task == 3 and sess.scene3 is not None:
+            reward = grade_task3_low_confidence(
+                action.decision,
+                action.reasoning,
+                sess.scene3,
+            )
+            feedback = (
+                f"Band expects {sess.scene3.expected_action!r}; "
+                f"decision={action.decision!r}. Score={reward:.2f}."
+            )
+        else:
+            feedback = "Internal error: missing scene."
+
+        obs_text = ""
+        if task == 1 and sess.scene1:
+            obs_text = format_task1_prompt(sess.scene1)
+        elif task == 2 and sess.scene2:
+            obs_text = format_task2_prompt(sess.scene2)
+        elif task == 3 and sess.scene3:
+            obs_text = format_task3_prompt(sess.scene3)
+
+        return float(reward), feedback, obs_text, task
+
     def step(
         self,
         action: ArjunaAction,
         timeout_s: float | None = None,
         **kwargs: Any,
     ) -> ArjunaObservation:
-        if not self._state.awaiting_action or self._task is None:
+        eid = kwargs.get("episode_id")
+        if eid is None and action.metadata:
+            eid = action.metadata.get("episode_id")
+        if isinstance(eid, str) and eid:
+            if eid not in SESSIONS:
+                return self._step_error_obs()
+            sess = SESSIONS.pop(eid)
+            reward, feedback, obs_text, task = self._grade_from_session(sess, action)
+            if self._state.episode_id == eid:
+                self._state.step_count += 1
+                self._state.awaiting_action = False
             return ArjunaObservation(
-                task_type=1,
-                scene_id="invalid",
-                observation_text="",
-                feedback="Call reset() before step().",
-                reward=0.0,
+                episode_id=eid,
+                task_type=task,  # type: ignore[arg-type]
+                scene_id=sess.scene_id or "unknown",
+                observation_text=obs_text,
+                feedback=feedback,
+                reward=reward,
                 done=True,
             )
 
-        self._state.step_count += 1
-        task = self._task
-        reward = 0.0
-        feedback = ""
+        if not self._state.awaiting_action or self._task is None:
+            return self._step_error_obs()
 
-        if task == 1 and self._scene1 is not None:
-            reward = grade_task1_identification(action.task1_label, self._scene1)
-            feedback = (
-                f"Expected '{self._scene1.expected_label}', "
-                f"got {action.task1_label!r}. Score={reward:.2f}."
-            )
-        elif task == 2 and self._scene2 is not None:
-            reward = grade_task2_triage(action.ranked_objects, self._scene2)
-            feedback = (
-                f"Ground truth order: {list(self._scene2.expected_priority)}; "
-                f"agent: {action.ranked_objects}. Score={reward:.2f}."
-            )
-        elif task == 3 and self._scene3 is not None:
-            reward = grade_task3_low_confidence(
-                action.decision,
-                action.reasoning,
-                self._scene3,
-            )
-            feedback = (
-                f"Band expects {self._scene3.expected_action!r}; "
-                f"decision={action.decision!r}. Score={reward:.2f}."
-            )
-        else:
-            feedback = "Internal error: missing scene."
+        self._state.step_count += 1
+        sess = _EpisodeSession(
+            task=self._task,
+            scene1=self._scene1,
+            scene2=self._scene2,
+            scene3=self._scene3,
+            scene_id=self._state.scene_id,
+        )
+        reward, feedback, obs_text, task = self._grade_from_session(sess, action)
 
         self._state.awaiting_action = False
-        obs_text = ""
-        if task == 1 and self._scene1:
-            obs_text = format_task1_prompt(self._scene1)
-        elif task == 2 and self._scene2:
-            obs_text = format_task2_prompt(self._scene2)
-        elif task == 3 and self._scene3:
-            obs_text = format_task3_prompt(self._scene3)
+        SESSIONS.pop(self._state.episode_id, None)
 
         return ArjunaObservation(
+            episode_id=self._state.episode_id,
             task_type=task,  # type: ignore[arg-type]
             scene_id=self._state.scene_id or "unknown",
             observation_text=obs_text,

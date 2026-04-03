@@ -18,7 +18,7 @@ Built with **OpenEnv** (Meta & Hugging Face): standardized `reset` / `step` / `s
 ## Environment Details
 
 - **Framework:** OpenEnv (`openenv-core`)
-- **API:** `reset()` / `step()` / `state()` (HTTP + WebSocket; use WebSocket client or `inference.py` for full episodes)
+- **API:** `reset()` / `step()` / `state()` (HTTP + WebSocket; for HTTP, pass **`episode_id`** from **`reset`** into **`step`**)
 - **Deployed on:** Hugging Face Spaces — [Calpol500mg/arjuna-env](https://huggingface.co/spaces/Calpol500mg/arjuna-env)
 - **Docker:** Yes — self-contained image via `Dockerfile`
 
@@ -35,6 +35,7 @@ Unified Pydantic model **`ArjunaAction`** (set fields matching `task_type` on th
 
 **`ArjunaObservation`** fields:
 
+- **`episode_id`** (`str | null`): Set on **`reset`**; required on **`POST /step`** over plain HTTP (see below) so the server can load the same scene across requests
 - **`task_type`** (`int`): Which task is active (`1`, `2`, or `3`)
 - **`scene_id`** (`str`): Synthetic scene identifier
 - **`observation_text`** (`str`): Natural-language scene + YOLO detections for the agent
@@ -107,6 +108,8 @@ python -m openenv.cli validate https://calpol500mg-arjuna-env.hf.space
 
 ## Example API Usage
 
+On **Hugging Face Spaces** (and any deployment where each HTTP request may hit a new process), **`POST /reset`** and **`POST /step`** do not share the same in-memory environment instance. After **`reset`**, read **`observation.episode_id`** from the response and send that same value on **`step`** as a top-level JSON field alongside **`action`**. Omitting it produces “Call reset() before step().” The **WebSocket** client keeps one environment per connection, so it can omit **`episode_id`** on **`step`**; **`inference.py`** still passes **`episode_id`** in **`action.metadata`** for consistency.
+
 ### Reset
 
 ```bash
@@ -115,12 +118,14 @@ curl -X POST https://calpol500mg-arjuna-env.hf.space/reset \
   -d "{\"seed\": 42}"
 ```
 
+The JSON response includes **`observation.episode_id`** — use it in the next request.
+
 ### Step — Task 1
 
 ```bash
 curl -X POST https://calpol500mg-arjuna-env.hf.space/step \
   -H "Content-Type: application/json" \
-  -d "{\"action\": {\"task1_label\": \"person\"}}"
+  -d "{\"episode_id\": \"<paste-from-reset-observation>\", \"action\": {\"task1_label\": \"person\"}}"
 ```
 
 ### Step — Task 2
@@ -128,7 +133,7 @@ curl -X POST https://calpol500mg-arjuna-env.hf.space/step \
 ```bash
 curl -X POST https://calpol500mg-arjuna-env.hf.space/step \
   -H "Content-Type: application/json" \
-  -d "{\"action\": {\"ranked_objects\": [\"person\", \"car\", \"bicycle\"]}}"
+  -d "{\"episode_id\": \"<paste-from-reset-observation>\", \"action\": {\"ranked_objects\": [\"person\", \"car\", \"bicycle\"]}}"
 ```
 
 ### Step — Task 3
@@ -136,10 +141,8 @@ curl -X POST https://calpol500mg-arjuna-env.hf.space/step \
 ```bash
 curl -X POST https://calpol500mg-arjuna-env.hf.space/step \
   -H "Content-Type: application/json" \
-  -d "{\"action\": {\"decision\": \"discard\", \"reasoning\": \"confidence below 0.35, unsafe to log\"}}"
+  -d "{\"episode_id\": \"<paste-from-reset-observation>\", \"action\": {\"decision\": \"discard\", \"reasoning\": \"confidence below 0.35, unsafe to log\"}}"
 ```
-
-**Note:** For a full **reset → step** episode with consistent state, use the **WebSocket client** (`client.py`) or `inference.py`; plain HTTP `reset`/`step` are documented by OpenEnv for compatibility, but session continuity is via WebSockets.
 
 ## Baseline Results
 
