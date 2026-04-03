@@ -5,6 +5,8 @@ WORKDIR /app
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
+# OpenEnv Gradio Playground at /web (judges can try Reset → Step in the browser)
+ENV ENABLE_WEB_INTERFACE=true
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
