@@ -77,7 +77,7 @@ The Docker image sets **`ENABLE_WEB_INTERFACE=true`** so this UI is served on **
 17. [Troubleshooting](#troubleshooting)  
 18. [FAQ](#faq)  
 19. [Future improvements](#future-improvements)  
-20. [Screenshots / visuals](#screenshots--visuals)  
+20. [Visuals & architecture](#visuals--architecture)  
 21. [Credits and acknowledgements](#credits-and-acknowledgements)  
 22. [License](#license)  
 23. [Maintainer / contact](#maintainer--contact)  
@@ -267,7 +267,7 @@ arjuna_env/
 ├── requirements.txt
 ├── Dockerfile
 ├── docs/
-│   ├── images/               # Notes for README screenshots (PNGs via GitHub raw URLs)
+│   ├── images/               # See docs/images/README.md (no image binaries in repo)
 │   └── PUSH_TO_HF_SPACE.md   # How to push to HF without binary-blob history errors
 ├── demo.py                   # Offline-friendly heuristic demo (no LLM)
 ├── inference.py              # Optional LLM baseline (uses HF router + API key)
@@ -370,7 +370,7 @@ python inference.py
 | Playground `ranked_objects` validation | Use JSON array string or comma-separated labels (see [Gradio](#gradio-playground-web)). |
 | `/web` returns **404** | Start with **`ENABLE_WEB_INTERFACE=true`** **before** importing/running the app; rebuild/restart container if needed. |
 | HF `402` on `inference.py` | Inference quota exhausted; use smaller **`N_SEEDS`** / **`MAX_TOKENS`** or run **`demo.py`** offline. |
-| **`git push space` rejected (binary files)** | History may still contain PNG blobs; use a **snapshot push** (see **`docs/PUSH_TO_HF_SPACE.md`**) or **[Hub Xet](https://huggingface.co/docs/hub/xet)**. README images use **GitHub raw** URLs so PNGs need not live on HF Git. |
+| **`git push space` rejected (binary files)** | History may still contain binary blobs; use a **snapshot push** (see **`docs/PUSH_TO_HF_SPACE.md`**) or **[Hub Xet](https://huggingface.co/docs/hub/xet)**. |
 | **`sdk` must be one of [gradio, docker, …]** | README frontmatter must use **`sdk: docker`** (lowercase), with keys like **`title`**, **`colorFrom`**, not `Title` / `Sdk: Docker`. |
 
 ---
@@ -394,32 +394,20 @@ A: Yes via OpenEnv’s stack; **`inference.py`** can pass metadata consistently.
 ## Future improvements
 
 - Add a **`tests/`** package with parametrized grading and HTTP contract tests.  
-- Optional **`gradio_builder`** “Custom” tab with task-aware field visibility.  
-- Add a short **-screen recording (GIF)** of Reset → Step on **`/web`** if file size stays reasonable for the repo.
+- Optional **`gradio_builder`** “Custom” tab with task-aware field visibility.
 
 ---
 
-## Screenshots / visuals
+## Visuals & architecture
 
-Live UI for judges: **[https://calpol500mg-arjuna-env.hf.space/web](https://calpol500mg-arjuna-env.hf.space/web)** (see [Submission & demo links](#submission--demo-links)).
+There are **no screenshot or image files** in this repository (keeps **Hugging Face Space** `git push` simple and avoids binary history issues). **Try the live UI** instead:
 
-### Swagger / OpenAPI (`/docs`)
+| What | Live URL |
+|------|----------|
+| **Gradio Playground** | [calpol500mg-arjuna-env.hf.space/web](https://calpol500mg-arjuna-env.hf.space/web) |
+| **Swagger / OpenAPI** | [calpol500mg-arjuna-env.hf.space/docs](https://calpol500mg-arjuna-env.hf.space/docs) |
 
-<!-- PNGs are hosted via GitHub raw URLs: HF Space Git rejects binary files in pushes. Update IMAGES_COMMIT in URLs when you replace screenshots. -->
-
-![Swagger UI - API overview](https://raw.githubusercontent.com/AyushKumar-alt/arjuna-env/8b73341/docs/images/swagger_docs.png)
-
-![Swagger UI - reset and step operations](https://raw.githubusercontent.com/AyushKumar-alt/arjuna-env/8b73341/docs/images/swagger_docs1.png)
-
-### Gradio Playground (`/web`)
-
-![OpenEnv Playground - task form and quick start](https://raw.githubusercontent.com/AyushKumar-alt/arjuna-env/8b73341/docs/images/playground.png)
-
-![Playground - observation and JSON](https://raw.githubusercontent.com/AyushKumar-alt/arjuna-env/8b73341/docs/images/playground1.png)
-
-![Playground - graded step with reward and feedback](https://raw.githubusercontent.com/AyushKumar-alt/arjuna-env/8b73341/docs/images/playground2.png)
-
-**Why not relative paths?** Hugging Face **Space** `git push` rejects these PNGs unless you use **[Xet](https://huggingface.co/docs/hub/xet)**. Embedded images use a **pinned GitHub commit** (`8b73341`) where the files still exist in history. See **`docs/images/README.md`** to refresh assets.
+Folder **`docs/images/`** only holds this documentation; see **`docs/images/README.md`** for policy and deployment notes.
 
 **Architecture (high level):**
 
