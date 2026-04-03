@@ -14,11 +14,13 @@ from __future__ import annotations
 
 import json
 import os
+import random
 import re
 from statistics import mean
 from typing import Any, List
 
 from openai import OpenAI
+from openai import APIStatusError
 from openenv.core.client_types import StepResult
 
 from client import ArjunaEnv
@@ -75,6 +77,7 @@ def _client() -> OpenAI:
 
 def _chat(llm: OpenAI, system: str, user: str) -> str:
     model = os.environ["MODEL_NAME"]
+    max_tokens = int(os.environ.get("MAX_TOKENS", "80"))
     resp = llm.chat.completions.create(
         model=model,
         messages=[
@@ -82,7 +85,7 @@ def _chat(llm: OpenAI, system: str, user: str) -> str:
             {"role": "user", "content": user},
         ],
         temperature=0.3,
-        max_tokens=200,
+        max_tokens=max_tokens,
     )
     return (resp.choices[0].message.content or "").strip()
 
@@ -121,6 +124,23 @@ def parse_task2_ranking(text: str) -> List[str]:
     if "," in text:
         return [p.strip().lower() for p in text.split(",") if p.strip()]
     return [text.strip().lower()]
+
+
+def _extract_first_json_array_block(text: str) -> str | None:
+    """Return the first balanced JSON array block from text, if present."""
+    start = text.find("[")
+    if start < 0:
+        return None
+    depth = 0
+    for i in range(start, len(text)):
+        ch = text[i]
+        if ch == "[":
+            depth += 1
+        elif ch == "]":
+            depth -= 1
+            if depth == 0:
+                return text[start : i + 1]
+    return None
 
 
 def parse_task3_decision(text: str) -> tuple[str, str]:
@@ -205,17 +225,39 @@ def main() -> None:
             action = ArjunaAction(task1_label=label, metadata=ep_meta)
         elif task == 2:
             ranked: List[str]
-            try:
-                parsed = json.loads(reply)
-                if isinstance(parsed, list):
-                    ranked = [str(x).strip().lower() for x in parsed if str(x).strip()]
-                else:
-                    ranked = parse_task2_ranking(reply)
-            except json.JSONDecodeError:
-                labels = re.findall(r'"([a-z_ ]+)"', reply, flags=re.IGNORECASE)
-                if labels:
-                    ranked = [lbl.strip().lower() for lbl in labels if lbl.strip()]
-                else:
+            array_block = _extract_first_json_array_block(reply)
+            parsed_any = False
+            ranked = []
+            if array_block is not None:
+                try:
+                    parsed = json.loads(array_block)
+                    parsed_any = True
+                    if isinstance(parsed, list):
+                        for item in parsed:
+                            # Preferred shape: ["person", "car", ...]
+                            if isinstance(item, str):
+                                label = item.strip().lower()
+                                if label:
+                                    ranked.append(label)
+                                continue
+                            # Also accept: [{"label": "person", ...}, ...]
+                            if isinstance(item, dict):
+                                raw_label = item.get("label")
+                                if raw_label is not None:
+                                    label = str(raw_label).strip().lower()
+                                    if label:
+                                        ranked.append(label)
+                except json.JSONDecodeError:
+                    parsed_any = False
+
+            if not ranked:
+                if not parsed_any:
+                    # Regex fallback intentionally captures only quoted values,
+                    # not object keys like "label" / "confidence".
+                    labels = re.findall(r':\s*"([a-z_ ]+)"', reply, flags=re.IGNORECASE)
+                    if labels:
+                        ranked = [lbl.strip().lower() for lbl in labels if lbl.strip()]
+                if not ranked:
                     ranked = parse_task2_ranking(reply)
             action = ArjunaAction(ranked_objects=ranked, metadata=ep_meta)
         else:
@@ -231,24 +273,66 @@ def main() -> None:
         print(f"  reward={rw:.3f} done={step_out.done}")
         return rw
 
-    seeds = [0, 1, 2, 3, 4]
+    n_seeds = int(os.environ.get("N_SEEDS", "3"))
+    seeds = random.sample(range(100), n_seeds)
+    exhausted_quota = False
+    completed_episodes = 0
+    enable_retry = os.environ.get("ENABLE_RETRY", "0").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+        "on",
+    )
 
     with ArjunaEnv(base_url=base_url).sync() as env:
         for task in (1, 2, 3):
+            if exhausted_quota:
+                break
             for seed in seeds:
+                if exhausted_quota:
+                    break
                 try:
                     rw = run_episode(env, llm, task, seed)
+                except APIStatusError as exc:
+                    if exc.status_code == 402:
+                        exhausted_quota = True
+                        print(
+                            "Quota exhausted (HTTP 402 from inference provider). "
+                            "Stopping run and reporting partial results."
+                        )
+                        break
+                    raise
                 except Exception as exc:
+                    if not enable_retry:
+                        raise
                     print(f"  episode error (task={task}, seed={seed}): {exc!r}, retrying once")
-                    rw = run_episode(env, llm, task, seed)
+                    try:
+                        rw = run_episode(env, llm, task, seed)
+                    except APIStatusError as retry_exc:
+                        if retry_exc.status_code == 402:
+                            exhausted_quota = True
+                            print(
+                                "Quota exhausted (HTTP 402 from inference provider) "
+                                "during retry. Stopping run and reporting partial results."
+                            )
+                            break
+                        raise
                 per_task[task].append(rw)
                 all_rewards.append(rw)
+                completed_episodes += 1
 
     print("---")
     for t in (1, 2, 3):
         m = mean(per_task[t]) if per_task[t] else 0.0
         print(f"task {t} mean reward: {m:.3f}")
     print(f"overall mean reward: {mean(all_rewards) if all_rewards else 0.0:.3f}")
+    min_task_scores = {t: (min(per_task[t]) if per_task[t] else 0.0) for t in (1, 2, 3)}
+    max_task_scores = {t: (max(per_task[t]) if per_task[t] else 0.0) for t in (1, 2, 3)}
+    print(f"Run seeds used: {seeds}")
+    print(f"Score variation: min={min_task_scores}, max={max_task_scores}")
+    print(f"Episodes completed: {completed_episodes}/{len(seeds) * 3}")
+    if exhausted_quota:
+        print("Run ended early due to inference quota exhaustion.")
 
 
 if __name__ == "__main__":

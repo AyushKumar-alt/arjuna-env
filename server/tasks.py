@@ -16,6 +16,30 @@ from .synthetic_data import (
     expected_low_confidence_action,
 )
 
+VEHICLE_LABELS = {
+    "car",
+    "truck",
+    "bus",
+    "motorcycle",
+    "bicycle",
+    "airplane",
+    "train",
+    "boat",
+}
+PERSON_LABELS = {"person", "man", "woman", "child", "pedestrian"}
+ANIMAL_LABELS = {
+    "dog",
+    "cat",
+    "bird",
+    "horse",
+    "sheep",
+    "cow",
+    "elephant",
+    "bear",
+    "zebra",
+    "giraffe",
+}
+
 
 def _norm_label(s: str) -> str:
     return s.strip().lower()
@@ -25,11 +49,39 @@ def _norm_list(labels: Iterable[str]) -> tuple[str, ...]:
     return tuple(_norm_label(x) for x in labels)
 
 
+def _task1_group(label: str) -> str | None:
+    if label in VEHICLE_LABELS:
+        return "vehicle"
+    if label in PERSON_LABELS:
+        return "person"
+    if label in ANIMAL_LABELS:
+        return "animal"
+    return None
+
+
 def grade_task1_identification(predicted: str | None, scene: Task1Scene) -> float:
-    """1.0 if predicted class matches expected label (case-insensitive)."""
+    """
+    Task 1 with semantic partial credit.
+
+    - exact match -> 1.0
+    - same category group -> 0.7
+    - predicted is a known grouped class but wrong group -> 0.2
+    - unrelated/unknown -> 0.0
+    """
     if predicted is None:
         return 0.0
-    return 1.0 if _norm_label(predicted) == _norm_label(scene.expected_label) else 0.0
+    pred = _norm_label(predicted)
+    expected = _norm_label(scene.expected_label)
+    if pred == expected:
+        return 1.0
+
+    pred_group = _task1_group(pred)
+    expected_group = _task1_group(expected)
+    if pred_group is not None and pred_group == expected_group:
+        return 0.7
+    if pred_group is not None and pred_group != expected_group:
+        return 0.2
+    return 0.0
 
 
 def grade_task2_triage(predicted_rank: list[str] | None, scene: Task2Scene) -> float:
@@ -64,29 +116,27 @@ def _normalize_decision(raw: str | None) -> LowConfidenceAction | None:
     return None
 
 
-def _reasoning_suggests_engagement(reasoning: str | None) -> bool:
-    """Heuristic for partial credit when the chosen action is wrong."""
-    if not reasoning:
-        return False
-    t = reasoning.strip().lower()
-    if len(t) < 12:
-        return False
-    hints = (
-        "confidence",
-        "uncertain",
-        "uncertainty",
-        "ambiguous",
-        "low conf",
-        "noisy",
-        "blur",
-        "occlusion",
-        "rescan",
-        "discard",
-        "risk",
-        "sensor",
-        "yolo",
-    )
-    return any(h in t for h in hints)
+def _reasoning_quality(reasoning: str | None) -> str:
+    """Classify reasoning quality as strong/weak/none."""
+    if reasoning is None:
+        return "none"
+    text = reasoning.strip()
+    if not text:
+        return "none"
+    # Strong reasoning explicitly references a confidence value.
+    if re.search(r"\b(?:0(?:\.\d+)?|1(?:\.0+)?)\b", text):
+        return "strong"
+    return "weak"
+
+
+def _decision_band_index(decision: LowConfidenceAction | None) -> int | None:
+    if decision == "discard":
+        return 0
+    if decision == "request_rescan":
+        return 1
+    if decision == "log_and_continue":
+        return 2
+    return None
 
 
 def grade_task3_low_confidence(
@@ -95,16 +145,31 @@ def grade_task3_low_confidence(
     scene: Task3Scene,
 ) -> float:
     """
-    1.0 if decision matches band rule; 0.5 if wrong decision but reasoning shows
-    sound uncertainty analysis; 0.0 otherwise.
+    Richer low-confidence grading:
+    - Correct decision + strong reasoning -> 1.0
+    - Correct decision + weak/no reasoning -> 0.8
+    - Adjacent-band decision + strong reasoning -> 0.5
+    - Adjacent-band decision + weak/no reasoning -> 0.3
+    - Two bands off / invalid -> 0.0
     """
     conf = scene.primary_detection.confidence
     correct = expected_low_confidence_action(conf)
     got = _normalize_decision(decision)
+    quality = _reasoning_quality(reasoning)
+
+    if got is None:
+        return 0.0
+
     if got == correct:
-        return 1.0
-    if _reasoning_suggests_engagement(reasoning):
-        return 0.5
+        return 1.0 if quality == "strong" else 0.8
+
+    correct_idx = _decision_band_index(correct)
+    got_idx = _decision_band_index(got)
+    if correct_idx is None or got_idx is None:
+        return 0.0
+
+    if abs(correct_idx - got_idx) == 1:
+        return 0.5 if quality == "strong" else 0.3
     return 0.0
 
 

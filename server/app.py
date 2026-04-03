@@ -12,6 +12,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import os
+
 from fastapi import Request
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import RedirectResponse
@@ -19,6 +21,10 @@ from openenv.core.env_server import create_app
 
 from models import ArjunaAction, ArjunaObservation
 from server.arjuna_environment import ArjunaEnvironment
+from server.openenv_web_patch import apply as _apply_openenv_web_patch
+
+if os.getenv("ENABLE_WEB_INTERFACE", "false").lower() in ("true", "1", "yes"):
+    _apply_openenv_web_patch()
 
 app = create_app(
     ArjunaEnvironment,

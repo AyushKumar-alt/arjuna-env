@@ -4,10 +4,11 @@ Pydantic models for ARJUNA perception OpenEnv (actions, observations, state).
 
 from __future__ import annotations
 
-from typing import Literal
+import json
+from typing import Any, Literal
 
 from openenv.core.env_server.types import Action, Observation, State
-from pydantic import Field
+from pydantic import Field, field_validator
 
 
 class ArjunaState(State):
@@ -45,6 +46,29 @@ class ArjunaAction(Action):
         default=None,
         description="Task 3 optional explanation (used for partial credit).",
     )
+
+    @field_validator("ranked_objects", mode="before")
+    @classmethod
+    def _coerce_ranked_objects(cls, v: Any) -> list[str] | None:
+        """Gradio sends a single text line; accept JSON array or comma-separated labels."""
+        if v is None or v == "":
+            return None
+        if isinstance(v, list):
+            return [str(x).strip() for x in v if str(x).strip()]
+        if isinstance(v, str):
+            s = v.strip()
+            if not s:
+                return None
+            if s.startswith("["):
+                try:
+                    parsed = json.loads(s)
+                except json.JSONDecodeError:
+                    return None
+                if isinstance(parsed, list):
+                    return [str(x).strip() for x in parsed if str(x).strip()]
+                return None
+            return [p.strip() for p in s.split(",") if p.strip()]
+        return v
 
 
 class ArjunaObservation(Observation):

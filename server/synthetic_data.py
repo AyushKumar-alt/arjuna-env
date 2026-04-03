@@ -164,6 +164,66 @@ TASK1_SCENES: tuple[Task1Scene, ...] = (
         detection=SyntheticDetection("umbrella", 0.93, (180.0, 40.0, 520.0, 360.0)),
         expected_label="umbrella",
     ),
+    Task1Scene(
+        scene_id="t1_011",
+        description="City park trail: a dog near a bench under morning light.",
+        detection=SyntheticDetection("dog", 0.78, (220.0, 260.0, 420.0, 430.0)),
+        expected_label="dog",
+    ),
+    Task1Scene(
+        scene_id="t1_012",
+        description="Forest edge: a cat sitting on a fallen log with clear silhouette.",
+        detection=SyntheticDetection("cat", 0.79, (300.0, 220.0, 430.0, 340.0)),
+        expected_label="cat",
+    ),
+    Task1Scene(
+        scene_id="t1_013",
+        description="Airport waiting area: unattended backpack by the charging station.",
+        detection=SyntheticDetection("backpack", 0.91, (260.0, 240.0, 360.0, 380.0)),
+        expected_label="backpack",
+    ),
+    Task1Scene(
+        scene_id="t1_014",
+        description="Beach boardwalk: bright umbrella opened beside a kiosk.",
+        detection=SyntheticDetection("umbrella", 0.87, (120.0, 70.0, 420.0, 330.0)),
+        expected_label="umbrella",
+    ),
+    Task1Scene(
+        scene_id="t1_015",
+        description="Train station concourse: rolling suitcase near platform sign.",
+        detection=SyntheticDetection("suitcase", 0.84, (330.0, 230.0, 430.0, 410.0)),
+        expected_label="suitcase",
+    ),
+    Task1Scene(
+        scene_id="t1_016",
+        description="Open-plan office: a single laptop on a desk under desk lamp.",
+        detection=SyntheticDetection("laptop", 0.95, (250.0, 210.0, 470.0, 340.0)),
+        expected_label="laptop",
+    ),
+    Task1Scene(
+        scene_id="t1_017",
+        description="Mall food court: plastic bottle on a table near the aisle.",
+        detection=SyntheticDetection("bottle", 0.82, (360.0, 220.0, 410.0, 330.0)),
+        expected_label="bottle",
+    ),
+    Task1Scene(
+        scene_id="t1_018",
+        description="Office lobby: a chair facing the reception desk.",
+        detection=SyntheticDetection("chair", 0.76, (240.0, 180.0, 460.0, 420.0)),
+        expected_label="chair",
+    ),
+    Task1Scene(
+        scene_id="t1_019",
+        description="Living room showroom: one couch centered under warm lighting.",
+        detection=SyntheticDetection("couch", 0.89, (140.0, 190.0, 620.0, 430.0)),
+        expected_label="couch",
+    ),
+    Task1Scene(
+        scene_id="t1_020",
+        description="Electronics store aisle: wall-mounted TV panel in full view.",
+        detection=SyntheticDetection("tv", 0.97, (180.0, 70.0, 620.0, 320.0)),
+        expected_label="tv",
+    ),
 )
 
 
@@ -303,6 +363,117 @@ TASK2_SCENES: tuple[Task2Scene, ...] = (
         ),
         expected_priority=("truck", "traffic cone", "person", "umbrella"),
     ),
+    Task2Scene(
+        scene_id="t2_012",
+        description="Warehouse lane: forklift crossing with one worker nearby.",
+        detections=(
+            SyntheticDetection("truck", 0.93, (80.0, 170.0, 460.0, 380.0)),
+            SyntheticDetection("person", 0.75, (500.0, 150.0, 560.0, 360.0)),
+            SyntheticDetection("pallet", 0.59, (290.0, 300.0, 360.0, 390.0)),
+        ),
+        expected_priority=("truck", "person", "pallet"),
+    ),
+    Task2Scene(
+        scene_id="t2_013",
+        description="City curb: person stepping out, car approaching, umbrella overhead.",
+        detections=(
+            SyntheticDetection("person", 0.81, (300.0, 120.0, 380.0, 410.0)),
+            SyntheticDetection("car", 0.81, (120.0, 220.0, 520.0, 380.0)),
+            SyntheticDetection("umbrella", 0.67, (280.0, 40.0, 390.0, 180.0)),
+        ),
+        expected_priority=("person", "car", "umbrella"),
+    ),
+    Task2Scene(
+        scene_id="t2_014",
+        description="Airport apron: airplane parked, bus service vehicle, two ground crew.",
+        detections=(
+            SyntheticDetection("airplane", 0.92, (40.0, 60.0, 760.0, 300.0)),
+            SyntheticDetection("bus", 0.84, (170.0, 260.0, 360.0, 360.0)),
+            SyntheticDetection("person", 0.84, (390.0, 250.0, 430.0, 360.0)),
+            SyntheticDetection("person", 0.72, (460.0, 250.0, 500.0, 360.0)),
+            SyntheticDetection("luggage cart", 0.69, (520.0, 280.0, 620.0, 360.0)),
+        ),
+        expected_priority=("airplane", "person", "bus", "person", "luggage cart"),
+    ),
+    Task2Scene(
+        scene_id="t2_015",
+        description="School drop-off: bus, bicycle, backpack, child crossing sign.",
+        detections=(
+            SyntheticDetection("bus", 0.86, (60.0, 120.0, 680.0, 380.0)),
+            SyntheticDetection("bicycle", 0.73, (420.0, 240.0, 530.0, 360.0)),
+            SyntheticDetection("backpack", 0.73, (510.0, 230.0, 560.0, 330.0)),
+            SyntheticDetection("stop sign", 0.75, (700.0, 120.0, 740.0, 180.0)),
+        ),
+        expected_priority=("bus", "stop sign", "bicycle", "backpack"),
+    ),
+    Task2Scene(
+        scene_id="t2_016",
+        description="Downtown junction: traffic light, person, truck, motorcycle, dog.",
+        detections=(
+            SyntheticDetection("traffic light", 0.82, (620.0, 50.0, 660.0, 120.0)),
+            SyntheticDetection("person", 0.82, (250.0, 130.0, 320.0, 410.0)),
+            SyntheticDetection("truck", 0.82, (80.0, 210.0, 300.0, 360.0)),
+            SyntheticDetection("motorcycle", 0.82, (350.0, 250.0, 470.0, 360.0)),
+            SyntheticDetection("dog", 0.61, (500.0, 300.0, 580.0, 380.0)),
+        ),
+        expected_priority=("person", "truck", "motorcycle", "traffic light", "dog"),
+    ),
+    Task2Scene(
+        scene_id="t2_017",
+        description="Port entry gate: boat trailer, car, security guard, cone.",
+        detections=(
+            SyntheticDetection("boat", 0.77, (70.0, 170.0, 400.0, 320.0)),
+            SyntheticDetection("car", 0.77, (430.0, 200.0, 660.0, 340.0)),
+            SyntheticDetection("person", 0.77, (355.0, 130.0, 410.0, 350.0)),
+            SyntheticDetection("traffic cone", 0.65, (300.0, 330.0, 330.0, 390.0)),
+        ),
+        expected_priority=("person", "boat", "car", "traffic cone"),
+    ),
+    Task2Scene(
+        scene_id="t2_018",
+        description="Mall atrium: person near escalator, chair cluster, potted plant.",
+        detections=(
+            SyntheticDetection("person", 0.74, (320.0, 130.0, 390.0, 410.0)),
+            SyntheticDetection("chair", 0.74, (190.0, 250.0, 290.0, 390.0)),
+            SyntheticDetection("potted plant", 0.74, (500.0, 220.0, 560.0, 360.0)),
+            SyntheticDetection("bench", 0.69, (120.0, 300.0, 260.0, 380.0)),
+        ),
+        expected_priority=("person", "chair", "potted plant", "bench"),
+    ),
+    Task2Scene(
+        scene_id="t2_019",
+        description="Rail crossing: train approaching, warning sign, cyclist waiting.",
+        detections=(
+            SyntheticDetection("train", 0.91, (50.0, 120.0, 760.0, 330.0)),
+            SyntheticDetection("stop sign", 0.79, (620.0, 110.0, 670.0, 180.0)),
+            SyntheticDetection("bicycle", 0.79, (390.0, 230.0, 500.0, 360.0)),
+            SyntheticDetection("person", 0.79, (430.0, 180.0, 480.0, 350.0)),
+        ),
+        expected_priority=("train", "person", "bicycle", "stop sign"),
+    ),
+    Task2Scene(
+        scene_id="t2_020",
+        description="Beach access road: bus, person, dog, surfboard rack, bicycle.",
+        detections=(
+            SyntheticDetection("bus", 0.83, (80.0, 130.0, 650.0, 330.0)),
+            SyntheticDetection("person", 0.83, (360.0, 150.0, 420.0, 370.0)),
+            SyntheticDetection("dog", 0.83, (430.0, 300.0, 510.0, 380.0)),
+            SyntheticDetection("surfboard", 0.70, (540.0, 120.0, 600.0, 330.0)),
+            SyntheticDetection("bicycle", 0.70, (250.0, 250.0, 340.0, 360.0)),
+        ),
+        expected_priority=("person", "bus", "dog", "bicycle", "surfboard"),
+    ),
+    Task2Scene(
+        scene_id="t2_021",
+        description="Office parking deck: motorcycle, car, laptop bag, worker.",
+        detections=(
+            SyntheticDetection("motorcycle", 0.76, (170.0, 230.0, 340.0, 360.0)),
+            SyntheticDetection("car", 0.76, (360.0, 200.0, 670.0, 360.0)),
+            SyntheticDetection("backpack", 0.76, (520.0, 240.0, 560.0, 320.0)),
+            SyntheticDetection("person", 0.76, (470.0, 150.0, 530.0, 360.0)),
+        ),
+        expected_priority=("person", "motorcycle", "car", "backpack"),
+    ),
 )
 
 # Sanity: every Task2 scene must match computed triage order (catches data bugs).
@@ -424,6 +595,66 @@ TASK3_SCENES: tuple[Task3Scene, ...] = (
         primary_detection=SyntheticDetection("car", 0.53, (260.0, 220.0, 520.0, 360.0)),
         expected_action="log_and_continue",
         notes="Confidence above 0.50 despite tricky lighting.",
+    ),
+    Task3Scene(
+        scene_id="t3_015",
+        description="Night rain on highway: faint object at shoulder in low visibility.",
+        primary_detection=SyntheticDetection("person", 0.21, (420.0, 260.0, 470.0, 360.0)),
+        expected_action="discard",
+    ),
+    Task3Scene(
+        scene_id="t3_016",
+        description="Dense morning fog: possible bicycle silhouette near lane divider.",
+        primary_detection=SyntheticDetection("bicycle", 0.15, (330.0, 260.0, 410.0, 340.0)),
+        expected_action="discard",
+    ),
+    Task3Scene(
+        scene_id="t3_017",
+        description="Dusty construction route: ambiguous box close to rubble pile.",
+        primary_detection=SyntheticDetection("truck", 0.29, (120.0, 220.0, 430.0, 360.0)),
+        expected_action="discard",
+    ),
+    Task3Scene(
+        scene_id="t3_018",
+        description="Glare from oncoming headlights: weak pedestrian hypothesis.",
+        primary_detection=SyntheticDetection("person", 0.32, (260.0, 160.0, 320.0, 360.0)),
+        expected_action="discard",
+    ),
+    Task3Scene(
+        scene_id="t3_019",
+        description="Tunnel interior: moderate confidence vehicle detection in dim lighting.",
+        primary_detection=SyntheticDetection("car", 0.38, (220.0, 220.0, 520.0, 360.0)),
+        expected_action="request_rescan",
+    ),
+    Task3Scene(
+        scene_id="t3_020",
+        description="Wet road spray: uncertain motorcycle shape amid reflections.",
+        primary_detection=SyntheticDetection("motorcycle", 0.44, (300.0, 240.0, 450.0, 350.0)),
+        expected_action="request_rescan",
+    ),
+    Task3Scene(
+        scene_id="t3_021",
+        description="Evening fog near station exit: moderate confidence person outline.",
+        primary_detection=SyntheticDetection("person", 0.48, (390.0, 180.0, 450.0, 380.0)),
+        expected_action="request_rescan",
+    ),
+    Task3Scene(
+        scene_id="t3_022",
+        description="Sunlit boulevard: strong car detection despite small glare patch.",
+        primary_detection=SyntheticDetection("car", 0.52, (180.0, 210.0, 560.0, 360.0)),
+        expected_action="log_and_continue",
+    ),
+    Task3Scene(
+        scene_id="t3_023",
+        description="Airport service lane: bus contour clear under floodlights.",
+        primary_detection=SyntheticDetection("bus", 0.61, (90.0, 170.0, 690.0, 360.0)),
+        expected_action="log_and_continue",
+    ),
+    Task3Scene(
+        scene_id="t3_024",
+        description="Clear afternoon near tunnel mouth: stable truck detection in frame center.",
+        primary_detection=SyntheticDetection("truck", 0.75, (110.0, 180.0, 610.0, 360.0)),
+        expected_action="log_and_continue",
     ),
 )
 
