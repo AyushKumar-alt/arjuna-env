@@ -1,10 +1,10 @@
 ---
-Title: ARJUNA Perception Environment
-ColorFrom: Blue
-ColorTo: Green
-Sdk: Docker
-Pinned: False
-License: MIT
+title: Arjuna Perception Env
+emoji: 🤖
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
 ---
 
 # ARJUNA Perception Environment
