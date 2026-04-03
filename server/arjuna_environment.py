@@ -8,7 +8,10 @@ import random
 import uuid
 from typing import Any
 
+from pathlib import Path
+
 from openenv.core.env_server.interfaces import Environment
+from openenv.core.env_server.types import EnvironmentMetadata
 
 from models import ArjunaAction, ArjunaObservation, ArjunaState
 
@@ -23,10 +26,41 @@ from .tasks import (
 )
 
 
+def _load_readme_text() -> str | None:
+    """Load README for /metadata; supports Docker (/app) and local dev layouts."""
+    candidates = (
+        Path("/app/README.md"),
+        Path(__file__).resolve().parent.parent / "README.md",
+    )
+    for path in candidates:
+        if path.is_file():
+            try:
+                raw = path.read_text(encoding="utf-8")
+            except OSError:
+                continue
+            if raw.lstrip().startswith("---"):
+                parts = raw.split("---", 2)
+                if len(parts) >= 3:
+                    return parts[2].lstrip("\n")
+            return raw
+    return None
+
+
 class ArjunaEnvironment(Environment):
     """Simulated perception episodes with three task families."""
 
     SUPPORTS_CONCURRENT_SESSIONS = True
+
+    _META_NAME = "arjuna-perception-env"
+    _META_DESCRIPTION = (
+        "A simulated robot perception RL environment where an AI agent acts as the decision brain "
+        "of ARJUNA autonomous robot. The agent receives camera scene descriptions and must identify "
+        "objects, triage multi-object scenes, and make low-confidence decisions across 3 tasks of "
+        "increasing difficulty."
+    )
+    _META_VERSION = "1.0.0"
+    _META_AUTHOR = "Calpol500mg"
+    _META_DOCS_URL = "https://huggingface.co/spaces/Calpol500mg/arjuna-env"
 
     def __init__(self) -> None:
         super().__init__()
@@ -42,6 +76,18 @@ class ArjunaEnvironment(Environment):
         self._scene1: sd.Task1Scene | None = None
         self._scene2: sd.Task2Scene | None = None
         self._scene3: sd.Task3Scene | None = None
+
+    def get_metadata(self) -> EnvironmentMetadata:
+        """Expose name, description, and docs for GET /metadata (OpenEnv)."""
+        readme_raw = _load_readme_text()
+        return EnvironmentMetadata(
+            name=self._META_NAME,
+            description=self._META_DESCRIPTION,
+            readme_content=readme_raw,
+            version=self._META_VERSION,
+            author=self._META_AUTHOR,
+            documentation_url=self._META_DOCS_URL,
+        )
 
     def reset(
         self,

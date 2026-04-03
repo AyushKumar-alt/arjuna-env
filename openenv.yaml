@@ -1,6 +1,14 @@
 spec_version: 1
-name: arjuna_perception_env
+name: arjuna-perception-env
 type: space
 runtime: fastapi
 app: server.app:app
 port: 7860
+description: >-
+  A simulated robot perception RL environment where an AI agent acts as the decision brain
+  of ARJUNA autonomous robot. The agent receives camera scene descriptions and must identify
+  objects, triage multi-object scenes, and make low-confidence decisions across 3 tasks of
+  increasing difficulty.
+version: "1.0.0"
+author: Calpol500mg
+documentation_url: "https://huggingface.co/spaces/Calpol500mg/arjuna-env"
