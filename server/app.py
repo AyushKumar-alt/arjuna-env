@@ -12,7 +12,9 @@ from __future__ import annotations
 
 from typing import Any
 
+from fastapi import Request
 from fastapi.openapi.utils import get_openapi
+from fastapi.responses import RedirectResponse
 from openenv.core.env_server import create_app
 
 from models import ArjunaAction, ArjunaObservation
@@ -91,7 +93,20 @@ app.openapi = custom_openapi  # type: ignore[method-assign]
 
 
 @app.get("/", include_in_schema=False)
-def root() -> dict[str, Any]:
+def root(request: Request) -> Any:
+    # HF Space preview and plain browser loads should show the Swagger UI.
+    # Keep the JSON summary available for API clients via `/?format=json`
+    # (or any explicit JSON Accept header).
+    accept = request.headers.get("accept", "").lower()
+    want_json = (
+        request.query_params.get("format") == "json"
+        or request.query_params.get("json") == "1"
+        or "application/json" in accept
+        or "text/json" in accept
+    )
+    if not want_json:
+        return RedirectResponse(url="/docs")
+
     return {
         "name": "arjuna-perception-env",
         "description": (
