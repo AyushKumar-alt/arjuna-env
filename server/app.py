@@ -13,7 +13,6 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi.openapi.utils import get_openapi
-from fastapi.responses import RedirectResponse
 from openenv.core.env_server import create_app
 
 from models import ArjunaAction, ArjunaObservation
@@ -92,8 +91,17 @@ app.openapi = custom_openapi  # type: ignore[method-assign]
 
 
 @app.get("/", include_in_schema=False)
-def root() -> RedirectResponse:
-    return RedirectResponse(url="/docs")
+def root() -> dict[str, Any]:
+    return {
+        "name": "arjuna-perception-env",
+        "description": (
+            "Simulated robot perception environment for ARJUNA built on OpenEnv; "
+            "use /reset and /step or the WebSocket client for episodes."
+        ),
+        "tasks": 3,
+        "docs": "/docs",
+        "health": "/health",
+    }
 
 
 def main() -> None:

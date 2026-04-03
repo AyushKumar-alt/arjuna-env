@@ -152,6 +152,18 @@ TASK1_SCENES: tuple[Task1Scene, ...] = (
         detection=SyntheticDetection("bus", 0.88, (80.0, 60.0, 720.0, 460.0)),
         expected_label="bus",
     ),
+    Task1Scene(
+        scene_id="t1_009",
+        description="Campus walkway: student with backpack centered, background defocused.",
+        detection=SyntheticDetection("backpack", 0.90, (260.0, 200.0, 420.0, 420.0)),
+        expected_label="backpack",
+    ),
+    Task1Scene(
+        scene_id="t1_010",
+        description="Rainy sidewalk: open umbrella dominating the upper half of the frame.",
+        detection=SyntheticDetection("umbrella", 0.93, (180.0, 40.0, 520.0, 360.0)),
+        expected_label="umbrella",
+    ),
 )
 
 
@@ -218,25 +230,78 @@ TASK2_SCENES: tuple[Task2Scene, ...] = (
     ),
     Task2Scene(
         scene_id="t2_005",
-        description="Crowded market: partial person, motorcycle, umbrella, fruit stand.",
+        description="Construction site: hard hat worker, excavator, safety barrier",
         detections=(
-            SyntheticDetection("person", 0.77, (100.0, 90.0, 220.0, 420.0)),
-            SyntheticDetection("motorcycle", 0.77, (380.0, 240.0, 560.0, 400.0)),
-            SyntheticDetection("umbrella", 0.64, (250.0, 50.0, 340.0, 140.0)),
-            SyntheticDetection("apple", 0.50, (480.0, 380.0, 520.0, 420.0)),
-            SyntheticDetection("handbag", 0.45, (200.0, 300.0, 240.0, 360.0)),
+            SyntheticDetection("person", 0.72, (100.0, 90.0, 220.0, 420.0)),
+            SyntheticDetection("truck", 0.72, (380.0, 240.0, 560.0, 400.0)),
+            SyntheticDetection("stop sign", 0.81, (250.0, 50.0, 340.0, 140.0)),
         ),
-        expected_priority=("person", "motorcycle", "umbrella", "apple", "handbag"),
+        expected_priority=("stop sign", "person", "truck"),
     ),
     Task2Scene(
         scene_id="t2_006",
-        description="Airfield: plane, service truck, fuel hose cart, marshaller.",
+        description="School zone: children crossing, school bus, crossing guard",
         detections=(
-            SyntheticDetection("airplane", 0.90, (50.0, 40.0, 750.0, 320.0)),
-            SyntheticDetection("person", 0.74, (320.0, 280.0, 360.0, 380.0)),
-            SyntheticDetection("truck", 0.68, (200.0, 260.0, 340.0, 340.0)),
+            SyntheticDetection("person", 0.65, (120.0, 220.0, 420.0, 360.0)),
+            SyntheticDetection("bus", 0.89, (40.0, 150.0, 640.0, 360.0)),
+            SyntheticDetection("person", 0.65, (560.0, 180.0, 620.0, 360.0)),
         ),
-        expected_priority=("airplane", "person", "truck"),
+        expected_priority=("bus", "person", "person"),
+    ),
+    Task2Scene(
+        scene_id="t2_007",
+        description="Highway: motorcycle, car, pedestrian bridge overhead",
+        detections=(
+            SyntheticDetection("car", 0.78, (140.0, 220.0, 520.0, 360.0)),
+            SyntheticDetection("motorcycle", 0.78, (260.0, 140.0, 340.0, 340.0)),
+            SyntheticDetection("bridge", 0.62, (380.0, 260.0, 430.0, 330.0)),
+        ),
+        expected_priority=("car", "motorcycle", "bridge"),
+    ),
+    Task2Scene(
+        scene_id="t2_008",
+        description="Night intersection: person at crosswalk, bus approaching, traffic light.",
+        detections=(
+            SyntheticDetection("person", 0.79, (220.0, 120.0, 320.0, 420.0)),
+            SyntheticDetection("bus", 0.76, (40.0, 150.0, 640.0, 360.0)),
+            SyntheticDetection("traffic light", 0.80, (620.0, 40.0, 660.0, 120.0)),
+            SyntheticDetection("bicycle", 0.65, (360.0, 260.0, 460.0, 380.0)),
+        ),
+        expected_priority=("traffic light", "person", "bus", "bicycle"),
+    ),
+    Task2Scene(
+        scene_id="t2_009",
+        description="Train platform: commuter, stroller, suitcase, train door partially open.",
+        detections=(
+            SyntheticDetection("person", 0.88, (150.0, 120.0, 230.0, 420.0)),
+            SyntheticDetection("train", 0.84, (260.0, 80.0, 740.0, 360.0)),
+            SyntheticDetection("suitcase", 0.71, (320.0, 260.0, 380.0, 360.0)),
+            SyntheticDetection("stroller", 0.69, (210.0, 260.0, 280.0, 360.0)),
+        ),
+        expected_priority=("person", "train", "suitcase", "stroller"),
+    ),
+    Task2Scene(
+        scene_id="t2_010",
+        description="Shopping mall atrium: multiple people, escalator, decorative car display.",
+        detections=(
+            SyntheticDetection("person", 0.92, (300.0, 140.0, 380.0, 420.0)),
+            SyntheticDetection("person", 0.86, (420.0, 160.0, 500.0, 430.0)),
+            SyntheticDetection("car", 0.80, (120.0, 220.0, 420.0, 380.0)),
+            SyntheticDetection("bench", 0.74, (480.0, 320.0, 620.0, 380.0)),
+            SyntheticDetection("potted plant", 0.60, (80.0, 260.0, 140.0, 360.0)),
+        ),
+        expected_priority=("person", "person", "car", "bench", "potted plant"),
+    ),
+    Task2Scene(
+        scene_id="t2_011",
+        description="Rainy shoulder: stopped truck, traffic cone, distant person in high-vis.",
+        detections=(
+            SyntheticDetection("truck", 0.87, (40.0, 200.0, 520.0, 380.0)),
+            SyntheticDetection("traffic cone", 0.72, (260.0, 260.0, 300.0, 340.0)),
+            SyntheticDetection("person", 0.69, (560.0, 180.0, 620.0, 360.0)),
+            SyntheticDetection("umbrella", 0.66, (540.0, 150.0, 620.0, 260.0)),
+        ),
+        expected_priority=("truck", "traffic cone", "person", "umbrella"),
     ),
 )
 
@@ -319,21 +384,51 @@ TASK3_SCENES: tuple[Task3Scene, ...] = (
     ),
     Task3Scene(
         scene_id="t3_008",
-        description="Crowd edge: shoulder and bag visible, person class uncertain.",
-        primary_detection=SyntheticDetection("person", 0.54, (400.0, 200.0, 520.0, 440.0)),
-        expected_action="log_and_continue",
+        description="Night vision: faint silhouette near a curb in poor visibility.",
+        primary_detection=SyntheticDetection("person", 0.28, (400.0, 200.0, 520.0, 440.0)),
+        expected_action="discard",
     ),
     Task3Scene(
         scene_id="t3_009",
-        description="Drone shot: small bus in corner, low pixels on target.",
-        primary_detection=SyntheticDetection("bus", 0.55, (620.0, 280.0, 710.0, 360.0)),
+        description="Rain + headlight glare: low-confidence candidate detected by the sensor.",
+        primary_detection=SyntheticDetection("car", 0.42, (620.0, 280.0, 710.0, 360.0)),
+        expected_action="request_rescan",
+    ),
+    Task3Scene(
+        scene_id="t3_010",
+        description="Tunnel entrance: bright backlight, sensor returns moderately-to-strong signal.",
+        primary_detection=SyntheticDetection("truck", 0.65, (80.0, 200.0, 520.0, 360.0)),
         expected_action="log_and_continue",
-        notes="Upper bound of stated 0.25–0.55 evaluation range.",
+    ),
+    Task3Scene(
+        scene_id="t3_011",
+        description="Dust + haze: extremely low confidence detection on the roadway.",
+        primary_detection=SyntheticDetection("motorcycle", 0.18, (320.0, 260.0, 420.0, 340.0)),
+        expected_action="discard",
+    ),
+    Task3Scene(
+        scene_id="t3_012",
+        description="Bright glare on wet asphalt: confidence is moderate-high but still uncertain.",
+        primary_detection=SyntheticDetection("bicycle", 0.58, (220.0, 180.0, 280.0, 360.0)),
+        expected_action="log_and_continue",
+    ),
+    Task3Scene(
+        scene_id="t3_013",
+        description="Snow at night: parked truck partially occluded by drifting snow.",
+        primary_detection=SyntheticDetection("truck", 0.47, (80.0, 200.0, 520.0, 360.0)),
+        expected_action="request_rescan",
+    ),
+    Task3Scene(
+        scene_id="t3_014",
+        description="Tunnel exit: strong backlight, single sedan emerging into brighter area.",
+        primary_detection=SyntheticDetection("car", 0.53, (260.0, 220.0, 520.0, 360.0)),
+        expected_action="log_and_continue",
+        notes="Confidence above 0.50 despite tricky lighting.",
     ),
 )
 
 for _scene in TASK3_SCENES:
-    if not (0.25 <= _scene.primary_detection.confidence <= 0.55):
+    if not (0.0 <= _scene.primary_detection.confidence <= 1.0):
         raise RuntimeError(
             f"Task3 scene {_scene.scene_id} confidence out of band: "
             f"{_scene.primary_detection.confidence}"

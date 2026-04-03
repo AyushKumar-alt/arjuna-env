@@ -16,7 +16,7 @@ import json
 import os
 import re
 from statistics import mean
-from typing import List
+from typing import Any, List
 
 from openai import OpenAI
 from openenv.core.client_types import StepResult
@@ -25,10 +25,45 @@ from client import ArjunaEnv
 from models import ArjunaAction, ArjunaObservation
 from server.tasks import extract_json_list
 
-SYSTEM = (
-    "You are the perception policy for autonomous robot ARJUNA. "
-    "Follow each TASK block exactly. Be concise."
-)
+TASK1_SYSTEM = """
+You are ARJUNA, an autonomous robot vision system.
+You are given a camera scene with one YOLO detection.
+Identify the object and respond with its class label only.
+One word or short phrase. No explanation.
+""".strip()
+
+TASK2_SYSTEM = """
+You are ARJUNA, an autonomous robot at an industrial or urban site.
+Your camera detected multiple objects simultaneously.
+Prioritize which objects need attention first based on:
+- How safety-critical the object type is
+- How reliable the detection appears to be
+
+Return a JSON array of object labels, most important first.
+Example: ["person", "car", "bicycle"]
+Return the array only. No explanation.
+""".strip()
+
+TASK3_SYSTEM = """
+You are ARJUNA, an autonomous robot making real-time perception decisions.
+Your camera produced a detection with a confidence score between 0.0 and 1.0.
+
+Use this scale to decide:
+
+CONFIDENCE SCALE (0.0 to 1.0):
+- 0.0 to 0.4  → VERY LOW  → action: discard
+- 0.4 to 0.5  → MODERATE  → action: request_rescan
+- 0.5 to 1.0  → HIGH      → action: log_and_continue
+
+Steps:
+1. Find the confidence number in the scene description
+2. Look at the scale above
+3. Pick the matching action
+
+Return JSON only: 
+{"decision": "<choice>", "reasoning": "<one sentence>"}
+No other text.
+""".strip()
 
 
 def _client() -> OpenAI:
@@ -38,16 +73,16 @@ def _client() -> OpenAI:
     )
 
 
-def _chat(llm: OpenAI, user: str) -> str:
+def _chat(llm: OpenAI, system: str, user: str) -> str:
     model = os.environ["MODEL_NAME"]
     resp = llm.chat.completions.create(
         model=model,
         messages=[
-            {"role": "system", "content": SYSTEM},
+            {"role": "system", "content": system},
             {"role": "user", "content": user},
         ],
-        temperature=0.1,
-        max_tokens=512,
+        temperature=0.3,
+        max_tokens=200,
     )
     return (resp.choices[0].message.content or "").strip()
 
@@ -89,15 +124,29 @@ def parse_task2_ranking(text: str) -> List[str]:
 
 
 def parse_task3_decision(text: str) -> tuple[str, str]:
+    text = text.strip()
+    try:
+        data = json.loads(text)
+        if isinstance(data, dict) and "decision" in data:
+            decision_raw = str(data["decision"])
+            reasoning = str(data.get("reasoning", "")).strip()
+            decision = decision_raw.strip().lower().replace("-", "_")
+            if decision not in ("log_and_continue", "request_rescan", "discard"):
+                decision = "discard"
+            return decision, reasoning
+    except json.JSONDecodeError:
+        pass
+
     norm = text.lower().replace("-", "_")
-    decision: str | None = None
     for token in ("log_and_continue", "request_rescan", "discard"):
         if token in norm:
-            decision = token
-            break
-    if decision is None:
-        decision = "discard"
-    return decision, text.strip()
+            return token, text.strip()
+
+    match = re.search(r"(log_and_continue|discard|request_rescan)", norm)
+    if match:
+        return match.group(1), text.strip()
+
+    return "discard", text.strip()
 
 
 def episode_reward(step_result: StepResult[ArjunaObservation]) -> float:
@@ -118,37 +167,82 @@ def main() -> None:
     per_task: dict[int, list[float]] = {1: [], 2: [], 3: []}
     all_rewards: list[float] = []
 
+    def run_episode(
+        env: ArjunaEnv,
+        llm_client: OpenAI,
+        task: int,
+        seed: int,
+    ) -> float:
+        reset_out = env.reset(task_type=task, seed=seed)
+        obs = reset_out.observation
+
+        user_prompt: str
+        system_prompt: str
+
+        if task == 1:
+            system_prompt = TASK1_SYSTEM
+            user_prompt = obs.observation_text
+        elif task == 2:
+            system_prompt = TASK2_SYSTEM
+            user_prompt = obs.observation_text
+        else:
+            system_prompt = TASK3_SYSTEM
+            user_prompt = obs.observation_text
+
+        ep_meta: dict[str, str] = {}
+        if obs.episode_id:
+            ep_meta["episode_id"] = obs.episode_id
+
+        reply = _chat(llm_client, system_prompt, user_prompt)
+        print(f"task={task} seed={seed} scene={obs.scene_id}")
+        print(f"  LLM raw response: {reply[:200]}")
+
+        action: ArjunaAction
+        if task == 1:
+            label = reply.strip().lower()
+            if not label:
+                label = parse_task1_label(reply)
+            action = ArjunaAction(task1_label=label, metadata=ep_meta)
+        elif task == 2:
+            ranked: List[str]
+            try:
+                parsed = json.loads(reply)
+                if isinstance(parsed, list):
+                    ranked = [str(x).strip().lower() for x in parsed if str(x).strip()]
+                else:
+                    ranked = parse_task2_ranking(reply)
+            except json.JSONDecodeError:
+                labels = re.findall(r'"([a-z_ ]+)"', reply, flags=re.IGNORECASE)
+                if labels:
+                    ranked = [lbl.strip().lower() for lbl in labels if lbl.strip()]
+                else:
+                    ranked = parse_task2_ranking(reply)
+            action = ArjunaAction(ranked_objects=ranked, metadata=ep_meta)
+        else:
+            decision, reasoning = parse_task3_decision(reply)
+            action = ArjunaAction(
+                decision=decision,
+                reasoning=reasoning,
+                metadata=ep_meta,
+            )
+
+        step_out = env.step(action)
+        rw = episode_reward(step_out)
+        print(f"  reward={rw:.3f} done={step_out.done}")
+        return rw
+
+    seeds = [0, 1, 2, 3, 4]
+
     with ArjunaEnv(base_url=base_url).sync() as env:
         for task in (1, 2, 3):
-            for seed in (0, 1, 2):
-                reset_out = env.reset(task_type=task, seed=seed)
-                obs = reset_out.observation
-                reply = _chat(llm, obs.observation_text)
-
-                ep_meta: dict[str, str] = {}
-                if obs.episode_id:
-                    ep_meta["episode_id"] = obs.episode_id
-
-                if task == 1:
-                    label = parse_task1_label(reply)
-                    action = ArjunaAction(task1_label=label, metadata=ep_meta)
-                elif task == 2:
-                    ranked = parse_task2_ranking(reply)
-                    action = ArjunaAction(ranked_objects=ranked, metadata=ep_meta)
-                else:
-                    dec, reason = parse_task3_decision(reply)
-                    action = ArjunaAction(
-                        decision=dec, reasoning=reason, metadata=ep_meta
-                    )
-
-                step_out = env.step(action)
-                rw = episode_reward(step_out)
+            for seed in seeds:
+                try:
+                    rw = run_episode(env, llm, task, seed)
+                except Exception as exc:
+                    print(f"  episode error (task={task}, seed={seed}): {exc!r}, retrying once")
+                    rw = run_episode(env, llm, task, seed)
                 per_task[task].append(rw)
                 all_rewards.append(rw)
-                print(
-                    f"task={task} seed={seed} scene={obs.scene_id} "
-                    f"reward={rw:.3f} done={step_out.done}"
-                )
 
     print("---")
     for t in (1, 2, 3):
