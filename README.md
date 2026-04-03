@@ -1,6 +1,5 @@
 ---
 title: ARJUNA Perception Environment
-emoji: 🤖
 colorFrom: blue
 colorTo: green
 sdk: docker
