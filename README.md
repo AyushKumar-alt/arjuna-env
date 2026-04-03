@@ -266,7 +266,7 @@ arjuna_env/
 ├── requirements.txt
 ├── Dockerfile
 ├── docs/
-│   └── images/               # README screenshots (add PNG/GIF here)
+│   └── images/               # Notes for README screenshots (PNGs via GitHub raw URLs)
 ├── demo.py                   # Offline-friendly heuristic demo (no LLM)
 ├── inference.py              # Optional LLM baseline (uses HF router + API key)
 ├── client.py                 # Thin HTTP client helper
@@ -368,6 +368,7 @@ python inference.py
 | Playground `ranked_objects` validation | Use JSON array string or comma-separated labels (see [Gradio](#gradio-playground-web)). |
 | `/web` returns **404** | Start with **`ENABLE_WEB_INTERFACE=true`** **before** importing/running the app; rebuild/restart container if needed. |
 | HF `402` on `inference.py` | Inference quota exhausted; use smaller **`N_SEEDS`** / **`MAX_TOKENS`** or run **`demo.py`** offline. |
+| **`git push space` rejected (binary files)** | Hub may block PNGs in the Space repo; either use **[Hub Xet](https://huggingface.co/docs/hub/xet)** or keep screenshots only on **GitHub** and embed with **`raw.githubusercontent.com/.../COMMIT/...`** (this README does the latter). |
 
 ---
 
@@ -401,19 +402,21 @@ Live UI for judges: **[https://calpol500mg-arjuna-env.hf.space/web](https://calp
 
 ### Swagger / OpenAPI (`/docs`)
 
-![Swagger UI - API overview](docs/images/swagger_docs.png)
+<!-- PNGs are hosted via GitHub raw URLs: HF Space Git rejects binary files in pushes. Update IMAGES_COMMIT in URLs when you replace screenshots. -->
 
-![Swagger UI - reset and step operations](docs/images/swagger_docs1.png)
+![Swagger UI - API overview](https://raw.githubusercontent.com/AyushKumar-alt/arjuna-env/8b73341/docs/images/swagger_docs.png)
+
+![Swagger UI - reset and step operations](https://raw.githubusercontent.com/AyushKumar-alt/arjuna-env/8b73341/docs/images/swagger_docs1.png)
 
 ### Gradio Playground (`/web`)
 
-![OpenEnv Playground - task form and quick start](docs/images/playground.png)
+![OpenEnv Playground - task form and quick start](https://raw.githubusercontent.com/AyushKumar-alt/arjuna-env/8b73341/docs/images/playground.png)
 
-![Playground - observation and JSON](docs/images/playground1.png)
+![Playground - observation and JSON](https://raw.githubusercontent.com/AyushKumar-alt/arjuna-env/8b73341/docs/images/playground1.png)
 
-![Playground - graded step with reward and feedback](docs/images/playground2.png)
+![Playground - graded step with reward and feedback](https://raw.githubusercontent.com/AyushKumar-alt/arjuna-env/8b73341/docs/images/playground2.png)
 
-Source files live in **`docs/images/`** (relative paths so GitHub and Hugging Face README rendering work).
+**Why not relative paths?** Hugging Face **Space** `git push` rejects these PNGs unless you use **[Xet](https://huggingface.co/docs/hub/xet)**. Embedded images use a **pinned GitHub commit** (`8b73341`) where the files still exist in history. See **`docs/images/README.md`** to refresh assets.
 
 **Architecture (high level):**
 
