@@ -176,5 +176,5 @@ arjuna_env/
 
 - **Author:** Ayush Kumar 
 - **HF Space:** [https://huggingface.co/spaces/Calpol500mg/arjuna-env](https://huggingface.co/spaces/Calpol500mg/arjuna-env)  
-- **Live app:** [https://calpol500mg-arjuna-env.hf.space](https://calpol500mg-arjuna-env.hf.space)  
+- **Live app:** [https://calpol500mg-arjuna-env.hf.space](https://calpol500mg-arjuna-env.hf.space/docs)  
 - **Framework:** [OpenEnv](https://github.com/meta-pytorch/OpenEnv) by Meta & Hugging Face  
