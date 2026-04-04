@@ -27,6 +27,14 @@ from client import ArjunaEnv
 from models import ArjunaAction, ArjunaObservation
 from server.tasks import extract_json_list
 
+API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
+MODEL_NAME = os.getenv("MODEL_NAME", "meta-llama/Llama-3.3-70B-Instruct")
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+# Optional - if you use from_docker_image():
+LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
+
+
 TASK1_SYSTEM = """
 You are ARJUNA, an autonomous robot vision system.
 You are given a camera scene with one YOLO detection.
@@ -67,16 +75,15 @@ No other text.
 
 def _client() -> OpenAI:
     return OpenAI(
-        base_url=os.environ["API_BASE_URL"],
-        api_key=os.environ["HF_TOKEN"],
+        base_url=API_BASE_URL,
+        api_key=HF_TOKEN,
     )
 
 
 def _chat(llm: OpenAI, system: str, user: str) -> str:
-    model = os.environ["MODEL_NAME"]
     max_tokens = int(os.environ.get("MAX_TOKENS", "80"))
     resp = llm.chat.completions.create(
-        model=model,
+        model=MODEL_NAME,
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": user},
@@ -174,9 +181,9 @@ def episode_reward(step_result: StepResult[ArjunaObservation]) -> float:
 
 
 def main() -> None:
-    _ = os.environ["API_BASE_URL"]
-    _ = os.environ["MODEL_NAME"]
-    _ = os.environ["HF_TOKEN"]
+    if not HF_TOKEN:
+        print("Error: HF_TOKEN is not set.")
+        return
 
     base_url = os.environ.get("ARJUNA_ENV_BASE_URL", "http://127.0.0.1:7860")
     llm = _client()
@@ -188,7 +195,7 @@ def main() -> None:
         reset_out = env.reset(seed=seed)
         obs = reset_out.observation
 
-        print(f"=== Episode {ep_idx} (seed={seed}) ===")
+        print(f"START Episode {ep_idx} (seed={seed})")
 
         ep_meta: dict[str, Any] = {}
         if obs.episode_id:
@@ -260,7 +267,7 @@ def main() -> None:
             rw = episode_reward(step_out)
             step_rewards.append(rw)
             per_task[task].append(rw)
-            print(f"  Step {sub}/3: task{task} | scene={scene_id} | reward={rw:.3f}")
+            print(f"STEP {sub}/3 reward={rw:.3f}")
 
             obs = step_out.observation
             if step_out.done:
@@ -269,7 +276,7 @@ def main() -> None:
                     if obs.overall_reward is not None
                     else float(mean(step_rewards))
                 )
-                print(f"  Episode reward: {overall:.3f}")
+                print(f"END Episode {ep_idx} reward={overall:.3f}")
                 
                 # Level 2: Fetch and print curriculum status
                 try:
@@ -295,7 +302,7 @@ def main() -> None:
                 return float(overall)
 
         overall = float(mean(step_rewards))
-        print(f"  Episode reward: {overall:.3f}")
+        print(f"END Episode {ep_idx} reward={overall:.3f}")
         return overall
 
     n_seeds = int(os.environ.get("N_SEEDS", "3"))
