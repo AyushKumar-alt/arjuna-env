@@ -21,8 +21,6 @@ from openenv.core.env_server.types import EnvironmentMetadata
 from models import ArjunaAction, ArjunaObservation, ArjunaState
 
 from . import synthetic_data as sd
-from .curriculum import get_current_difficulty, get_curriculum_stats, record_episode
-from .scene_generator import generate_episode_bundle
 from .tasks import (
     format_step_observation,
     format_task1_prompt,
@@ -111,20 +109,25 @@ class ArjunaEnvironment(Environment):
 
     def _pick_bundle(self, seed: int | None) -> sd.EpisodeBundle:
         """Pick a bundle: try LLM-generated first, fall back to hardcoded."""
-        difficulty = get_current_difficulty()
+        difficulty = "medium"  # safe default
+        generated_bundle = None
 
         # Level 1: try dynamic generation if enabled
         if os.environ.get("ENABLE_DYNAMIC_SCENES", "false").lower() in ("true", "1", "yes"):
             try:
-                generated = generate_episode_bundle(difficulty=difficulty, seed=seed)
-                if generated is not None:
+                from server.scene_generator import generate_episode_bundle
+                from server.curriculum import get_current_difficulty
+                difficulty = get_current_difficulty()
+                generated_bundle = generate_episode_bundle(difficulty=difficulty, seed=seed)
+                if generated_bundle is not None:
                     logger.info(
                         "Using generated bundle: %s  difficulty=%s",
-                        generated.bundle_id, difficulty,
+                        generated_bundle.bundle_id, difficulty,
                     )
-                    return generated
+                    return generated_bundle
             except Exception as exc:  # pragma: no cover
-                logger.warning("Dynamic scene generation failed: %s. Using fallback.", exc)
+                logger.warning("Dynamic scene generation skipped: %s. Using fallback.", exc)
+                generated_bundle = None
 
         # Fallback: hardcoded synthetic_data.py bundles
         if seed is not None:
@@ -235,15 +238,17 @@ class ArjunaEnvironment(Environment):
         SESSIONS.pop(episode_id, None)
 
         # Level 2: record episode reward for auto-curriculum
-        try:
-            curriculum_result = record_episode(overall)
-            logger.info(
-                "Curriculum update: %s → difficulty now: %s",
-                curriculum_result["reason"],
-                curriculum_result["difficulty_after"],
-            )
-        except Exception as exc:  # pragma: no cover
-            logger.warning("Curriculum record failed: %s", exc)
+        if os.environ.get("ENABLE_DYNAMIC_SCENES", "false").lower() in ("true", "1", "yes"):
+            try:
+                from server.curriculum import record_episode
+                curriculum_result = record_episode(overall)
+                logger.info(
+                    "Curriculum update: %s → difficulty now: %s",
+                    curriculum_result["reason"],
+                    curriculum_result["difficulty_after"],
+                )
+            except Exception as exc:  # pragma: no cover
+                logger.warning("Curriculum record skipped: %s", exc)
 
         if sync_state and self._state.episode_id == episode_id:
             self._state.step_count += 1

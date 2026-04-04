@@ -20,7 +20,11 @@ import random
 import re
 from typing import Optional
 
-from openai import OpenAI
+try:
+    from openai import OpenAI
+    _OPENAI_AVAILABLE = True
+except ImportError:
+    _OPENAI_AVAILABLE = False
 
 from .synthetic_data import (
     EpisodeBundle,
@@ -35,8 +39,10 @@ logger = logging.getLogger(__name__)
 
 # ── LLM Client (optional) ─────────────────────────────────
 
-def _get_client() -> Optional[OpenAI]:
+def _get_client() -> Optional['OpenAI']:
     """Return an OpenAI-compatible client, or None if creds are missing."""
+    if not _OPENAI_AVAILABLE:
+        return None
     base_url = os.environ.get("API_BASE_URL")
     token    = os.environ.get("HF_TOKEN")
     if not base_url or not token:

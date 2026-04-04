@@ -126,34 +126,51 @@ def root(request: Request) -> Any:
 
 
 @app.get("/curriculum", tags=["curriculum"])
-async def get_curriculum_endpoint() -> dict:
+async def get_curriculum_endpoint():
     """
-    Get the current auto-curriculum status.
-
-    Shows difficulty level, recent performance, and progression history.
-    Difficulty auto-adjusts based on agent episode rewards:
-    ``> 0.85 → promote``, ``< 0.60 → demote``.
+    Auto-curriculum status (only active when 
+    ENABLE_DYNAMIC_SCENES=true).
     """
-    from server.curriculum import get_curriculum_stats
-    stats = get_curriculum_stats()
-    return {
-        "current_difficulty": stats["current_difficulty"],
-        "recent_mean_reward": round(stats["recent_mean"], 4),
-        "total_episodes": stats["total_episodes"],
-        "promotions": stats["promotions"],
-        "demotions": stats["demotions"],
-        "window_rewards": stats["window"],
-        "thresholds": {
-            "promote_above": stats["promote_threshold"],
-            "demote_below": stats["demote_threshold"],
-        },
-        "description": (
-            f"Agent is at '{stats['current_difficulty']}' difficulty. "
-            f"Recent mean reward: {stats['recent_mean']:.3f}. "
-            f"Will promote above {stats['promote_threshold']}, "
-            f"demote below {stats['demote_threshold']}."
-        ),
-    }
+    dynamic_enabled = os.environ.get(
+        "ENABLE_DYNAMIC_SCENES", "false"
+    ).lower() == "true"
+    
+    if not dynamic_enabled:
+        return {
+            "enabled": False,
+            "message": (
+                "Auto-curriculum is disabled. "
+                "Set ENABLE_DYNAMIC_SCENES=true to enable."
+            ),
+            "current_difficulty": "medium",
+            "note": (
+                "Environment runs fully offline "
+                "using synthetic_data.py scenes."
+            )
+        }
+    
+    try:
+        from server.curriculum import get_curriculum_stats
+        stats = get_curriculum_stats()
+        return {
+            "enabled": True,
+            "current_difficulty": stats["current_difficulty"],
+            "recent_mean_reward": stats["recent_mean"],
+            "total_episodes": stats["total_episodes"],
+            "promotions": stats["promotions"],
+            "demotions": stats["demotions"],
+            "window_rewards": stats["window"],
+            "thresholds": {
+                "promote_above": stats["promote_threshold"],
+                "demote_below": stats["demote_threshold"]
+            }
+        }
+    except Exception as e:
+        return {
+            "enabled": True,
+            "error": str(e),
+            "message": "Curriculum module error"
+        }
 
 
 def main() -> None:

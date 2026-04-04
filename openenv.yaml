@@ -20,7 +20,7 @@ episode_description: >
   Difficulty auto-adjusts based on agent performance history.
 
 features:
-  dynamic_scenes: true
+  dynamic_scenes: false  # optional, requires API_BASE_URL + HF_TOKEN
   auto_curriculum: true
   difficulty_levels:
     - easy

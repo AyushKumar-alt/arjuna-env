@@ -18,42 +18,66 @@ In **2–4 lines:** ARJUNA is an autonomous robot whose “eyes” are simulated
 
 ---
 
-## Submission & demo links
+## Quick Start — No API Key Required
 
-| Item | Link |
-|------|------|
-| **Hugging Face Space (project)** | [huggingface.co/spaces/Calpol500mg/arjuna-env](https://huggingface.co/spaces/Calpol500mg/arjuna-env) |
-| **Live app (root)** | [https://calpol500mg-arjuna-env.hf.space](https://calpol500mg-arjuna-env.hf.space) |
-| **Swagger / OpenAPI (`/docs`)** | [https://calpol500mg-arjuna-env.hf.space/docs](https://calpol500mg-arjuna-env.hf.space/docs) |
-| **Interactive Playground (`/web`)** — Gradio UI | [https://calpol500mg-arjuna-env.hf.space/web](https://calpol500mg-arjuna-env.hf.space/web) |
-| **Public GitHub repository** | [github.com/AyushKumar-alt/arjuna-env](https://github.com/AyushKumar-alt/arjuna-env) |
+The environment runs **fully offline**. 
+No API key needed to run the environment itself.
 
-### For judges — try the environment in the browser
+### Run with Docker (recommended)
+```bash
+docker build -t arjuna-env .
+docker run -p 7860:7860 arjuna-env
+```
 
-Use the **live Playground** (no API key required for the environment itself):
+### Run locally
+```bash
+pip install -r requirements.txt
+python -m uvicorn server.app:app --host 0.0.0.0 --port 7860
+```
 
-**[https://calpol500mg-arjuna-env.hf.space/web](https://calpol500mg-arjuna-env.hf.space/web)**
-
-1. Click **Reset** — you start at **step 1/3** (`task_type`: 1) with a **`bundle_name`**.  
-2. Submit the action for that step, then click **Step** — **`done`** stays **false** until step 3.  
-3. Repeat for **`task_type` 2** and **3** (three **Step** clicks per episode), then read **`overall_reward`** when **`done`** is **true**.
-
-The Docker image sets **`ENABLE_WEB_INTERFACE=true`** so this UI is served on **Hugging Face Spaces** after you rebuild and push the Space.
+### Test offline with demo.py
+```bash
+# No API key needed — uses heuristic policy
+python demo.py
+```
 
 ---
 
-## Hackathon / Round 1: quick answers
+## Core vs Optional Features
 
-| Question | Answer |
-|----------|--------|
-| **What does the environment do?** | Simulates ARJUNA robot **perception**: each **episode** runs **3 sequential steps** (identify → triage → decide) on one **themed location bundle**; **`reset` / `step`** return **per-step rewards** in **[0, 1]** and **`overall_reward`** (mean of 3 steps) after the last step, using **local synthetic scenes** only. |
-| **How many steps per episode?** | **3** — Step 1: single-object identification (easy), Step 2: multi-object triage (medium), Step 3: low-confidence decision (hard). All three use scenes from the **same themed bundle**. |
-| **How do I run it locally?** | **`pip install -r requirements.txt`** then **`python -m uvicorn server.app:app --host 0.0.0.0 --port 7860`** (optional: **`ENABLE_WEB_INTERFACE=true`** for **`/web`**). |
-| **How do I build the Docker image?** | From repo root: **`docker build -t arjuna-env .`** then **`docker run -p 7860:7860 arjuna-env`** — the image enables **`/web`** by default (`ENABLE_WEB_INTERFACE` in `Dockerfile`). |
-| **How do I test the demo?** | Start the server, set **`ARJUNA_ENV_BASE_URL`** if needed, run **`python demo.py`**. Optionally **`python -m openenv.cli validate https://calpol500mg-arjuna-env.hf.space`**. |
-| **Which files define environment / tasks / grader?** | **`server/arjuna_environment.py`** (env + sessions), **`server/synthetic_data.py`** (scenes + `EPISODE_BUNDLES`), **`server/tasks.py`** & **`server/grader.py`** (rewards), **`models.py`** (actions/observations). |
-| **Does it run offline?** | **Yes** for the env, **`demo.py`**, and **`/web`**: **no cloud DB**, scenes are **local**. **`inference.py`** alone needs **network + HF token** (optional baseline). |
-| **What is the Hugging Face demo URL?** | **Space:** [huggingface.co/spaces/Calpol500mg/arjuna-env](https://huggingface.co/spaces/Calpol500mg/arjuna-env) — **Live:** [calpol500mg-arjuna-env.hf.space](https://calpol500mg-arjuna-env.hf.space) |
+### Core (offline, no API key needed)
+| Feature | File | Description |
+|---|---|---|
+| Environment server | server/app.py | HTTP endpoints |
+| Episode logic | server/arjuna_environment.py | reset/step/state |
+| Task graders | server/tasks.py, server/grader.py | reward logic |
+| Synthetic scenes | server/synthetic_data.py | 8 episode bundles |
+| Data models | models.py | typed actions/observations |
+| Offline demo | demo.py | heuristic agent, no LLM |
+
+### Optional (requires API key + network)
+| Feature | File | How to enable |
+|---|---|---|
+| LLM baseline agent | inference.py | Set API_BASE_URL + HF_TOKEN |
+| Dynamic scene generation | server/scene_generator.py | ENABLE_DYNAMIC_SCENES=true |
+| Auto-curriculum | server/curriculum.py | ENABLE_DYNAMIC_SCENES=true |
+| AutoRL loop | autorl.py | Set API_BASE_URL + HF_TOKEN |
+
+The environment **always falls back to synthetic_data.py** 
+if dynamic scene generation is disabled or fails.
+
+---
+
+## Offline Execution Guarantee
+
+All of these work with **zero network calls**:
+- `POST /reset` → picks from synthetic_data.py bundles
+- `POST /step` → grades using local tasks.py logic
+- `GET /state` → returns local session state
+- `GET /health` → returns healthy
+- `GET /schema` → returns typed schemas
+- `GET /metadata` → returns environment info
+- `python demo.py` → full 3-step episode, heuristic policy
 
 ---
 
