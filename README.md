@@ -14,7 +14,7 @@ pinned: false
 
 ## What does this environment do?
 
-In **2–4 lines:** ARJUNA is an autonomous robot whose “eyes” are simulated here. Each episode samples a **synthetic scene** (all data is local in `server/synthetic_data.py`). The agent receives **natural-language observations** with fake detections and must emit a structured **action**. The **grader** returns a **reward in \[0, 1\]** and **feedback** so you can train or evaluate agents with a clear objective—without real cameras, cloud databases, or (for the env itself) any external API.
+In **2–4 lines:** ARJUNA is an autonomous robot whose “eyes” are simulated here. Each **episode** is a **3-step sequence** (identify → triage → decide) over one **themed bundle** of scenes (see `EPISODE_BUNDLES` in `server/synthetic_data.py`). The agent receives **natural-language observations** with fake detections and must emit a structured **action** per step. The **grader** returns a **per-step reward in \[0, 1\]**, and after step 3 an **`overall_reward`** (mean of the three steps) plus **feedback**—without real cameras, cloud databases, or (for the env itself) any external API.
 
 ---
 
@@ -34,9 +34,9 @@ Use the **live Playground** (no API key required for the environment itself):
 
 **[https://calpol500mg-arjuna-env.hf.space/web](https://calpol500mg-arjuna-env.hf.space/web)**
 
-1. Click **Reset** and read **`task_type`** in the raw JSON.  
-2. Fill only the fields that match that task (**Task1 Label** / **Ranked Objects** / **Decision** + **Reasoning**).  
-3. Click **Step** once and inspect **`reward`**, **`done`**, and **`feedback`**.
+1. Click **Reset** — you start at **step 1/3** (`task_type`: 1) with a **`bundle_name`**.  
+2. Submit the action for that step, then click **Step** — **`done`** stays **false** until step 3.  
+3. Repeat for **`task_type` 2** and **3** (three **Step** clicks per episode), then read **`overall_reward`** when **`done`** is **true**.
 
 The Docker image sets **`ENABLE_WEB_INTERFACE=true`** so this UI is served on **Hugging Face Spaces** after you rebuild and push the Space.
 
@@ -46,11 +46,12 @@ The Docker image sets **`ENABLE_WEB_INTERFACE=true`** so this UI is served on **
 
 | Question | Answer |
 |----------|--------|
-| **What does the environment do?** | Simulates ARJUNA robot **perception**: the agent reads **YOLO-style scene text** and acts with **`ArjunaAction`**; **`reset` / `step`** return rewards in **[0, 1]** using **local synthetic scenes** only. |
+| **What does the environment do?** | Simulates ARJUNA robot **perception**: each **episode** runs **3 sequential steps** (identify → triage → decide) on one **themed location bundle**; **`reset` / `step`** return **per-step rewards** in **[0, 1]** and **`overall_reward`** (mean of 3 steps) after the last step, using **local synthetic scenes** only. |
+| **How many steps per episode?** | **3** — Step 1: single-object identification (easy), Step 2: multi-object triage (medium), Step 3: low-confidence decision (hard). All three use scenes from the **same themed bundle**. |
 | **How do I run it locally?** | **`pip install -r requirements.txt`** then **`python -m uvicorn server.app:app --host 0.0.0.0 --port 7860`** (optional: **`ENABLE_WEB_INTERFACE=true`** for **`/web`**). |
 | **How do I build the Docker image?** | From repo root: **`docker build -t arjuna-env .`** then **`docker run -p 7860:7860 arjuna-env`** — the image enables **`/web`** by default (`ENABLE_WEB_INTERFACE` in `Dockerfile`). |
 | **How do I test the demo?** | Start the server, set **`ARJUNA_ENV_BASE_URL`** if needed, run **`python demo.py`**. Optionally **`python -m openenv.cli validate https://calpol500mg-arjuna-env.hf.space`**. |
-| **Which files define environment / tasks / grader?** | **`server/arjuna_environment.py`** (env + sessions), **`server/synthetic_data.py`** (scenes), **`server/tasks.py`** & **`server/grader.py`** (rewards), **`models.py`** (actions/observations). |
+| **Which files define environment / tasks / grader?** | **`server/arjuna_environment.py`** (env + sessions), **`server/synthetic_data.py`** (scenes + `EPISODE_BUNDLES`), **`server/tasks.py`** & **`server/grader.py`** (rewards), **`models.py`** (actions/observations). |
 | **Does it run offline?** | **Yes** for the env, **`demo.py`**, and **`/web`**: **no cloud DB**, scenes are **local**. **`inference.py`** alone needs **network + HF token** (optional baseline). |
 | **What is the Hugging Face demo URL?** | **Space:** [huggingface.co/spaces/Calpol500mg/arjuna-env](https://huggingface.co/spaces/Calpol500mg/arjuna-env) — **Live:** [calpol500mg-arjuna-env.hf.space](https://calpol500mg-arjuna-env.hf.space) |
 
@@ -59,28 +60,44 @@ The Docker image sets **`ENABLE_WEB_INTERFACE=true`** so this UI is served on **
 ## Table of contents
 
 1. [Hackathon / Round 1: quick answers](#hackathon--round-1-quick-answers)  
-2. [Environment overview (observations, actions, tasks)](#environment-overview-observations-actions-tasks)  
-3. [Prerequisites](#prerequisites)  
-4. [Setup: `requirements.txt` and venv](#setup-requirementstxt-and-venv)  
-5. [Run with Docker](#run-with-docker)  
-6. [Run locally without Docker (uvicorn)](#run-locally-without-docker-uvicorn)  
-7. [Run the demo (offline)](#run-the-demo-offline)  
-8. [Gradio Playground (`/web`)](#gradio-playground-web)  
-9. [How grading works](#how-grading-works)  
-10. [OpenEnv compliance and key files](#openenv-compliance-and-key-files)  
-11. [Project structure](#project-structure)  
-12. [Example interaction (reset → step)](#example-interaction-reset--step)  
-13. [Testing and validation](#testing-and-validation)  
-14. [Offline execution](#offline-execution)  
-15. [Optional: LLM baseline (`inference.py`)](#optional-llm-baseline-inferencepy)  
-16. [Design notes](#design-notes)  
-17. [Troubleshooting](#troubleshooting)  
-18. [FAQ](#faq)  
-19. [Future improvements](#future-improvements)  
-20. [Visuals & architecture](#visuals--architecture)  
-21. [Credits and acknowledgements](#credits-and-acknowledgements)  
-22. [License](#license)  
-23. [Maintainer / contact](#maintainer--contact)  
+2. [Why 3-step episodes?](#why-3-step-episodes)  
+3. [Environment overview (observations, actions, tasks)](#environment-overview-observations-actions-tasks)  
+4. [Prerequisites](#prerequisites)  
+5. [Setup: `requirements.txt` and venv](#setup-requirementstxt-and-venv)  
+6. [Run with Docker](#run-with-docker)  
+7. [Run locally without Docker (uvicorn)](#run-locally-without-docker-uvicorn)  
+8. [Run the demo (offline)](#run-the-demo-offline)  
+9. [Gradio Playground (`/web`)](#gradio-playground-web)  
+10. [How grading works](#how-grading-works)  
+11. [OpenEnv compliance and key files](#openenv-compliance-and-key-files)  
+12. [Project structure](#project-structure)  
+13. [Example interaction (reset → three steps)](#example-interaction-reset--three-steps)  
+14. [Testing and validation](#testing-and-validation)  
+15. [Offline execution](#offline-execution)  
+16. [Optional: LLM baseline (`inference.py`)](#optional-llm-baseline-inferencepy)  
+17. [Design notes](#design-notes)  
+18. [Troubleshooting](#troubleshooting)  
+19. [FAQ](#faq)  
+20. [Future improvements](#future-improvements)  
+21. [Visuals & architecture](#visuals--architecture)  
+22. [Credits and acknowledgements](#credits-and-acknowledgements)  
+23. [License](#license)  
+24. [Maintainer / contact](#maintainer--contact)  
+
+---
+
+## Why 3-step episodes?
+
+A **single-step** environment gives RL agents one reward signal per reset — limiting the training signal and making it impossible to model sequential decision-making. ARJUNA solves this with **3-step episodes**:
+
+| Benefit | Detail |
+|---------|--------|
+| **Denser reward signal** | Agents receive a reward after **every step** (not just at episode end), enabling faster credit assignment and learning. |
+| **Sequential difficulty** | Steps escalate: easy identification → ordered triage → ambiguous low-confidence call. Agents must adapt within the same episode. |
+| **Thematic coherence** | All 3 steps draw scenes from the same **location bundle** (e.g. "Warehouse"), so context carries across steps — closer to real-world perception pipelines. |
+| **Overall episode signal** | `overall_reward` = mean of 3 step rewards gives a clean episode-level metric for leaderboard comparison. |
+
+The 8 themed bundles (Urban Street, Warehouse, Parking Lot, School Zone, Airport, Hospital Entrance, Construction Site, Night Street) ensure diverse training distributions across resets.
 
 ---
 
@@ -90,11 +107,14 @@ The Docker image sets **`ENABLE_WEB_INTERFACE=true`** so this UI is served on **
 
 After **`reset`**, **`ArjunaObservation`** includes:
 
-- **`task_type`**: `1`, `2`, or `3`
-- **`scene_id`**: id into synthetic data (e.g. `t1_008`)
+- **`task_type`**: `1` for step 1 (then `2`, then `3` after each graded step)
+- **`step_number`**: `1`, `2`, or `3` — which step you are on
+- **`bundle_name`**: human-readable theme (e.g. “Urban Street”) shared across the episode
+- **`scene_id`**: id for the **current** task’s scene (e.g. `t1_bnd_urban`)
 - **`observation_text`**: instructions + scene description + simulated YOLO lines
 - **`episode_id`**: must be sent back on **stateless HTTP** `POST /step` (see below)
-- After **`step`**: **`reward`**, **`done`**, **`feedback`**
+- After each **`step`**: **`reward`** for that step, **`done`** (false until step 3), **`feedback`**
+- After the **third** **`step`**: **`overall_reward`** (mean of the three step rewards), **`done: true`**
 
 Definitions live in **`models.py`**.
 
@@ -207,7 +227,7 @@ export ARJUNA_ENV_BASE_URL=http://127.0.0.1:7860   # PowerShell: $env:ARJUNA_ENV
 python demo.py
 ```
 
-You will see printed observations, actions, rewards, and a short summary. **`demo.py`** is the canonical **offline-friendly** “try the env” entrypoint for reviewers.
+You will see one **full 3-step episode** (bundle name, per-step rewards, overall reward). **`demo.py`** is the canonical **offline-friendly** “try the env” entrypoint for reviewers (no LLM API key).
 
 ---
 
@@ -219,11 +239,62 @@ This repo applies **`server/openenv_web_patch.py`** so the Playground **Step** p
 
 **Usage:**
 
-1. Click **Reset** — check **`task_type`** in the raw JSON.  
-2. Fill **only** the fields for that task (Task 1: label; Task 2: ranking; Task 3: decision + optional reasoning).  
-3. Click **Step** once per episode.
+1. Click **Reset** — note **`step_number`**, **`task_type`**, and **`bundle_name`**.  
+2. Fill the fields for **that** step only, then click **Step** ( **`done`** is **false** after steps 1 and 2 ).  
+3. Repeat until **`task_type`** is **3** and you’ve submitted the third action — then **`done`** becomes **true** and **`overall_reward`** appears.
 
 **Task 2 input:** `ranked_objects` can be a **JSON array string** (e.g. `["person","car"]`) or **comma-separated** labels; **`models.py`** coerces strings into `list[str]` for the Playground.
+
+---
+
+## Dynamic Scene Generation (Level 1)
+
+Instead of fixed hardcoded scenes, the environment generates **infinite unique episodes** using an LLM:
+
+- Every `reset()` call produces a fresh, novel scene
+- 3 difficulty tiers: `easy` → `medium` → `hard`
+- Prevents agent memorization of fixed scenarios
+- Falls back to hardcoded scenes if LLM is unavailable
+
+Scene generation is powered by the same LLM infrastructure as inference, keeping the environment self-contained.
+```python
+# Environment generates a fresh scene on every reset
+obs = await env.reset(seed=42)
+# obs.observation_text contains a brand new LLM-generated scene
+```
+
+*(Note: Requires `ENABLE_DYNAMIC_SCENES=true`, `API_BASE_URL`, and `HF_TOKEN` environment variables to activate).*
+
+---
+
+## Auto-Curriculum Learning (Level 2)
+
+The environment **automatically adjusts difficulty** based on the agent's recent performance:
+
+```
+Agent mean reward > 0.85 → PROMOTE to harder difficulty
+Agent mean reward < 0.60 → DEMOTE to easier difficulty  
+Otherwise                → Stay at current difficulty
+```
+
+Check current curriculum status:
+```bash
+curl http://127.0.0.1:7860/curriculum
+```
+Example response:
+```json
+{
+  "current_difficulty": "medium",
+  "recent_mean_reward": 0.883,
+  "total_episodes": 12,
+  "promotions": 1,
+  "demotions": 0,
+  "thresholds": {
+    "promote_above": 0.85,
+    "demote_below": 0.60
+  }
+}
+```
 
 ---
 
@@ -232,10 +303,10 @@ This repo applies **`server/openenv_web_patch.py`** so the Playground **Step** p
 Plain-language summary (details in **`server/tasks.py`**; discoverable re-exports in **`server/grader.py`**):
 
 - **Task 1:** Compares normalized **`task1_label`** to the scene’s expected label. **1.0** exact match; **0.7** same semantic **category group** (vehicles / people / animals); **0.2** agent label is a known category but wrong group; **0.0** otherwise.  
-- **Task 2:** Compares your ordering to **`expected_priority`** in synthetic data: **correct_positions / n**.  
-- **Task 3:** Maps detector confidence to gold action (`discard` / `request_rescan` / `log_and_continue`). **Correct + “strong” reasoning** (text mentions a numeric confidence) → **1.0**; **correct + weak/no reasoning** → **0.8**; **one band off** with strong/weak reasoning → **0.5** / **0.3**; **two bands off or invalid** → **0.0**.
+- **Task 2:** Compares your ordering to **`expected_priority`**. **All correct → 1.0**; **n−1 positions → 0.85**; **n−2 → 0.65**; **exactly one → 0.33**; **none → 0.0** (length must match).  
+- **Task 3:** Maps detector confidence to gold action (`discard` / `request_rescan` / `log_and_continue`). **Correct + strong reasoning** (text mentions a numeric confidence) → **1.0**; **correct + weak** → **0.85**; **correct + no reasoning** → **0.7**; **one band off** with strong/weak reasoning → **0.5** / **0.3**; **two bands off or invalid** → **0.0**.
 
-Feedback strings after **`step`** are produced in **`server/arjuna_environment.py`** from these scores.
+Feedback strings after **`step`** are produced in **`server/arjuna_environment.py`** from these scores (including **“Step k/3 complete…”** banners).
 
 ---
 
@@ -249,9 +320,9 @@ This project targets **OpenEnv** conventions:
 
 | Concern | Primary file(s) |
 |--------|------------------|
-| Episodes, sessions, orchestration | `server/arjuna_environment.py` (`SESSIONS` + `episode_id` for HTTP) |
+| Episodes, sessions, orchestration | `server/arjuna_environment.py` (`SESSIONS` + `episode_id` for HTTP; **3 steps** per episode) |
 | Rubric / reward logic | `server/tasks.py`, **`server/grader.py`** (re-exports) |
-| Scenes and gold labels | `server/synthetic_data.py` |
+| Scenes and gold labels | `server/synthetic_data.py` (includes **`EPISODE_BUNDLES`** for themed 3-step episodes) |
 | FastAPI / OpenEnv app | `server/app.py`, **`server/openenv_web_patch.py`** (Gradio `episode_id`) |
 | CLI / Space config | `openenv.yaml`, `Dockerfile` |
 
@@ -286,21 +357,55 @@ arjuna_env/
 
 ---
 
-## Example interaction (reset → step)
+## Example interaction (reset → three steps)
 
-**1. Reset** returns `task_type`, `scene_id`, `episode_id`, `observation_text`, `reward: 0`, `done: false`.  
-**2. Step** with body:
+This shows a complete episode using the **"Urban Street"** bundle (seed 0).
+
+**1. Reset** — start a new episode:
+
+```bash
+curl -X POST http://127.0.0.1:7860/reset \
+  -H "Content-Type: application/json" \
+  -d '{"seed": 0}'
+```
+
+Response: `task_type: 1`, `step_number: 1`, `bundle_name: "Urban Street"`, `scene_id`, `episode_id`, `observation_text` (YOLO-style scene), `reward: 0.0`, `done: false`.
+
+**2. Step 1 — single-object identification** (`task_type: 1`):
 
 ```json
 {
-  "episode_id": "<from reset observation>",
-  "action": { "task1_label": "bicycle" }
+  "episode_id": "<from reset response>",
+  "action": { "task1_label": "person" }
 }
 ```
 
-**3. Response** includes `reward`, `done: true`, and `feedback` (for task 1: expected vs got and score).
+Response: `reward` for step 1 (e.g. `1.0`), `done: false`, `task_type: 2`, new `observation_text` for triage, `step_number: 2`, `feedback`: `"Step 1/3 complete. Reward: 1.000. Move to next step."`
 
-Same pattern for task 2 (`ranked_objects` list) and task 3 (`decision` + optional `reasoning`). See also the **curl** examples under [Validate](#testing-and-validation) in older sections or use Swagger **`/docs`**.
+**3. Step 2 — multi-object triage** (`task_type: 2`):
+
+```json
+{
+  "episode_id": "<same episode_id>",
+  "action": { "ranked_objects": ["person", "car", "bicycle"] }
+}
+```
+
+Response: `reward` for step 2 (e.g. `1.0`), `done: false`, `task_type: 3`, new `observation_text` for low-confidence decision, `step_number: 3`, `feedback`: `"Step 2/3 complete. Reward: 1.000. Move to next step."`
+
+**4. Step 3 — low-confidence decision** (`task_type: 3`):
+
+```json
+{
+  "episode_id": "<same episode_id>",
+  "action": {
+    "decision": "discard",
+    "reasoning": "confidence 0.31 is below the 0.35 threshold, object identity unclear."
+  }
+}
+```
+
+Final response: `done: true`, `overall_reward: 1.0` (mean of all 3 step rewards), `step_number: 3`, `feedback`: `"Step 3/3 complete. Reward: 1.000. Episode done. Overall: 1.000"`. See Swagger **`/docs`** and [Legacy cURL](#legacy-quick-reference-curl) below.
 
 ---
 
@@ -316,10 +421,10 @@ python -m openenv.cli validate https://calpol500mg-arjuna-env.hf.space
 
 1. `POST /reset` with `{"seed": 42}`  
 2. Copy `observation.episode_id`  
-3. `POST /step` with `episode_id` + `action` appropriate for `task_type`  
-4. Expect `200`, `done: true`, `feedback` non-empty for a valid action shape
+3. `POST /step` three times with `episode_id` + actions for **`task_type` 1, then 2, then 3**  
+4. Expect `done: false` after steps 1–2, then **`done: true`** and **`overall_reward`** after step 3; `feedback` non-empty each time
 
-**Playground:** `Reset` → fill fields → `Step` once; expect graded JSON.
+**Playground:** `Reset` → **Step** three times (adjust fields as `task_type` changes); expect graded JSON each time.
 
 *(Automated `pytest` suite is not bundled; add `tests/` if you want CI-style checks.)*
 
@@ -353,9 +458,9 @@ python inference.py
 
 ## Design notes
 
-- **Stateless HTTP:** `episode_id` + module-level **`SESSIONS`** keeps scene state across requests (critical on HF Spaces).  
-- **Single action schema:** one **`ArjunaAction`** for all tasks; agents pick fields based on **`task_type`**.  
-- **Synthetic diversity:** multiple scenes per task support varied rewards, not only 0/1.  
+- **Stateless HTTP:** `episode_id` + module-level **`SESSIONS`** keeps **multi-step** episode state across requests (critical on HF Spaces).  
+- **Single action schema:** one **`ArjunaAction`** for all tasks; agents pick fields based on **`task_type`** on each observation.  
+- **Synthetic diversity:** **`EPISODE_BUNDLES`** tie three scenes to one theme; standalone **`TASK*_SCENES`** remain for extra variety elsewhere.  
 - **Playground UX:** `ranked_objects` string coercion and **`openenv_web_patch`** reduce friction for reviewers using **`/web`**.
 
 ---
@@ -364,7 +469,7 @@ python inference.py
 
 | Issue | What to try |
 |--------|-------------|
-| `Call reset() before step()` | Call **`/reset`** (or **Reset** in UI) before **`step`**; send **`episode_id`** on HTTP; only **one** graded **Step** per episode unless you **Reset** again. |
+| `Call reset() before step()` | Call **`/reset`** (or **Reset** in UI) before **`step`**; send **`episode_id`** on HTTP; run **three** graded **Step** calls per episode (or **`Call reset()`** if the episode id expired). |
 | `only one usage of each socket address` | Another process uses the port; pick another `--port` or `taskkill` the old listener (see `netstat` / `findstr` on Windows). |
 | Docker `npipe` / cannot connect | Start **Docker Desktop** and wait until the engine is running. |
 | Playground `ranked_objects` validation | Use JSON array string or comma-separated labels (see [Gradio](#gradio-playground-web)). |
@@ -462,14 +567,31 @@ For reviewer questions, use the Space **Community** tab or GitHub **Issues**: [g
 
 ## Baseline results (historical, LLM-dependent)
 
-Representative **`inference.py`** run (will vary by model and quota):
+**`inference.py`** runs **full 3-step episodes** per seed and reports **per-task mean rewards** plus **overall mean reward**. Output format:
 
-- Task 1: ~1.000  
-- Task 2: ~0.78  
-- Task 3: ~0.67  
-- Overall: ~0.82  
+```
+=== Episode 1 (seed=42) ===
+  Step 1/3: task1 | scene=t1_bnd_urban | reward=1.000
+  Step 2/3: task2 | scene=t2_bnd_urban | reward=0.850
+  Step 3/3: task3 | scene=t3_bnd_urban | reward=1.000
+  Episode reward: 0.950
+---
+task 1 mean reward: 0.950
+task 2 mean reward: 0.820
+task 3 mean reward: 0.867
+overall mean reward: 0.879
+```
 
-Prefer **`demo.py`** or manual **Playground** checks for **deterministic** smoke tests.
+Numbers **vary by model and quota**; typical ranges with a capable LLM:
+
+| Task | Typical range | Note |
+|------|--------------|------|
+| Task 1 — Identification | 0.90–1.00 | Single label; exact or semantic match |
+| Task 2 — Triage | 0.70–0.90 | Sensitive to list ordering accuracy |
+| Task 3 — Low-confidence | 0.75–1.00 | Strongly improved by mentioning confidence value in reasoning |
+| **Overall episode** | **0.80–0.95** | Mean of all 3 step rewards per episode |
+
+Prefer **`demo.py`** (deterministic heuristic, no API key) or manual **Playground** checks for **repeatable** smoke tests.
 
 ---
 
@@ -507,4 +629,4 @@ curl -X POST https://calpol500mg-arjuna-env.hf.space/step \
   -d "{\"episode_id\": \"<paste-from-reset>\", \"action\": {\"decision\": \"discard\", \"reasoning\": \"confidence below 0.35, unsafe to log\"}}"
 ```
 
-On Spaces, **always** pass **`episode_id`** on **`POST /step`** after **`POST /reset`** for stateless HTTP workers.
+On Spaces, **always** pass the **same** **`episode_id`** on **each** **`POST /step`** until **`done`** is **true** (three steps per episode) for stateless HTTP workers.

@@ -37,33 +37,30 @@ One word or short phrase. No explanation.
 TASK2_SYSTEM = """
 You are ARJUNA, an autonomous robot at an industrial or urban site.
 Your camera detected multiple objects simultaneously.
-Prioritize which objects need attention first based on:
-- How safety-critical the object type is
-- How reliable the detection appears to be
 
-Return a JSON array of object labels, most important first.
-Example: ["person", "car", "bicycle"]
-Return the array only. No explanation.
+Rank them from most to least important to act on. Consider:
+- Detection reliability (confidence)
+- Object type and safety relevance in an autonomous driving / robotics context
+
+Return ONLY a JSON array of label strings:
+["label_a", "label_b", "label_c"]
+No objects, no confidence values — just the string labels in your priority order.
 """.strip()
 
 TASK3_SYSTEM = """
 You are ARJUNA, an autonomous robot making real-time perception decisions.
-Your camera produced a detection with a confidence score between 0.0 and 1.0.
+Your camera produced a low-confidence detection. You must decide what to do next.
 
-Use this scale to decide:
+Your three options:
+- discard         — confidence is too low to trust; ignore this detection entirely
+- request_rescan  — borderline confidence; ask for another sensor pass before deciding
+- log_and_continue — confidence is acceptable; record and proceed with caution
 
-CONFIDENCE SCALE (0.0 to 1.0):
-- 0.0 to 0.4  → VERY LOW  → action: discard
-- 0.4 to 0.5  → MODERATE  → action: request_rescan
-- 0.5 to 1.0  → HIGH      → action: log_and_continue
+Use the confidence score mentioned in the scene to guide your judgment.
+Very low confidence → discard. Marginal → request_rescan. Acceptable → log_and_continue.
 
-Steps:
-1. Find the confidence number in the scene description
-2. Look at the scale above
-3. Pick the matching action
-
-Return JSON only: 
-{"decision": "<choice>", "reasoning": "<one sentence>"}
+Return JSON only:
+{"decision": "<choice>", "reasoning": "<one sentence explaining, mentioning the confidence value>"}
 No other text.
 """.strip()
 
@@ -185,93 +182,121 @@ def main() -> None:
     llm = _client()
 
     per_task: dict[int, list[float]] = {1: [], 2: [], 3: []}
-    all_rewards: list[float] = []
+    all_episode_means: list[float] = []
 
-    def run_episode(
-        env: ArjunaEnv,
-        llm_client: OpenAI,
-        task: int,
-        seed: int,
-    ) -> float:
-        reset_out = env.reset(task_type=task, seed=seed)
+    def run_episode(env: ArjunaEnv, llm_client: OpenAI, seed: int, ep_idx: int) -> float:
+        reset_out = env.reset(seed=seed)
         obs = reset_out.observation
 
-        user_prompt: str
-        system_prompt: str
+        print(f"=== Episode {ep_idx} (seed={seed}) ===")
 
-        if task == 1:
-            system_prompt = TASK1_SYSTEM
-            user_prompt = obs.observation_text
-        elif task == 2:
-            system_prompt = TASK2_SYSTEM
-            user_prompt = obs.observation_text
-        else:
-            system_prompt = TASK3_SYSTEM
-            user_prompt = obs.observation_text
-
-        ep_meta: dict[str, str] = {}
+        ep_meta: dict[str, Any] = {}
         if obs.episode_id:
             ep_meta["episode_id"] = obs.episode_id
 
-        reply = _chat(llm_client, system_prompt, user_prompt)
-        print(f"task={task} seed={seed} scene={obs.scene_id}")
-        print(f"  LLM raw response: {reply[:200]}")
+        step_rewards: list[float] = []
 
-        action: ArjunaAction
-        if task == 1:
-            label = reply.strip().lower()
-            if not label:
-                label = parse_task1_label(reply)
-            action = ArjunaAction(task1_label=label, metadata=ep_meta)
-        elif task == 2:
-            ranked: List[str]
-            array_block = _extract_first_json_array_block(reply)
-            parsed_any = False
-            ranked = []
-            if array_block is not None:
-                try:
-                    parsed = json.loads(array_block)
-                    parsed_any = True
-                    if isinstance(parsed, list):
-                        for item in parsed:
-                            # Preferred shape: ["person", "car", ...]
-                            if isinstance(item, str):
-                                label = item.strip().lower()
-                                if label:
-                                    ranked.append(label)
-                                continue
-                            # Also accept: [{"label": "person", ...}, ...]
-                            if isinstance(item, dict):
-                                raw_label = item.get("label")
-                                if raw_label is not None:
-                                    label = str(raw_label).strip().lower()
+        for sub in (1, 2, 3):
+            scene_id = obs.scene_id
+            task = obs.task_type
+            user_prompt = obs.observation_text
+
+            if task == 1:
+                system_prompt = TASK1_SYSTEM
+            elif task == 2:
+                system_prompt = TASK2_SYSTEM
+            else:
+                system_prompt = TASK3_SYSTEM
+
+            reply = _chat(llm_client, system_prompt, user_prompt)
+
+            action: ArjunaAction
+            if task == 1:
+                label = reply.strip().lower()
+                if not label:
+                    label = parse_task1_label(reply)
+                action = ArjunaAction(task1_label=label, metadata=ep_meta)
+            elif task == 2:
+                ranked: List[str] = []
+                array_block = _extract_first_json_array_block(reply)
+                parsed_any = False
+                if array_block is not None:
+                    try:
+                        parsed = json.loads(array_block)
+                        parsed_any = True
+                        if isinstance(parsed, list):
+                            for item in parsed:
+                                if isinstance(item, str):
+                                    label = item.strip().lower()
                                     if label:
                                         ranked.append(label)
-                except json.JSONDecodeError:
-                    parsed_any = False
+                                    continue
+                                if isinstance(item, dict) and "label" in item:
+                                    raw_label = item.get("label")
+                                    if raw_label is not None:
+                                        label = str(raw_label).strip().lower()
+                                        if label:
+                                            ranked.append(label)
+                    except json.JSONDecodeError:
+                        parsed_any = False
 
-            if not ranked:
-                if not parsed_any:
-                    # Regex fallback intentionally captures only quoted values,
-                    # not object keys like "label" / "confidence".
-                    labels = re.findall(r':\s*"([a-z_ ]+)"', reply, flags=re.IGNORECASE)
-                    if labels:
-                        ranked = [lbl.strip().lower() for lbl in labels if lbl.strip()]
                 if not ranked:
-                    ranked = parse_task2_ranking(reply)
-            action = ArjunaAction(ranked_objects=ranked, metadata=ep_meta)
-        else:
-            decision, reasoning = parse_task3_decision(reply)
-            action = ArjunaAction(
-                decision=decision,
-                reasoning=reasoning,
-                metadata=ep_meta,
-            )
+                    if not parsed_any:
+                        labels = re.findall(r':\s*"([a-z_ ]+)"', reply, flags=re.IGNORECASE)
+                        if labels:
+                            ranked = [lbl.strip().lower() for lbl in labels if lbl.strip()]
+                    if not ranked:
+                        ranked = parse_task2_ranking(reply)
+                action = ArjunaAction(ranked_objects=ranked, metadata=ep_meta)
+            else:
+                decision, reasoning = parse_task3_decision(reply)
+                action = ArjunaAction(
+                    decision=decision,
+                    reasoning=reasoning,
+                    metadata=ep_meta,
+                )
 
-        step_out = env.step(action)
-        rw = episode_reward(step_out)
-        print(f"  reward={rw:.3f} done={step_out.done}")
-        return rw
+            step_out = env.step(action)
+            rw = episode_reward(step_out)
+            step_rewards.append(rw)
+            per_task[task].append(rw)
+            print(f"  Step {sub}/3: task{task} | scene={scene_id} | reward={rw:.3f}")
+
+            obs = step_out.observation
+            if step_out.done:
+                overall = (
+                    obs.overall_reward
+                    if obs.overall_reward is not None
+                    else float(mean(step_rewards))
+                )
+                print(f"  Episode reward: {overall:.3f}")
+                
+                # Level 2: Fetch and print curriculum status
+                try:
+                    import requests
+                    # Hack to parse base URL correctly if using standard format 
+                    # Note: this works when the server is local, but we don't assume `base_url` format strictly,
+                    # mostly used for local testing `http://127.0.0.1:7860/curriculum`
+                    curr_url = "http://127.0.0.1:7860/curriculum"
+                    if "localhost" in base_url or "127.0.0.1" in base_url:
+                        host_port = base_url.replace("http://", "").split("/")[0]
+                        curr_url = f"http://{host_port}/curriculum"
+                        
+                    curr_resp = requests.get(curr_url, timeout=2)
+                    if curr_resp.status_code == 200:
+                        curr = curr_resp.json()
+                        print(
+                            f"  Curriculum: difficulty={curr['current_difficulty']} "
+                            f"| recent_mean={curr['recent_mean_reward']:.3f}"
+                        )
+                except Exception:
+                    pass  # curriculum endpoint optional or unreachable
+
+                return float(overall)
+
+        overall = float(mean(step_rewards))
+        print(f"  Episode reward: {overall:.3f}")
+        return overall
 
     n_seeds = int(os.environ.get("N_SEEDS", "3"))
     seeds = random.sample(range(100), n_seeds)
@@ -285,52 +310,48 @@ def main() -> None:
     )
 
     with ArjunaEnv(base_url=base_url).sync() as env:
-        for task in (1, 2, 3):
+        for ep_idx, seed in enumerate(seeds, start=1):
             if exhausted_quota:
                 break
-            for seed in seeds:
-                if exhausted_quota:
+            try:
+                overall = run_episode(env, llm, seed, ep_idx)
+            except APIStatusError as exc:
+                if exc.status_code == 402:
+                    exhausted_quota = True
+                    print(
+                        "Quota exhausted (HTTP 402 from inference provider). "
+                        "Stopping run and reporting partial results."
+                    )
                     break
+                raise
+            except Exception as exc:
+                if not enable_retry:
+                    raise
+                print(f"  episode error (seed={seed}): {exc!r}, retrying once")
                 try:
-                    rw = run_episode(env, llm, task, seed)
-                except APIStatusError as exc:
-                    if exc.status_code == 402:
+                    overall = run_episode(env, llm, seed, ep_idx)
+                except APIStatusError as retry_exc:
+                    if retry_exc.status_code == 402:
                         exhausted_quota = True
                         print(
-                            "Quota exhausted (HTTP 402 from inference provider). "
-                            "Stopping run and reporting partial results."
+                            "Quota exhausted (HTTP 402 from inference provider) "
+                            "during retry. Stopping run and reporting partial results."
                         )
                         break
                     raise
-                except Exception as exc:
-                    if not enable_retry:
-                        raise
-                    print(f"  episode error (task={task}, seed={seed}): {exc!r}, retrying once")
-                    try:
-                        rw = run_episode(env, llm, task, seed)
-                    except APIStatusError as retry_exc:
-                        if retry_exc.status_code == 402:
-                            exhausted_quota = True
-                            print(
-                                "Quota exhausted (HTTP 402 from inference provider) "
-                                "during retry. Stopping run and reporting partial results."
-                            )
-                            break
-                        raise
-                per_task[task].append(rw)
-                all_rewards.append(rw)
-                completed_episodes += 1
+            all_episode_means.append(overall)
+            completed_episodes += 1
 
     print("---")
     for t in (1, 2, 3):
         m = mean(per_task[t]) if per_task[t] else 0.0
         print(f"task {t} mean reward: {m:.3f}")
-    print(f"overall mean reward: {mean(all_rewards) if all_rewards else 0.0:.3f}")
+    print(f"overall mean reward: {mean(all_episode_means) if all_episode_means else 0.0:.3f}")
     min_task_scores = {t: (min(per_task[t]) if per_task[t] else 0.0) for t in (1, 2, 3)}
     max_task_scores = {t: (max(per_task[t]) if per_task[t] else 0.0) for t in (1, 2, 3)}
     print(f"Run seeds used: {seeds}")
     print(f"Score variation: min={min_task_scores}, max={max_task_scores}")
-    print(f"Episodes completed: {completed_episodes}/{len(seeds) * 3}")
+    print(f"Episodes completed: {completed_episodes}/{len(seeds)}")
     if exhausted_quota:
         print("Run ended early due to inference quota exhaustion.")
 

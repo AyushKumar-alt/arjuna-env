@@ -125,6 +125,37 @@ def root(request: Request) -> Any:
     }
 
 
+@app.get("/curriculum", tags=["curriculum"])
+async def get_curriculum_endpoint() -> dict:
+    """
+    Get the current auto-curriculum status.
+
+    Shows difficulty level, recent performance, and progression history.
+    Difficulty auto-adjusts based on agent episode rewards:
+    ``> 0.85 → promote``, ``< 0.60 → demote``.
+    """
+    from server.curriculum import get_curriculum_stats
+    stats = get_curriculum_stats()
+    return {
+        "current_difficulty": stats["current_difficulty"],
+        "recent_mean_reward": round(stats["recent_mean"], 4),
+        "total_episodes": stats["total_episodes"],
+        "promotions": stats["promotions"],
+        "demotions": stats["demotions"],
+        "window_rewards": stats["window"],
+        "thresholds": {
+            "promote_above": stats["promote_threshold"],
+            "demote_below": stats["demote_threshold"],
+        },
+        "description": (
+            f"Agent is at '{stats['current_difficulty']}' difficulty. "
+            f"Recent mean reward: {stats['recent_mean']:.3f}. "
+            f"Will promote above {stats['promote_threshold']}, "
+            f"demote below {stats['demote_threshold']}."
+        ),
+    }
+
+
 def main() -> None:
     import uvicorn
 

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Iterable
+from typing import Any, Iterable
 
 from .synthetic_data import (
     LowConfidenceAction,
@@ -59,15 +59,20 @@ def _task1_group(label: str) -> str | None:
     return None
 
 
-def grade_task1_identification(predicted: str | None, scene: Task1Scene) -> float:
+def grade_task1_identification(
+    predicted: str | None,
+    scene: Task1Scene,
+    metadata: dict[str, Any] | None = None,
+) -> float:
     """
     Task 1 with semantic partial credit.
 
-    - exact match -> 1.0
+    - exact match -> 1.0 (metadata may repeat the YOLO confidence; score stays capped at 1.0)
     - same category group -> 0.7
     - predicted is a known grouped class but wrong group -> 0.2
     - unrelated/unknown -> 0.0
     """
+    _ = metadata
     if predicted is None:
         return 0.0
     pred = _norm_label(predicted)
@@ -86,8 +91,15 @@ def grade_task1_identification(predicted: str | None, scene: Task1Scene) -> floa
 
 def grade_task2_triage(predicted_rank: list[str] | None, scene: Task2Scene) -> float:
     """
-    Fraction of positions where the agent's ranking matches ground truth.
-    Ground truth is scene.expected_priority (most important first).
+    Granular reward by how many positions match ground truth (including tie-break order).
+
+    - all positions correct -> 1.0
+    - n-1 positions correct -> 0.85
+    - n-2 positions correct -> 0.65
+    - exactly 1 position correct -> 0.33
+    - none correct -> 0.0
+
+    Length must match ground truth or the score is 0.0.
     """
     expected = _norm_list(scene.expected_priority)
     if not predicted_rank:
@@ -95,8 +107,17 @@ def grade_task2_triage(predicted_rank: list[str] | None, scene: Task2Scene) -> f
     pred = _norm_list(predicted_rank)
     if len(pred) != len(expected):
         return 0.0
-    correct = sum(1 for i in range(len(expected)) if pred[i] == expected[i])
-    return correct / len(expected)
+    n = len(expected)
+    correct = sum(1 for i in range(n) if pred[i] == expected[i])
+    if correct == n:
+        return 1.0
+    if n >= 2 and correct == n - 1:
+        return 0.85
+    if n >= 3 and correct == n - 2:
+        return 0.65
+    if correct == 1:
+        return 0.33
+    return 0.0
 
 
 def _normalize_decision(raw: str | None) -> LowConfidenceAction | None:
@@ -146,10 +167,11 @@ def grade_task3_low_confidence(
 ) -> float:
     """
     Richer low-confidence grading:
-    - Correct decision + strong reasoning -> 1.0
-    - Correct decision + weak/no reasoning -> 0.8
-    - Adjacent-band decision + strong reasoning -> 0.5
-    - Adjacent-band decision + weak/no reasoning -> 0.3
+    - Correct + strong reasoning (mentions confidence number) -> 1.0
+    - Correct + weak reasoning -> 0.85
+    - Correct + no reasoning -> 0.7
+    - Adjacent-band + strong reasoning -> 0.5
+    - Adjacent-band + weak/no reasoning -> 0.3
     - Two bands off / invalid -> 0.0
     """
     conf = scene.primary_detection.confidence
@@ -161,7 +183,11 @@ def grade_task3_low_confidence(
         return 0.0
 
     if got == correct:
-        return 1.0 if quality == "strong" else 0.8
+        if quality == "strong":
+            return 1.0
+        if quality == "weak":
+            return 0.85
+        return 0.7
 
     correct_idx = _decision_band_index(correct)
     got_idx = _decision_band_index(got)
@@ -173,7 +199,20 @@ def grade_task3_low_confidence(
     return 0.0
 
 
+def format_step_observation(bundle_name: str, step: int, inner_prompt: str) -> str:
+    """Wrap a task prompt with step index and bundle theme for multi-step episodes."""
+    titles = {
+        1: "Step 1/3 — Single Object ID",
+        2: "Step 2/3 — Multi Object Triage",
+        3: "Step 3/3 — Low Confidence Decision",
+    }
+    title = titles.get(step, f"Step {step}/3")
+    return f"{title}\n\nBundle: {bundle_name}\n\n{inner_prompt}"
+
+
 def format_task1_prompt(scene: Task1Scene) -> str:
+    if scene.obs_text_override:
+        return scene.obs_text_override
     d = scene.detection
     return (
         "TASK: single_object_identification\n\n"
@@ -186,6 +225,8 @@ def format_task1_prompt(scene: Task1Scene) -> str:
 
 
 def format_task2_prompt(scene: Task2Scene) -> str:
+    if scene.obs_text_override:
+        return scene.obs_text_override
     lines = [
         "TASK: multi_object_triage",
         "",
@@ -211,6 +252,8 @@ def format_task2_prompt(scene: Task2Scene) -> str:
 
 
 def format_task3_prompt(scene: Task3Scene) -> str:
+    if scene.obs_text_override:
+        return scene.obs_text_override
     d = scene.primary_detection
     opts = "log_and_continue | discard | request_rescan"
     return (

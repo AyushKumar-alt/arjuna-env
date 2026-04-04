@@ -21,7 +21,20 @@ class ArjunaState(State):
     scene_id: str | None = Field(default=None, description="Synthetic scene identifier.")
     awaiting_action: bool = Field(
         default=False,
-        description="True after reset until the first step completes.",
+        description="True after reset until the episode completes (after 3 steps).",
+    )
+    steps_completed: int = Field(
+        default=0,
+        ge=0,
+        description="How many graded steps finished in the current episode (0–3).",
+    )
+    step_rewards: list[float] = Field(
+        default_factory=list,
+        description="Per-step rewards accumulated so far in the episode.",
+    )
+    bundle_theme: str | None = Field(
+        default=None,
+        description="Human-readable name of the episode bundle (shared location/theme).",
     )
 
 
@@ -80,6 +93,14 @@ class ArjunaObservation(Observation):
     )
     task_type: Literal[1, 2, 3] = Field(..., description="Which task is active.")
     scene_id: str = Field(..., description="Synthetic scene id.")
+    step_number: Literal[1, 2, 3] = Field(
+        default=1,
+        description="Which step of the 3-step episode this observation corresponds to.",
+    )
+    bundle_name: str | None = Field(
+        default=None,
+        description="Episode bundle theme (coherent location across the three tasks).",
+    )
     observation_text: str = Field(
         ...,
         description="Natural-language scene + detections for the LLM or planner.",
@@ -92,6 +113,12 @@ class ArjunaObservation(Observation):
         default=0.0,
         ge=0.0,
         le=1.0,
-        description="Last reward in [0,1].",
+        description="Reward for the step just graded, or 0.0 on reset before any step.",
+    )
+    overall_reward: float | None = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Mean of the three step rewards; set only when done=True after step 3.",
     )
     done: bool = Field(default=False, description="True when the episode ended.")

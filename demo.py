@@ -1,119 +1,140 @@
 from __future__ import annotations
 
 """
-Simple offline demo for the ARJUNA perception environment.
+Offline demo for the ARJUNA perception environment (no LLM API key required).
 
-This script:
-- starts a short episode loop against a running ARJUNA HTTP server
-- uses a trivial, hand-written policy (no external LLMs)
-- prints observations, actions, rewards, and final scores
+Runs one full 3-step episode against a running ARJUNA HTTP server using a
+small heuristic that parses observation_text (regex + confidence sorting).
 
-Usage (with local server already running on port 7860):
+Usage (with local server on port 7860):
 
-    # In one terminal
     docker build -t arjuna-env .
     docker run -p 7860:7860 arjuna-env
 
-    # In another terminal (inside this repo)
     python demo.py
 """
 
 import os
-from typing import Any, Dict
+import re
+from statistics import mean
+from typing import List
 
-from client import ArjunaClient
+from models import ArjunaAction
+
+from client import ArjunaEnv
 
 
-def _heuristic_policy(task_type: int, obs_text: str) -> Dict[str, Any]:
-    """
-    Tiny, deterministic policy purely for demonstration.
+def _task1_label_from_obs(text: str) -> str:
+    """Primary YOLO line: label='person' or label=\"person\"."""
+    m = re.search(r"label\s*=\s*['\"]([^'\"]+)['\"]", text)
+    if m:
+        return m.group(1).strip().lower()
+    return "object"
 
-    - Task 1: guess a generic label based on keywords
-    - Task 2: returns a fixed ordering that often makes sense
-    - Task 3: picks a decision based on the numeric confidence in the text
-    """
-    text = obs_text.lower()
+
+def _task2_ranked_from_obs(text: str) -> List[str]:
+    """Extract label/confidence pairs and sort by confidence descending."""
+    pairs: list[tuple[str, float]] = []
+    for m in re.finditer(
+        r"label\s*=\s*['\"]([^'\"]+)['\"]\s*,\s*confidence\s*=\s*([0-9.]+)",
+        text,
+        flags=re.IGNORECASE,
+    ):
+        pairs.append((m.group(1).strip().lower(), float(m.group(2))))
+    if not pairs:
+        for m in re.finditer(r"label\s*=\s*['\"]([^'\"]+)['\"]", text):
+            pairs.append((m.group(1).strip().lower(), 0.5))
+    pairs.sort(key=lambda x: x[1], reverse=True)
+    return [p[0] for p in pairs]
+
+
+def _task3_decision_from_obs(text: str) -> tuple[str, str]:
+    m = re.search(r"confidence\s*=\s*([0-9.]+)", text, flags=re.IGNORECASE)
+    confidence = float(m.group(1)) if m else 0.3
+    if confidence < 0.35:
+        decision = "discard"
+    elif confidence < 0.5:
+        decision = "request_rescan"
+    else:
+        decision = "log_and_continue"
+    reasoning = f"parsed confidence {confidence:.3f} against policy bands"
+    return decision, reasoning
+
+
+def _heuristic_action(task_type: int, obs_text: str, episode_id: str | None) -> ArjunaAction:
+    meta: dict[str, str] = {}
+    if episode_id:
+        meta["episode_id"] = episode_id
 
     if task_type == 1:
-        if "person" in text or "worker" in text or "pedestrian" in text:
-            label = "person"
-        elif "car" in text:
-            label = "car"
-        elif "truck" in text or "bus" in text:
-            label = "truck"
-        elif "bicycle" in text or "bike" in text:
-            label = "bicycle"
-        else:
-            label = "object"
-        return {"task1_label": label}
-
+        return ArjunaAction(task1_label=_task1_label_from_obs(obs_text), metadata=meta)
     if task_type == 2:
-        # Very rough heuristic: always prioritize people, then vehicles, then others.
-        ordered: list[str] = []
-        if "person" in text or "worker" in text or "pedestrian" in text or "child" in text:
-            ordered.append("person")
-        if "truck" in text or "bus" in text:
-            ordered.append("truck")
-        if "car" in text:
-            ordered.append("car")
-        if "bicycle" in text or "bike" in text:
-            ordered.append("bicycle")
-        if not ordered:
-            ordered.append("object")
-        return {"ranked_objects": ordered}
-
-    if task_type == 3:
-        # Extract first floating-point number as "confidence".
-        import re
-
-        match = re.search(r"(\d\.\d+)", text)
-        confidence = float(match.group(1)) if match else 0.3
-
-        if confidence < 0.35:
-            decision = "discard"
-        elif confidence < 0.5:
-            decision = "request_rescan"
-        else:
-            decision = "log_and_continue"
-
-        return {
-            "decision": decision,
-            "reasoning": f"confidence {confidence:.2f} mapped to this band",
-        }
-
-    # Fallback empty action (should not happen with valid tasks)
-    return {}
+        return ArjunaAction(ranked_objects=_task2_ranked_from_obs(obs_text), metadata=meta)
+    decision, reasoning = _task3_decision_from_obs(obs_text)
+    return ArjunaAction(decision=decision, reasoning=reasoning, metadata=meta)
 
 
-def run_demo(episodes: int = 5) -> None:
+def run_demo(episodes: int = 1) -> None:
     base_url = os.environ.get("ARJUNA_ENV_BASE_URL", "http://127.0.0.1:7860")
-    client = ArjunaClient(base_url=base_url)
 
     print(f"Connecting to ARJUNA environment at {base_url}")
-    total_reward = 0.0
 
-    for i in range(episodes):
-        print(f"\n=== Episode {i + 1}/{episodes} ===")
-        obs, _ = client.reset()
-        episode_id = obs.episode_id
+    with ArjunaEnv(base_url=base_url).sync() as client:
+        for i in range(episodes):
+            reset_out = client.reset()
+            obs = reset_out.observation
+            episode_id = obs.episode_id
+            bundle = obs.bundle_name or "unknown"
 
-        print(f"task_type={obs.task_type} scene_id={obs.scene_id}")
-        print(f"observation_text={obs.observation_text!r}")
+            print(f"\n=== Episode Start (Bundle: {bundle}) ===")
 
-        action_payload = _heuristic_policy(obs.task_type, obs.observation_text)
-        print(f"action={action_payload}")
+            step_rewards: list[float] = []
 
-        step_obs, _ = client.step(action_payload, episode_id=episode_id)
-        total_reward += step_obs.reward or 0.0
+            for sub in (1, 2, 3):
+                task = obs.task_type
+                scene = obs.scene_id
+                title = (
+                    "Single Object ID"
+                    if task == 1
+                    else "Multi Object Triage"
+                    if task == 2
+                    else "Low Confidence Decision"
+                )
 
-        print(f"reward={step_obs.reward} done={step_obs.done}")
-        if step_obs.feedback:
-            print(f"feedback={step_obs.feedback}")
+                action = _heuristic_action(task, obs.observation_text, episode_id)
 
-    mean_reward = total_reward / max(episodes, 1)
-    print(f"\nDemo finished: mean reward over {episodes} episodes = {mean_reward:.3f}")
+                print(f"\nStep {sub}/3 — {title}")
+                short_scene = obs.observation_text.replace("\n", " ")[:120]
+                print(f"  Scene: {short_scene}…")
+                if task == 1:
+                    print(f"  Action: task1_label={action.task1_label!r}")
+                elif task == 2:
+                    print(f"  Action: ranked_objects={action.ranked_objects!r}")
+                else:
+                    print(f"  Action: decision={action.decision!r}")
+
+                step_out = client.step(action)
+                r = step_out.reward
+                if r is None:
+                    r = step_out.observation.reward
+                r = float(r or 0.0)
+                step_rewards.append(r)
+                fb = step_out.observation.feedback or ""
+                first_line = fb.splitlines()[0] if fb else ""
+                print(f"  Reward: {r:.3f} | Feedback: {first_line}")
+
+                obs = step_out.observation
+                if step_out.done:
+                    overall = (
+                        obs.overall_reward
+                        if obs.overall_reward is not None
+                        else float(mean(step_rewards))
+                    )
+                    print(f"\n=== Episode Complete ===")
+                    print(f"Overall reward: {overall:.3f}")
+                    print("==================")
+                    break
 
 
 if __name__ == "__main__":
-    run_demo()
-
+    run_demo(1)
