@@ -61,28 +61,31 @@ The Docker image sets **`ENABLE_WEB_INTERFACE=true`** so this UI is served on **
 
 1. [Hackathon / Round 1: quick answers](#hackathon--round-1-quick-answers)  
 2. [Why 3-step episodes?](#why-3-step-episodes)  
-3. [Environment overview (observations, actions, tasks)](#environment-overview-observations-actions-tasks)  
-4. [Prerequisites](#prerequisites)  
-5. [Setup: `requirements.txt` and venv](#setup-requirementstxt-and-venv)  
-6. [Run with Docker](#run-with-docker)  
-7. [Run locally without Docker (uvicorn)](#run-locally-without-docker-uvicorn)  
-8. [Run the demo (offline)](#run-the-demo-offline)  
-9. [Gradio Playground (`/web`)](#gradio-playground-web)  
-10. [How grading works](#how-grading-works)  
-11. [OpenEnv compliance and key files](#openenv-compliance-and-key-files)  
-12. [Project structure](#project-structure)  
-13. [Example interaction (reset → three steps)](#example-interaction-reset--three-steps)  
-14. [Testing and validation](#testing-and-validation)  
-15. [Offline execution](#offline-execution)  
-16. [Optional: LLM baseline (`inference.py`)](#optional-llm-baseline-inferencepy)  
-17. [Design notes](#design-notes)  
-18. [Troubleshooting](#troubleshooting)  
-19. [FAQ](#faq)  
-20. [Future improvements](#future-improvements)  
-21. [Visuals & architecture](#visuals--architecture)  
-22. [Credits and acknowledgements](#credits-and-acknowledgements)  
-23. [License](#license)  
-24. [Maintainer / contact](#maintainer--contact)  
+3. [**AutoRL approach — how it all fits together**](#autorl-approach--how-it-all-fits-together)  
+4. [Dynamic Scene Generation (Level 1)](#dynamic-scene-generation-level-1)  
+5. [Auto-Curriculum Learning (Level 2)](#auto-curriculum-learning-level-2)  
+6. [Environment overview (observations, actions, tasks)](#environment-overview-observations-actions-tasks)  
+7. [Prerequisites](#prerequisites)  
+8. [Setup: `requirements.txt` and venv](#setup-requirementstxt-and-venv)  
+9. [Run with Docker](#run-with-docker)  
+10. [Run locally without Docker (uvicorn)](#run-locally-without-docker-uvicorn)  
+11. [Run the demo (offline)](#run-the-demo-offline)  
+12. [Gradio Playground (`/web`)](#gradio-playground-web)  
+13. [How grading works](#how-grading-works)  
+14. [OpenEnv compliance and key files](#openenv-compliance-and-key-files)  
+15. [Project structure](#project-structure)  
+16. [Example interaction (reset → three steps)](#example-interaction-reset--three-steps)  
+17. [Testing and validation](#testing-and-validation)  
+18. [Offline execution](#offline-execution)  
+19. [Optional: LLM baseline (`inference.py`)](#optional-llm-baseline-inferencepy)  
+20. [Design notes](#design-notes)  
+21. [Troubleshooting](#troubleshooting)  
+22. [FAQ](#faq)  
+23. [Future improvements](#future-improvements)  
+24. [Visuals & architecture](#visuals--architecture)  
+25. [Credits and acknowledgements](#credits-and-acknowledgements)  
+26. [License](#license)  
+27. [Maintainer / contact](#maintainer--contact)  
 
 ---
 
@@ -98,6 +101,49 @@ A **single-step** environment gives RL agents one reward signal per reset — li
 | **Overall episode signal** | `overall_reward` = mean of 3 step rewards gives a clean episode-level metric for leaderboard comparison. |
 
 The 8 themed bundles (Urban Street, Warehouse, Parking Lot, School Zone, Airport, Hospital Entrance, Construction Site, Night Street) ensure diverse training distributions across resets.
+
+---
+
+## AutoRL approach — how it all fits together
+
+ARJUNA implements a **closed-loop, self-improving training environment** inspired by Automatic Reinforcement Learning (AutoRL) principles. The two subsystems — **Dynamic Scene Generation** and **Auto-Curriculum** — work together in a feedback loop:
+
+```mermaid
+flowchart TD
+  subgraph AutoRL Loop
+    A["Agent submits actions"] --> B["Grader scores episode"]
+    B --> C["Auto-Curriculum records reward"]
+    C --> D{"Mean reward vs thresholds"}
+    D -- "> 0.85" --> E["PROMOTE difficulty"]
+    D -- "< 0.60" --> F["DEMOTE difficulty"]
+    D -- "0.60-0.85" --> G["STAY at current level"]
+    E --> H["Scene Generator uses new difficulty"]
+    F --> H
+    G --> H
+    H --> I["LLM generates fresh scene at difficulty tier"]
+    I --> J["Agent receives new observation"]
+    J --> A
+  end
+```
+
+### Key design principles
+
+| Principle | Implementation |
+|-----------|----------------|
+| **No memorization** | The LLM generates a **unique scene every `reset()`** — the agent can never memorize fixed scenarios |
+| **Adaptive difficulty** | A sliding-window curriculum automatically **promotes/demotes** difficulty based on recent performance |
+| **Graceful degradation** | If the LLM is unavailable, the environment **falls back** to 8 hardcoded episode bundles — it always works offline |
+| **Stateless scalability** | The `episode_id` + `SESSIONS` pattern lets the autoRL loop run across **stateless HTTP workers** (e.g., HF Spaces) |
+| **Environment variables** | `ENABLE_DYNAMIC_SCENES`, `API_BASE_URL`, `HF_TOKEN` toggle the full autoRL loop on/off without code changes |
+
+### Files implementing autoRL
+
+| File | Role in AutoRL |
+|------|----------------|
+| `server/scene_generator.py` | LLM-powered scene generation with difficulty-aware prompts (easy/medium/hard) |
+| `server/curriculum.py` | `AutoCurriculum` class: sliding-window reward tracker with promote/demote logic |
+| `server/arjuna_environment.py` | Orchestrator: calls `generate_episode_bundle()` on `reset()`, calls `record_episode()` after final `step()` |
+| `server/app.py` | Exposes `GET /curriculum` endpoint for real-time monitoring |
 
 ---
 
@@ -249,35 +295,60 @@ This repo applies **`server/openenv_web_patch.py`** so the Playground **Step** p
 
 ## Dynamic Scene Generation (Level 1)
 
-Instead of fixed hardcoded scenes, the environment generates **infinite unique episodes** using an LLM:
+Instead of fixed hardcoded scenes, the environment generates **infinite unique episodes** using an LLM. This is the core of the autoRL approach — the environment itself is **non-stationary**, forcing the agent to generalize rather than memorize.
 
-- Every `reset()` call produces a fresh, novel scene
-- 3 difficulty tiers: `easy` → `medium` → `hard`
-- Prevents agent memorization of fixed scenarios
-- Falls back to hardcoded scenes if LLM is unavailable
+### How it works
 
-Scene generation is powered by the same LLM infrastructure as inference, keeping the environment self-contained.
+1. On every `reset()`, `arjuna_environment.py` calls `generate_episode_bundle()` from `scene_generator.py`
+2. The generator sends **difficulty-specific prompts** to the LLM (via HF Router / OpenAI-compatible API)
+3. Each prompt template enforces structural constraints (COCO classes, confidence ranges, JSON schema)
+4. Generated JSON is **validated** (schema checks + band-rule consistency for Task 3)
+5. Valid scenes are converted into `EpisodeBundle` dataclasses — **identical interface** to hardcoded scenes
+6. On failure (no creds, quota, malformed response), the system **silently falls back** to `synthetic_data.py`
+
+### Difficulty-aware generation
+
+| Difficulty | Task 1 (Confidence) | Task 2 (Objects) | Task 3 (Bands) |
+|-----------|--------------------|--------------------|----------------|
+| `easy` | 0.85–0.98 (clear) | 3 objects, no ties | Deep in one band |
+| `medium` | 0.72–0.84 (partial occlusion) | 4 objects, 1 tie | Near boundary |
+| `hard` | 0.60–0.71 (fog/night/blur) | 5 objects, multiple ties | Within 0.005 of boundary |
+
 ```python
 # Environment generates a fresh scene on every reset
 obs = await env.reset(seed=42)
 # obs.observation_text contains a brand new LLM-generated scene
+# difficulty is driven by the auto-curriculum (see Level 2)
 ```
 
-*(Note: Requires `ENABLE_DYNAMIC_SCENES=true`, `API_BASE_URL`, and `HF_TOKEN` environment variables to activate).*
+**Environment variables required:** `ENABLE_DYNAMIC_SCENES=true`, `API_BASE_URL`, `HF_TOKEN`
 
 ---
 
 ## Auto-Curriculum Learning (Level 2)
 
-The environment **automatically adjusts difficulty** based on the agent's recent performance:
+The environment **automatically adjusts difficulty** based on the agent's recent performance, completing the autoRL feedback loop. The `AutoCurriculum` class in `server/curriculum.py` uses a **sliding window** of the last 5 episode rewards:
 
 ```
-Agent mean reward > 0.85 → PROMOTE to harder difficulty
-Agent mean reward < 0.60 → DEMOTE to easier difficulty  
-Otherwise                → Stay at current difficulty
+Agent mean reward ≥ 0.85 → PROMOTE to harder difficulty  (easy→medium→hard)
+Agent mean reward < 0.60 → DEMOTE  to easier difficulty  (hard→medium→easy)
+Otherwise                → STAY    at current difficulty
 ```
 
-Check current curriculum status:
+### Curriculum internals
+
+| Parameter | Value | Purpose |
+|-----------|-------|---------|
+| `WINDOW_SIZE` | 5 | Number of recent episodes to average |
+| `MIN_EPISODES` | 3 | Minimum data before any adjustment |
+| `PROMOTE_THRESHOLD` | 0.85 | Mean reward above which difficulty increases |
+| `DEMOTE_THRESHOLD` | 0.60 | Mean reward below which difficulty decreases |
+
+After a promotion or demotion, the **window is cleared** to give the agent a fresh start at the new difficulty level.
+
+### Monitoring
+
+Check current curriculum status via the `/curriculum` endpoint:
 ```bash
 curl http://127.0.0.1:7860/curriculum
 ```
@@ -285,16 +356,17 @@ Example response:
 ```json
 {
   "current_difficulty": "medium",
-  "recent_mean_reward": 0.883,
   "total_episodes": 12,
+  "recent_mean": 0.883,
   "promotions": 1,
   "demotions": 0,
-  "thresholds": {
-    "promote_above": 0.85,
-    "demote_below": 0.60
-  }
+  "promote_threshold": 0.85,
+  "demote_threshold": 0.60,
+  "window": [0.90, 0.88, 0.85, 0.92]
 }
 ```
+
+The curriculum persists across episodes within a server process but **resets on restart** (stateless container recovery).
 
 ---
 
@@ -346,11 +418,13 @@ arjuna_env/
 ├── models.py                 # ArjunaAction, ArjunaObservation, ArjunaState
 ├── __init__.py
 └── server/
-    ├── app.py                # OpenEnv FastAPI app + OpenAPI tweaks
-    ├── arjuna_environment.py # Core Environment: reset / step / state
+    ├── app.py                # OpenEnv FastAPI app + /curriculum endpoint
+    ├── arjuna_environment.py # Core Environment: reset / step / state + autoRL orchestration
+    ├── scene_generator.py    # ★ Level 1: LLM-powered dynamic scene generation
+    ├── curriculum.py         # ★ Level 2: AutoCurriculum sliding-window tracker
     ├── tasks.py              # Grading + prompt formatting
     ├── grader.py             # Explicit re-exports of grading functions
-    ├── synthetic_data.py     # All scenes (100% local)
+    ├── synthetic_data.py     # Fallback scenes (100% local, 8 bundles)
     ├── openenv_web_patch.py  # Gradio: pass episode_id into step
     └── __init__.py
 ```
@@ -458,9 +532,13 @@ python inference.py
 
 ## Design notes
 
+- **AutoRL feedback loop:** The scene generator and curriculum form a closed loop — the agent's performance directly influences the difficulty of future scenes. This eliminates manual curriculum tuning.  
+- **Difficulty-aware prompting:** `scene_generator.py` uses **3 distinct prompt templates per task** (easy/medium/hard), controlling confidence ranges, object counts, and ambiguity levels at the prompt level.  
+- **Graceful fallback chain:** `LLM → validate → convert` or fall back to `synthetic_data.py`. The environment **never errors** due to LLM unavailability.  
 - **Stateless HTTP:** `episode_id` + module-level **`SESSIONS`** keeps **multi-step** episode state across requests (critical on HF Spaces).  
 - **Single action schema:** one **`ArjunaAction`** for all tasks; agents pick fields based on **`task_type`** on each observation.  
-- **Synthetic diversity:** **`EPISODE_BUNDLES`** tie three scenes to one theme; standalone **`TASK*_SCENES`** remain for extra variety elsewhere.  
+- **Synthetic diversity:** **`EPISODE_BUNDLES`** tie three scenes to one theme; standalone **`TASK*_SCENES`** remain as fallback variety.  
+- **Sliding window curriculum:** Window clears on difficulty change, preventing stale data from influencing future promotions/demotions.  
 - **Playground UX:** `ranked_objects` string coercion and **`openenv_web_patch`** reduce friction for reviewers using **`/web`**.
 
 ---
@@ -505,16 +583,15 @@ A: Yes via OpenEnv’s stack; **`inference.py`** can pass metadata consistently.
 
 ## Visuals & architecture
 
-There are **no screenshot or image files** in this repository (keeps **Hugging Face Space** `git push` simple and avoids binary history issues). **Try the live UI** instead:
+**Try the live UI** (no installation required):
 
 | What | Live URL |
 |------|----------|
 | **Gradio Playground** | [calpol500mg-arjuna-env.hf.space/web](https://calpol500mg-arjuna-env.hf.space/web) |
 | **Swagger / OpenAPI** | [calpol500mg-arjuna-env.hf.space/docs](https://calpol500mg-arjuna-env.hf.space/docs) |
+| **Curriculum Status** | [calpol500mg-arjuna-env.hf.space/curriculum](https://calpol500mg-arjuna-env.hf.space/curriculum) |
 
-Folder **`docs/images/`** only holds this documentation; see **`docs/images/README.md`** for policy and deployment notes.
-
-**Architecture (high level):**
+**Architecture (with autoRL loop):**
 
 ```mermaid
 flowchart LR
@@ -524,19 +601,29 @@ flowchart LR
     Demo["demo.py"]
     Inf["inference.py optional"]
   end
-  subgraph server [Server]
+  subgraph server [Server — AutoRL Core]
     App["server.app FastAPI"]
     Env["ArjunaEnvironment"]
-    Data["synthetic_data.py"]
+    SceneGen["scene_generator.py — LLM Scenes"]
+    Curriculum["curriculum.py — Auto-Curriculum"]
+    Data["synthetic_data.py — Fallback"]
     Grade["tasks.py / grader.py"]
+  end
+  subgraph llm [External LLM]
+    HF["HF Router / OpenAI API"]
   end
   Web --> App
   HTTP --> App
   Demo --> App
   Inf --> App
   App --> Env
-  Env --> Data
-  Env --> Grade
+  Env -- "reset()" --> SceneGen
+  SceneGen -- "difficulty" --> Curriculum
+  SceneGen --> HF
+  SceneGen -- "fallback" --> Data
+  Env -- "step() grade" --> Grade
+  Grade -- "episode reward" --> Curriculum
+  Curriculum -- "promote/demote" --> SceneGen
 ```
 
 ---
