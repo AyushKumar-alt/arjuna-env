@@ -174,23 +174,17 @@ The **12 themed bundles** ensure diverse training distributions across resets:
 
 ARJUNA implements a **closed-loop, self-improving training environment** inspired by Automatic Reinforcement Learning (AutoRL) principles. The two subsystems — **Dynamic Scene Generation** and **Auto-Curriculum** — work together in a feedback loop:
 
-```mermaid
-flowchart TD
-  subgraph AutoRL Loop
-    A["Agent submits actions"] --> B["Grader scores episode"]
-    B --> C["Auto-Curriculum records reward"]
-    C --> D{"Mean reward vs thresholds"}
-    D -- "> 0.85" --> E["PROMOTE difficulty"]
-    D -- "< 0.60" --> F["DEMOTE difficulty"]
-    D -- "0.60-0.85" --> G["STAY at current level"]
-    E --> H["Scene Generator uses new difficulty"]
-    F --> H
-    G --> H
-    H --> I["LLM generates fresh scene at difficulty tier"]
-    I --> J["Agent receives new observation"]
-    J --> A
-  end
-```
+**1. The AutoRL Loop (Feedback Cycle)**
+- 🕵️ **Agent** submits predictions/actions.
+- ⚖️ **Grader** immediately scores the episode and issues a numeric reward.
+- 📈 **Auto-Curriculum** tracks the most recent mean rewards.
+- 🔀 **Decision**:
+  - `Mean > 0.85` ➔ **PROMOTE** difficulty.
+  - `Mean < 0.60` ➔ **DEMOTE** difficulty.
+  - `0.60-0.85` ➔ **STAY** at current difficulty.
+- ⚙️ **Scene Generator** uses this difficulty tier to prompt the LLM.
+- 🏗️ LLM generates a brand new scene at the chosen difficulty.
+- 🔄 **Agent** receives the fresh observation, and the cycle continues.
 
 ### Key design principles
 
@@ -650,38 +644,22 @@ A: Yes via OpenEnv’s stack; **`inference.py`** can pass metadata consistently.
 
 **Architecture (with autoRL loop):**
 
-```mermaid
-flowchart LR
-  subgraph client [Clients]
-    Web["Gradio /web"]
-    HTTP["HTTP /reset /step"]
-    Demo["demo.py"]
-    Inf["inference.py optional"]
-  end
-  subgraph server [Server — AutoRL Core]
-    App["server.app FastAPI"]
-    Env["ArjunaEnvironment"]
-    SceneGen["scene_generator.py — LLM Scenes"]
-    Curriculum["curriculum.py — Auto-Curriculum"]
-    Data["synthetic_data.py — Fallback"]
-    Grade["tasks.py / grader.py"]
-  end
-  subgraph llm [External LLM]
-    HF["HF Router / OpenAI API"]
-  end
-  Web --> App
-  HTTP --> App
-  Demo --> App
-  Inf --> App
-  App --> Env
-  Env -- "reset()" --> SceneGen
-  SceneGen -- "difficulty" --> Curriculum
-  SceneGen --> HF
-  SceneGen -- "fallback" --> Data
-  Env -- "step() grade" --> Grade
-  Grade -- "episode reward" --> Curriculum
-  Curriculum -- "promote/demote" --> SceneGen
-```
+**1. Clients**
+- 🌐 **Gradio (`/web`)**: Interactive browser playground.
+- 💻 **HTTP (`/reset` & `/step`)**: REST requests.
+- 📜 **`demo.py`**: Offline heuristic script.
+- 🤖 **`inference.py`**: Optional LLM baseline agent.
+
+**2. Server (AutoRL Core)**
+- 🚦 **FastAPI (`server.app`)**: Routes requests to the core environment.
+- 🌍 **ArjunaEnvironment**: Orchestrates `reset()`, `step()`, and episode state.
+- 📝 **Grader (`tasks.py`)**: Scores the agent's actions on each step.
+- 🔄 **Auto-Curriculum (`curriculum.py`)**: Tracks mean rewards and promotes/demotes difficulty.
+- 🏗️ **Scene Generator (`scene_generator.py`)**: Prompts the LLM for dynamic scenes using the current difficulty.
+- 💾 **Fallback Data (`synthetic_data.py`)**: Serves the 12 offline bundles if dynamic generation is missing or disabled.
+
+**3. External LLM (Optional)**
+- 🧠 **HF Router / OpenAI API**: Generates dynamic perceptions when enabled.
 
 ---
 
