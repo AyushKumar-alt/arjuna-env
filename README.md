@@ -618,11 +618,11 @@ python inference.py
 
 ## FAQ
 
-### 🔑 Authentication
+###  Authentication
 **Q: Does the Space itself require my API key?**  
 A: The environment does **not**. Only `inference.py` (which directly hits an external LLM) requires a live token.
 
-### 📌 Development
+###  Development
 **Q: Where is the ultimate “source of truth” for correct answers?**  
 A: Examine `server/synthetic_data.py`. It holds the expected labels, rigorous priority orderings, and task 3 decision bands.
 
@@ -645,9 +645,9 @@ A: Yes, inherently via OpenEnv’s core system. That said, HTTP firmly remains t
 
 **Try the live UI** (no local installation required to evaluate):
 
-- 🌐 **Gradio Playground:** [calpol500mg-arjuna-env.hf.space/web](https://calpol500mg-arjuna-env.hf.space/web)
-- 📖 **Swagger / OpenAPI:** [calpol500mg-arjuna-env.hf.space/docs](https://calpol500mg-arjuna-env.hf.space/docs)
-- 📊 **Curriculum Status:** [calpol500mg-arjuna-env.hf.space/curriculum](https://calpol500mg-arjuna-env.hf.space/curriculum)
+-  **Gradio Playground:** [calpol500mg-arjuna-env.hf.space/web](https://calpol500mg-arjuna-env.hf.space/web)
+-  **Swagger / OpenAPI:** [calpol500mg-arjuna-env.hf.space/docs](https://calpol500mg-arjuna-env.hf.space/docs)
+-  **Curriculum Status:** [calpol500mg-arjuna-env.hf.space/curriculum](https://calpol500mg-arjuna-env.hf.space/curriculum)
 
 ### Architecture (With AutoRL Loop)
 
@@ -671,9 +671,9 @@ This architecture project is gracefully released under the **MIT License** — r
 
 ## Maintainer / Contact
 
-- 👤 **Author:** Ayush Kumar  
-- 🚀 **HF Space:** [Calpol500mg/arjuna-env](https://huggingface.co/spaces/Calpol500mg/arjuna-env)  
-- 🌍 **Live App:** [calpol500mg-arjuna-env.hf.space](https://calpol500mg-arjuna-env.hf.space)
+-  **Author:** Ayush Kumar  
+-  **HF Space:** [Calpol500mg/arjuna-env](https://huggingface.co/spaces/Calpol500mg/arjuna-env)  
+-  **Live App:** [calpol500mg-arjuna-env.hf.space](https://calpol500mg-arjuna-env.hf.space)
 
 For architecture issues or reviewer questions, please dynamically interact with the Space **Community** tab or GitHub **Issues** page: [github.com/AyushKumar-alt/arjuna-env/issues](https://github.com/AyushKumar-alt/arjuna-env/issues).
 
