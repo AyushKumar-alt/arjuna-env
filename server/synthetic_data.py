@@ -697,35 +697,26 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         name="Urban Street",
         task1=Task1Scene(
             scene_id="t1_bnd_urban",
-            description=(
-                "Urban street: one pedestrian standing on the sidewalk near a storefront, "
-                "clear daylight, minimal occlusion."
-            ),
+            description="Urban street: one pedestrian (person) standing on the sidewalk near a storefront.",
             detection=SyntheticDetection("person", 0.91, (140.0, 90.0, 480.0, 440.0)),
             expected_label="person",
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_urban",
-            description=(
-                "Same urban corridor: crosswalk with a pedestrian, a sedan in the lane, "
-                "and a cyclist in the bike lane."
-            ),
+            description="Urban intersection: a car, a bicycle, and a pedestrian waiting at the curb.",
             detections=(
-                SyntheticDetection("person", 0.92, (210.0, 110.0, 360.0, 450.0)),
-                SyntheticDetection("car", 0.80, (400.0, 220.0, 680.0, 380.0)),
-                SyntheticDetection("bicycle", 0.74, (120.0, 200.0, 340.0, 400.0)),
+                SyntheticDetection("car", 0.92, (100.0, 200.0, 500.0, 400.0)),
+                SyntheticDetection("bicycle", 0.88, (150.0, 250.0, 300.0, 400.0)),
+                SyntheticDetection("person", 0.85, (400.0, 150.0, 450.0, 420.0)),
             ),
-            expected_priority=("person", "car", "bicycle"),
+            expected_priority=("car", "bicycle", "person"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_urban",
-            description=(
-                "Urban doorway: a faint ambiguous shape visible in a dark recessed doorway "
-                "next to the sidewalk; could be debris or a person."
-            ),
-            primary_detection=SyntheticDetection("person", 0.31, (280.0, 160.0, 320.0, 360.0)),
+            description="Urban doorway: a faint ambiguous shape in a dark recess; could be debris or a person.",
+            primary_detection=SyntheticDetection("person", 0.24, (280.0, 160.0, 320.0, 360.0)),
             expected_action="discard",
-            notes="Very low confidence — discard.",
+            notes="0.24 < 0.35 threshold.",
         ),
     ),
     EpisodeBundle(
@@ -733,36 +724,26 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         name="Warehouse",
         task1=Task1Scene(
             scene_id="t1_bnd_warehouse",
-            description=(
-                "Warehouse floor: one forklift truck centered in the aisle, pallets stacked "
-                "along the racks."
-            ),
+            description="Warehouse aisle: a forklift (truck) maneuvered by a worker.",
             detection=SyntheticDetection("truck", 0.88, (90.0, 120.0, 620.0, 400.0)),
             expected_label="truck",
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_warehouse",
-            description=(
-                "Loading bay: worker near a box truck, pallet load on the floor, "
-                "and a safety cone marking the lane."
-            ),
+            description="Loading bay: a worker near a crate (suitcase), and a handheld pallet jack (truck).",
             detections=(
                 SyntheticDetection("person", 0.88, (300.0, 130.0, 380.0, 410.0)),
                 SyntheticDetection("truck", 0.87, (80.0, 150.0, 520.0, 390.0)),
                 SyntheticDetection("suitcase", 0.75, (420.0, 300.0, 500.0, 360.0)),
-                SyntheticDetection("traffic cone", 0.62, (240.0, 360.0, 270.0, 430.0)),
             ),
-            expected_priority=("person", "truck", "suitcase", "traffic cone"),
+            expected_priority=("person", "truck", "suitcase"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_warehouse",
-            description=(
-                "Dusty warehouse corridor: hazy air and uneven lighting; an uncertain blob "
-                "at the far end could be a person or equipment."
-            ),
-            primary_detection=SyntheticDetection("person", 0.42, (310.0, 140.0, 350.0, 340.0)),
+            description="Dusty corridor: an uncertain blob at the far end near stacked boxes.",
+            primary_detection=SyntheticDetection("handbag", 0.42, (310.0, 140.0, 350.0, 340.0)),
             expected_action="request_rescan",
-            notes="Moderate uncertainty — request rescan.",
+            notes="0.42 is in 0.35-0.50 band.",
         ),
     ),
     EpisodeBundle(
@@ -770,35 +751,26 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         name="Parking Lot",
         task1=Task1Scene(
             scene_id="t1_bnd_parking",
-            description=(
-                "Open parking lot: one sedan facing the camera, lines and wheel stops visible."
-            ),
-            detection=SyntheticDetection("car", 0.92, (180.0, 200.0, 600.0, 380.0)),
+            description="Parking lot: one car parked diagonally across two stalls.",
+            detection=SyntheticDetection("car", 0.88, (120.0, 150.0, 580.0, 400.0)),
             expected_label="car",
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_parking",
-            description=(
-                "Same lot: car backing out, cyclist crossing behind, pedestrian walking, "
-                "and a traffic cone near the curb."
-            ),
+            description="Parking lane: car entering, pedestrian walking, and a parking meter.",
             detections=(
-                SyntheticDetection("car", 0.92, (150.0, 210.0, 560.0, 370.0)),
-                SyntheticDetection("person", 0.89, (420.0, 180.0, 480.0, 380.0)),
-                SyntheticDetection("bicycle", 0.85, (300.0, 230.0, 400.0, 360.0)),
-                SyntheticDetection("traffic cone", 0.70, (520.0, 320.0, 550.0, 380.0)),
+                SyntheticDetection("car", 0.90, (200.0, 200.0, 450.0, 420.0)),
+                SyntheticDetection("person", 0.88, (500.0, 150.0, 550.0, 430.0)),
+                SyntheticDetection("parking meter", 0.76, (150.0, 280.0, 200.0, 350.0)),
             ),
-            expected_priority=("car", "person", "bicycle", "traffic cone"),
+            expected_priority=("car", "person", "parking meter"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_parking",
-            description=(
-                "Clear afternoon in the lot: a vehicle contour is stable and well-framed despite "
-                "minor glare on the hood; detection is reliable."
-            ),
-            primary_detection=SyntheticDetection("car", 0.65, (200.0, 220.0, 540.0, 360.0)),
+            description="Behind concrete pillar: a movement — potentially a stray dog.",
+            primary_detection=SyntheticDetection("dog", 0.65, (450.0, 350.0, 520.0, 420.0)),
             expected_action="log_and_continue",
-            notes="0.65 — well above 0.50, clearly log_and_continue.",
+            notes="0.65 is >= 0.50.",
         ),
     ),
     EpisodeBundle(
@@ -806,35 +778,26 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         name="School Zone",
         task1=Task1Scene(
             scene_id="t1_bnd_school",
-            description=(
-                "School drop-off lane: a yellow school bus stopped at the curb, signage visible."
-            ),
-            detection=SyntheticDetection("bus", 0.87, (60.0, 110.0, 660.0, 380.0)),
+            description="School zone: a school bus parked in the loading lane.",
+            detection=SyntheticDetection("bus", 0.96, (50.0, 80.0, 650.0, 420.0)),
             expected_label="bus",
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_school",
-            description=(
-                "School front: bus unloading, child with bicycle, crossing guard, and a dog "
-                "on leash near the crosswalk."
-            ),
+            description="Sidewalk: student with a backpack, a crossing guard, and a lost dog.",
             detections=(
-                SyntheticDetection("bus", 0.90, (40.0, 120.0, 640.0, 360.0)),
-                SyntheticDetection("person", 0.88, (360.0, 160.0, 420.0, 380.0)),
-                SyntheticDetection("bicycle", 0.82, (280.0, 240.0, 380.0, 360.0)),
-                SyntheticDetection("dog", 0.75, (480.0, 300.0, 540.0, 370.0)),
+                SyntheticDetection("person", 0.94, (300.0, 120.0, 380.0, 440.0)),
+                SyntheticDetection("backpack", 0.82, (150.0, 280.0, 320.0, 420.0)),
+                SyntheticDetection("dog", 0.72, (100.0, 350.0, 180.0, 420.0)),
             ),
-            expected_priority=("bus", "person", "bicycle", "dog"),
+            expected_priority=("person", "backpack", "dog"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_school",
-            description=(
-                "Frosted glass entry: a blurred silhouette behind the door — person or "
-                "reflection from the hall."
-            ),
-            primary_detection=SyntheticDetection("person", 0.38, (330.0, 150.0, 390.0, 380.0)),
+            description="Near the heavy playground equipment: a low shape behind the fence — potentially a person.",
+            primary_detection=SyntheticDetection("person", 0.38, (480.0, 320.0, 520.0, 440.0)),
             expected_action="request_rescan",
-            notes="0.35–0.50 band.",
+            notes="0.38 in 0.35-0.50 band.",
         ),
     ),
     EpisodeBundle(
@@ -842,35 +805,26 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         name="Airport",
         task1=Task1Scene(
             scene_id="t1_bnd_airport",
-            description=(
-                "Airport ramp: one commercial jet parked, tail and wing visible under daylight."
-            ),
+            description="Airport ramp: one commercial jet (airplane) parked at the gate.",
             detection=SyntheticDetection("airplane", 0.95, (120.0, 80.0, 680.0, 300.0)),
             expected_label="airplane",
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_airport",
-            description=(
-                "Service road near the terminal: airplane tail in background, fuel truck, "
-                "ground crew person, and a traffic cone by the lane."
-            ),
+            description="Terminal road: a shuttle bus, a traveler (person), and a luggage suitcase.",
             detections=(
-                SyntheticDetection("airplane", 0.94, (40.0, 60.0, 720.0, 280.0)),
-                SyntheticDetection("person", 0.91, (380.0, 200.0, 440.0, 380.0)),
-                SyntheticDetection("truck", 0.88, (180.0, 210.0, 520.0, 360.0)),
-                SyntheticDetection("traffic cone", 0.70, (560.0, 320.0, 590.0, 380.0)),
+                SyntheticDetection("bus", 0.91, (40.0, 60.0, 720.0, 280.0)),
+                SyntheticDetection("person", 0.88, (380.0, 200.0, 440.0, 380.0)),
+                SyntheticDetection("suitcase", 0.82, (180.0, 210.0, 520.0, 360.0)),
             ),
-            expected_priority=("airplane", "person", "truck", "traffic cone"),
+            expected_priority=("bus", "person", "suitcase"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_airport",
-            description=(
-                "Dense pre-dawn fog on the taxiway: sensor returns an extremely weak signal "
-                "near the runway edge; shape completely indistinct, identity unknown."
-            ),
+            description="Taxiway fog: extremely weak signal near the hangar wing; identity unknown.",
             primary_detection=SyntheticDetection("airplane", 0.19, (400.0, 120.0, 520.0, 260.0)),
             expected_action="discard",
-            notes="0.19 — well below 0.35, clearly discard.",
+            notes="0.19 < 0.35.",
         ),
     ),
     EpisodeBundle(
@@ -878,35 +832,26 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         name="Hospital Entrance",
         task1=Task1Scene(
             scene_id="t1_bnd_hospital",
-            description=(
-                "Hospital ambulance bay: one person in scrubs walking toward the entrance."
-            ),
-            detection=SyntheticDetection("person", 0.89, (260.0, 140.0, 380.0, 420.0)),
-            expected_label="person",
+            description="Ambulance bay: an ambulance (truck) with rear doors open.",
+            detection=SyntheticDetection("truck", 0.92, (100.0, 120.0, 620.0, 410.0)),
+            expected_label="truck",
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_hospital",
-            description=(
-                "Drop-off loop: ambulance-style truck with flashers, sedan, staff member, "
-                "and a traffic cone channeling traffic."
-            ),
+            description="Drop-off: a staff member (person), a wheelchair (bench class) on the ramp, and a car.",
             detections=(
-                SyntheticDetection("truck", 0.92, (50.0, 160.0, 480.0, 380.0)),
-                SyntheticDetection("person", 0.90, (520.0, 170.0, 580.0, 380.0)),
-                SyntheticDetection("car", 0.87, (300.0, 220.0, 620.0, 360.0)),
-                SyntheticDetection("traffic cone", 0.68, (200.0, 340.0, 230.0, 400.0)),
+                SyntheticDetection("person", 0.90, (480.0, 150.0, 540.0, 420.0)),
+                SyntheticDetection("car", 0.88, (100.0, 220.0, 450.0, 380.0)),
+                SyntheticDetection("bench", 0.74, (550.0, 340.0, 650.0, 420.0)),
             ),
-            expected_priority=("truck", "person", "car", "traffic cone"),
+            expected_priority=("person", "car", "bench"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_hospital",
-            description=(
-                "Bright sun glare on the glass canopy: a washed-out figure near the doors; "
-                "confidence is marginal."
-            ),
+            description="Glass canopy glare: a blurred figure (person) near the sliding doors.",
             primary_detection=SyntheticDetection("person", 0.51, (290.0, 160.0, 350.0, 380.0)),
             expected_action="log_and_continue",
-            notes="≥ 0.50.",
+            notes="0.51 >= 0.50.",
         ),
     ),
     EpisodeBundle(
@@ -914,35 +859,26 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         name="Construction Site",
         task1=Task1Scene(
             scene_id="t1_bnd_construction",
-            description=(
-                "Active construction: one dump truck in the foreground, dirt and barriers."
-            ),
+            description="Active site: a large dump truck in the foreground, tracks in dirt.",
             detection=SyntheticDetection("truck", 0.86, (100.0, 120.0, 640.0, 400.0)),
             expected_label="truck",
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_construction",
-            description=(
-                "Same site: hard-hat worker, articulated truck, stop sign at the lane merge, "
-                "and cones marking the trench."
-            ),
+            description="Excavation area: a foreman (person), a loader (truck), and a stop sign.",
             detections=(
                 SyntheticDetection("person", 0.88, (280.0, 130.0, 360.0, 400.0)),
                 SyntheticDetection("truck", 0.86, (40.0, 170.0, 420.0, 380.0)),
                 SyntheticDetection("stop sign", 0.75, (600.0, 80.0, 650.0, 150.0)),
-                SyntheticDetection("traffic cone", 0.72, (380.0, 350.0, 410.0, 420.0)),
             ),
-            expected_priority=("person", "truck", "stop sign", "traffic cone"),
+            expected_priority=("person", "truck", "stop sign"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_construction",
-            description=(
-                "Dust cloud from a loader: a vague shape behind the plume — worker or stacked "
-                "material."
-            ),
+            description="Dust plume: a vague moving shape — worker (person) or shifted pile.",
             primary_detection=SyntheticDetection("person", 0.44, (320.0, 180.0, 370.0, 360.0)),
             expected_action="request_rescan",
-            notes="0.35–0.50 band.",
+            notes="0.44 in 0.35-0.50 band.",
         ),
     ),
     EpisodeBundle(
@@ -950,34 +886,26 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         name="Night Street",
         task1=Task1Scene(
             scene_id="t1_bnd_night",
-            description=(
-                "Night street: one bicycle with reflectors crossing a pool of streetlight."
-            ),
-            detection=SyntheticDetection("bicycle", 0.78, (180.0, 220.0, 420.0, 400.0)),
-            expected_label="bicycle",
+            description="Night street: a rider on a motorcycle under high-pressure sodium lights.",
+            detection=SyntheticDetection("motorcycle", 0.82, (200.0, 220.0, 450.0, 410.0)),
+            expected_label="motorcycle",
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_night",
-            description=(
-                "Same block: cyclist in the intersection, pedestrian on the curb, "
-                "and an approaching car with headlights."
-            ),
+            description="Street corner: a car with headlights, a pedestrian (person), and a fire hydrant.",
             detections=(
-                SyntheticDetection("bicycle", 0.85, (200.0, 210.0, 380.0, 390.0)),
-                SyntheticDetection("person", 0.82, (440.0, 190.0, 500.0, 380.0)),
-                SyntheticDetection("car", 0.78, (80.0, 200.0, 320.0, 360.0)),
+                SyntheticDetection("car", 0.87, (100.0, 200.0, 450.0, 380.0)),
+                SyntheticDetection("person", 0.84, (480.0, 180.0, 520.0, 430.0)),
+                SyntheticDetection("fire hydrant", 0.62, (550.0, 360.0, 590.0, 430.0)),
             ),
-            expected_priority=("bicycle", "person", "car"),
+            expected_priority=("car", "person", "fire hydrant"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_night",
-            description=(
-                "Deep shadow under an awning: sensor returns a very faint flicker — "
-                "likely noise or a stationary object, confidence is negligible."
-            ),
-            primary_detection=SyntheticDetection("bicycle", 0.21, (350.0, 240.0, 410.0, 360.0)),
+            description="Shadowy alley: sensor returns a faint infrared flicker; stationary dog or debris.",
+            primary_detection=SyntheticDetection("dog", 0.21, (350.0, 240.0, 410.0, 360.0)),
             expected_action="discard",
-            notes="0.21 — well below 0.35, clearly discard.",
+            notes="0.21 < 0.35 discard.",
         ),
     ),
     EpisodeBundle(
@@ -985,26 +913,26 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         name="Forest Trail",
         task1=Task1Scene(
             scene_id="t1_bnd_forest",
-            description="Woodland path: a medium-sized dog running ahead, clear morning light.",
-            detection=SyntheticDetection("dog", 0.88, (300.0, 250.0, 450.0, 400.0)),
-            expected_label="dog",
+            description="Woodland path: a hiker with a backpack, clear morning light.",
+            detection=SyntheticDetection("backpack", 0.88, (300.0, 250.0, 450.0, 400.0)),
+            expected_label="backpack",
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_forest",
-            description="Trail junction: hiker with backpack, dog on leash, and a bird on a branch.",
+            description="Trail junction: a dog on a leash, a bird on a branch, and a hiker far ahead.",
             detections=(
                 SyntheticDetection("person", 0.89, (200.0, 150.0, 280.0, 420.0)),
-                SyntheticDetection("bird", 0.75, (500.0, 50.0, 540.0, 100.0)),
                 SyntheticDetection("dog", 0.82, (250.0, 320.0, 350.0, 410.0)),
+                SyntheticDetection("bird", 0.75, (500.0, 50.0, 540.0, 100.0)),
             ),
             expected_priority=("person", "dog", "bird"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_forest",
-            description="Thick brush: a low-lying shape moving behind the leaves; potentially a cat or rustling branches.",
-            primary_detection=SyntheticDetection("cat", 0.28, (400.0, 350.0, 460.0, 410.0)),
+            description="Thick brush: a low-lying heavy shape moving behind the leaves; potentially a bear.",
+            primary_detection=SyntheticDetection("bear", 0.28, (400.0, 350.0, 460.0, 410.0)),
             expected_action="discard",
-            notes="0.28 < 0.35.",
+            notes="0.28 < 0.35 discard.",
         ),
     ),
     EpisodeBundle(
@@ -1012,13 +940,13 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         name="Shopping Mall",
         task1=Task1Scene(
             scene_id="t1_bnd_mall",
-            description="Mall escalator entrance: a large open umbrella leaning against the railing.",
-            detection=SyntheticDetection("umbrella", 0.92, (150.0, 200.0, 450.0, 450.0)),
-            expected_label="umbrella",
+            description="Mall escalator entrance: shopper carrying a handbag.",
+            detection=SyntheticDetection("handbag", 0.92, (150.0, 220.0, 300.0, 380.0)),
+            expected_label="handbag",
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_mall",
-            description="Food court: shopper with suitcase, family sitting at a table, and a cleaning sign.",
+            description="Food court: traveler with suitcase, person sitting, and an empty chair.",
             detections=(
                 SyntheticDetection("person", 0.91, (300.0, 100.0, 380.0, 450.0)),
                 SyntheticDetection("suitcase", 0.84, (400.0, 350.0, 500.0, 450.0)),
@@ -1028,10 +956,10 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_mall",
-            description="Dimly lit corridor: an unattended object near the rest area; looks like a backpack but details are blurry.",
-            primary_detection=SyntheticDetection("backpack", 0.46, (380.0, 250.0, 440.0, 380.0)),
+            description="Restroom corridor: an unattended umbrella near the rest area; details are blurry.",
+            primary_detection=SyntheticDetection("umbrella", 0.46, (380.0, 250.0, 440.0, 380.0)),
             expected_action="request_rescan",
-            notes="0.46 is in 0.35-0.50 band.",
+            notes="0.46 in 0.35-0.50 band.",
         ),
     ),
     EpisodeBundle(
@@ -1045,20 +973,20 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_office",
-            description="Lounge area: employee on a couch, coffee table with a bottle, and a guest sitting.",
+            description="Lounge area: employee on a couch, a guest sitting, and a potted plant.",
             detections=(
                 SyntheticDetection("person", 0.93, (150.0, 150.0, 250.0, 400.0)),
                 SyntheticDetection("couch", 0.89, (100.0, 250.0, 600.0, 420.0)),
-                SyntheticDetection("bottle", 0.77, (350.0, 280.0, 380.0, 350.0)),
+                SyntheticDetection("potted plant", 0.77, (350.0, 280.0, 500.0, 450.0)),
             ),
-            expected_priority=("person", "couch", "bottle"),
+            expected_priority=("person", "couch", "potted plant"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_office",
-            description="Conference room window: a large soft shape against the frosted glass; likely a lounge chair.",
+            description="Conference room window: a large soft shape against the frosted glass — likely a chair.",
             primary_detection=SyntheticDetection("chair", 0.54, (280.0, 220.0, 450.0, 380.0)),
             expected_action="log_and_continue",
-            notes="0.54 > 0.50.",
+            notes="0.54 >= 0.50.",
         ),
     ),
     EpisodeBundle(
@@ -1066,29 +994,30 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         name="Rainy Street",
         task1=Task1Scene(
             scene_id="t1_bnd_rainy",
-            description="Rainy intersection: one car with wipers active, splash back from the road.",
-            detection=SyntheticDetection("car", 0.89, (200.0, 250.0, 550.0, 400.0)),
-            expected_label="car",
+            description="Rainy curb: a person holding a large umbrella.",
+            detection=SyntheticDetection("umbrella", 0.94, (200.0, 100.0, 450.0, 420.0)),
+            expected_label="umbrella",
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_rainy",
-            description="Downtown curb: bus boarding passengers, person with umbrella, and a mailbox.",
+            description="Downtown curb: a car splashing, a bus approaching, and a pedestrian with umbrella.",
             detections=(
-                SyntheticDetection("bus", 0.88, (100.0, 80.0, 500.0, 380.0)),
-                SyntheticDetection("person", 0.86, (420.0, 180.0, 480.0, 420.0)),
+                SyntheticDetection("car", 0.88, (100.0, 220.0, 500.0, 400.0)),
+                SyntheticDetection("bus", 0.88, (50.0, 50.0, 650.0, 380.0)),
                 SyntheticDetection("umbrella", 0.86, (400.0, 150.0, 520.0, 280.0)),
             ),
-            expected_priority=("bus", "person", "umbrella"),
+            expected_priority=("bus", "car", "umbrella"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_rainy",
-            description="Heavy downpour: a large metallic contour by the delivery dock; blurred truck or storage bin.",
+            description="Heavy rain: a blurry contour by the dock; could be a truck or stacked pallets.",
             primary_detection=SyntheticDetection("truck", 0.38, (50.0, 120.0, 420.0, 380.0)),
             expected_action="request_rescan",
-            notes="0.38 is in 0.35-0.50 band.",
+            notes="0.38 in 0.35-0.50 band.",
         ),
     ),
 )
+
 
 for _bundle in EPISODE_BUNDLES:
     _c2 = _expected_triage_order(_bundle.task2.detections)
