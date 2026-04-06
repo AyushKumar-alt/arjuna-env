@@ -124,7 +124,22 @@ A **single-step** environment gives RL agents one reward signal per reset — li
 | **Thematic coherence** | All 3 steps draw scenes from the same **location bundle** (e.g. "Warehouse"), so context carries across steps — closer to real-world perception pipelines. |
 | **Overall episode signal** | `overall_reward` = mean of 3 step rewards gives a clean episode-level metric for leaderboard comparison. |
 
-The 8 themed bundles (Urban Street, Warehouse, Parking Lot, School Zone, Airport, Hospital Entrance, Construction Site, Night Street) ensure diverse training distributions across resets.
+The **12 themed bundles** ensure diverse training distributions across resets:
+
+| # | Bundle | Notable Objects |
+|---|---|---|
+| 1 | **Urban Street** | person, car, bicycle, traffic light |
+| 2 | **Warehouse** | person, truck, suitcase, traffic cone |
+| 3 | **Parking Lot** | car, person, bicycle, traffic cone |
+| 4 | **School Zone** | bus, person, bicycle, dog |
+| 5 | **Airport** | airplane, person, truck, traffic cone |
+| 6 | **Hospital Entrance** | truck, person, car, traffic cone |
+| 7 | **Construction Site** | person, truck, stop sign, traffic cone |
+| 8 | **Night Street** | bicycle, person, car |
+| 9 | **Forest Trail** | dog, person, bird |
+| 10 | **Shopping Mall** | umbrella, person, suitcase, chair |
+| 11 | **Office Lobby** | laptop, person, couch, bottle |
+| 12 | **Rainy Street** | car, bus, person, umbrella |
 
 ---
 
