@@ -198,7 +198,7 @@ flowchart TD
 |-----------|----------------|
 | **No memorization** | The LLM generates a **unique scene every `reset()`** — the agent can never memorize fixed scenarios |
 | **Adaptive difficulty** | A sliding-window curriculum automatically **promotes/demotes** difficulty based on recent performance |
-| **Graceful degradation** | If the LLM is unavailable, the environment **falls back** to 8 hardcoded episode bundles — it always works offline |
+| **Graceful degradation** | If the LLM is unavailable, the environment **falls back** to **12 hardcoded offline episode bundles** — it always works offline |
 | **Stateless scalability** | The `episode_id` + `SESSIONS` pattern lets the autoRL loop run across **stateless HTTP workers** (e.g., HF Spaces) |
 | **Environment variables** | `ENABLE_DYNAMIC_SCENES`, `API_BASE_URL`, `HF_TOKEN` toggle the full autoRL loop on/off without code changes |
 
@@ -490,7 +490,7 @@ arjuna_env/
     ├── curriculum.py         # ★ Level 2: AutoCurriculum sliding-window tracker
     ├── tasks.py              # Grading + prompt formatting
     ├── grader.py             # Explicit re-exports of grading functions
-    ├── synthetic_data.py     # Fallback scenes (100% local, 8 bundles)
+    ├── synthetic_data.py     # Fallback scenes (100% local, 12 offline bundles)
     ├── openenv_web_patch.py  # Gradio: pass episode_id into step
     └── __init__.py
 ```
