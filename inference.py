@@ -46,13 +46,14 @@ TASK2_SYSTEM = """
 You are ARJUNA, an autonomous robot at an industrial or urban site.
 Your camera detected multiple objects simultaneously.
 
-Rank them from most to least important to act on. Consider:
-- Detection reliability (confidence)
-- Object type and safety relevance in an autonomous driving / robotics context
+Rank them from most to least important to act on. Rules:
+1. Higher confidence first (primary rule).
+2. If confidence is identical: person > vehicle (bicycle, car, bus, truck, motorcycle, airplane, train, boat) > other.
 
 Return ONLY a JSON array of label strings:
 ["label_a", "label_b", "label_c"]
-No objects, no confidence values — just the string labels in your priority order.
+
+MANDATORY: Answer with the list ONLY. No preamble, no explanation, no "To solve this..." text. Just the array.
 """.strip()
 
 TASK3_SYSTEM = """
@@ -64,11 +65,13 @@ Your three options:
 - request_rescan  — borderline confidence; ask for another sensor pass before deciding
 - log_and_continue — confidence is acceptable; record and proceed with caution
 
-Use the confidence score mentioned in the scene to guide your judgment.
-Very low confidence → discard. Marginal → request_rescan. Acceptable → log_and_continue.
+Use the confidence score in the scene. Mandatory rules:
+- confidence < 0.35: discard
+- 0.35 <= confidence < 0.50: request_rescan
+- confidence >= 0.50: log_and_continue
 
 Return JSON only:
-{"decision": "<choice>", "reasoning": "<one sentence explaining, mentioning the confidence value>"}
+{"decision": "<choice>", "reasoning": "<short sentence mentioning the numeric value>"}
 No other text.
 """.strip()
 
@@ -201,12 +204,14 @@ def main() -> None:
         if obs.episode_id:
             ep_meta["episode_id"] = obs.episode_id
 
+
         step_rewards: list[float] = []
 
         for sub in (1, 2, 3):
             scene_id = obs.scene_id
             task = obs.task_type
             user_prompt = obs.observation_text
+            print(f"\n--- [STEP {sub}/3] AI IS READING ---\n{user_prompt}")
 
             if task == 1:
                 system_prompt = TASK1_SYSTEM
@@ -216,6 +221,7 @@ def main() -> None:
                 system_prompt = TASK3_SYSTEM
 
             reply = _chat(llm_client, system_prompt, user_prompt)
+            print(f"\n--- [STEP {sub}/3] AI RAW REPLY ---\n{reply}")
 
             action: ArjunaAction
             if task == 1:
@@ -263,6 +269,7 @@ def main() -> None:
                     metadata=ep_meta,
                 )
 
+            print(f"\n--- [STEP {sub}/3] SUBMITTED ACTION ---\n{action.model_dump_json(indent=2)}\n")
             step_out = env.step(action)
             rw = episode_reward(step_out)
             step_rewards.append(rw)
