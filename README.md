@@ -581,16 +581,7 @@ python -m openenv.cli validate https://calpol500mg-arjuna-env.hf.space
 
 Uses **network + API key** (HF token). Example (**PowerShell**):
 
-```powershell
-$env:API_BASE_URL="https://router.huggingface.co/v1"
-$env:MODEL_NAME="meta-llama/Llama-3.3-70B-Instruct"
 $env:HF_TOKEN="your_hf_token_here"
-$env:ARJUNA_ENV_BASE_URL="http://127.0.0.1:7860"
-# Optional quota savers:
-$env:N_SEEDS="3"
-$env:MAX_TOKENS="80"
-$env:ENABLE_RETRY="0"
-
 python inference.py
 ```
 
