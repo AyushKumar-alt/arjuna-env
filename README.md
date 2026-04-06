@@ -174,23 +174,7 @@ The **12 themed bundles** ensure diverse training distributions across resets:
 
 ARJUNA implements a **closed-loop, self-improving training environment** inspired by Automatic Reinforcement Learning (AutoRL) principles. The two subsystems — **Dynamic Scene Generation** and **Auto-Curriculum** — work together in a feedback loop:
 
-```mermaid
-flowchart TD
-  subgraph AutoRL_Loop [AutoRL Loop]
-    A["Agent submits actions"] --> B["Grader scores episode"]
-    B --> C["Auto-Curriculum records reward"]
-    C --> D{"Mean reward vs thresholds"}
-    D -- "> 0.85" --> E["PROMOTE difficulty"]
-    D -- "< 0.60" --> F["DEMOTE difficulty"]
-    D -- "0.60-0.85" --> G["STAY at current level"]
-    E --> H["Scene Generator uses new difficulty"]
-    F --> H
-    G --> H
-    H --> I["LLM generates fresh scene at difficulty tier"]
-    I --> J["Agent receives new observation"]
-    J --> A
-  end
-```
+![AutoRL Loop Diagram](https://mermaid.ink/img/eyJjb2RlIjogImZsb3djaGFydCBURFxuICBzdWJncmFwaCBBdXRvUkxfTG9vcCBbQXV0b1JMIExvb3BdXG4gICAgQVtcIkFnZW50IHN1Ym1pdHMgYWN0aW9uc1wiXSAtLT4gQltcIkdyYWRlciBzY29yZXMgZXBpc29kZVwiXVxuICAgIEIgLS0-IENbXCJBdXRvLUN1cnJpY3VsdW0gcmVjb3JkcyByZXdhcmRcIl1cbiAgICBDIC0tPiBEe1wiTWVhbiByZXdhcmQgdnMgdGhyZXNob2xkc1wifVxuICAgIEQgLS0gXCI-IDAuODVcIiAtLT4gRVtcIlBST01PVEUgZGlmZmljdWx0eVwiXVxuICAgIEQgLS0gXCI8IDAuNjBcIiAtLT4gRltcIkRFTU9URSBkaWZmaWN1bHR5XCJdXG4gICAgRCAtLSBcIjAuNjAtMC44NVwiIC0tPiBHW1wiU1RBWSBhdCBjdXJyZW50IGxldmVsXCJdXG4gICAgRSAtLT4gSFtcIlNjZW5lIEdlbmVyYXRvciB1c2VzIG5ldyBkaWZmaWN1bHR5XCJdXG4gICAgRiAtLT4gSFxuICAgIEcgLS0-IEhcbiAgICBIIC0tPiBJW1wiTExNIGdlbmVyYXRlcyBmcmVzaCBzY2VuZSBhdCBkaWZmaWN1bHR5IHRpZXJcIl1cbiAgICBJIC0tPiBKW1wiQWdlbnQgcmVjZWl2ZXMgbmV3IG9ic2VydmF0aW9uXCJdXG4gICAgSiAtLT4gQVxuICBlbmQiLCAibWVybWFpZCI6IHsidGhlbWUiOiAiZGVmYXVsdCJ9fQ)
 
 ### Key design principles
 
@@ -650,38 +634,7 @@ A: Yes via OpenEnv’s stack; **`inference.py`** can pass metadata consistently.
 
 **Architecture (with autoRL loop):**
 
-```mermaid
-flowchart LR
-  subgraph client [Clients]
-    Web["Gradio /web"]
-    HTTP["HTTP /reset /step"]
-    Demo["demo.py"]
-    Inf["inference.py optional"]
-  end
-  subgraph server [Server — AutoRL Core]
-    App["server.app FastAPI"]
-    Env["ArjunaEnvironment"]
-    SceneGen["scene_generator.py — LLM Scenes"]
-    Curriculum["curriculum.py — Auto-Curriculum"]
-    Data["synthetic_data.py — Fallback"]
-    Grade["tasks.py / grader.py"]
-  end
-  subgraph llm [External LLM]
-    HF["HF Router / OpenAI API"]
-  end
-  Web --> App
-  HTTP --> App
-  Demo --> App
-  Inf --> App
-  App --> Env
-  Env -- "reset()" --> SceneGen
-  SceneGen -- "difficulty" --> Curriculum
-  SceneGen --> HF
-  SceneGen -- "fallback" --> Data
-  Env -- "step() grade" --> Grade
-  Grade -- "episode reward" --> Curriculum
-  Curriculum -- "promote/demote" --> SceneGen
-```
+![Architecture Diagram](https://mermaid.ink/img/eyJjb2RlIjogImZsb3djaGFydCBMUlxuICBzdWJncmFwaCBjbGllbnQgW0NsaWVudHNdXG4gICAgV2ViW1wiR3JhZGlvIC93ZWJcIl1cbiAgICBIVFRQW1wiSFRUUCAvcmVzZXQgL3N0ZXBcIl1cbiAgICBEZW1vW1wiZGVtby5weVwiXVxuICAgIEluZltcImluZmVyZW5jZS5weSBvcHRpb25hbFwiXVxuICBlbmRcbiAgc3ViZ3JhcGggc2VydmVyIFtTZXJ2ZXIgLSBBdXRvUkwgQ29yZV1cbiAgICBBcHBbXCJzZXJ2ZXIuYXBwIEZhc3RBUElcIl1cbiAgICBFbnZbXCJBcmp1bmFFbnZpcm9ubWVudFwiXVxuICAgIFNjZW5lR2VuW1wic2NlbmVfZ2VuZXJhdG9yLnB5IC0gTExNIFNjZW5lc1wiXVxuICAgIEN1cnJpY3VsdW1bXCJjdXJyaWN1bHVtLnB5IC0gQXV0by1DdXJyaWN1bHVtXCJdXG4gICAgRGF0YVtcInN5bnRoZXRpY19kYXRhLnB5IC0gRmFsbGJhY2tcIl1cbiAgICBHcmFkZVtcInRhc2tzLnB5IC8gZ3JhZGVyLnB5XCJdXG4gIGVuZFxuICBzdWJncmFwaCBsbG0gW0V4dGVybmFsIExMTV1cbiAgICBIRltcIkhGIFJvdXRlciAvIE9wZW5BSSBBUElcIl1cbiAgZW5kXG4gIFdlYiAtLT4gQXBwXG4gIEhUVFAgLS0-IEFwcFxuICBEZW1vIC0tPiBBcHBcbiAgSW5mIC0tPiBBcHBcbiAgQXBwIC0tPiBFbnZcbiAgRW52IC0tPnxcInJlc2V0KClcInwgU2NlbmVHZW5cbiAgU2NlbmVHZW4gLS0-fFwiZGlmZmljdWx0eVwifCBDdXJyaWN1bHVtXG4gIFNjZW5lR2VuIC0tPiBIRlxuICBTY2VuZUdlbiAtLT58XCJmYWxsYmFja1wifCBEYXRhXG4gIEVudiAtLT58XCJzdGVwKCkgZ3JhZGVcInwgR3JhZGVcbiAgR3JhZGUgLS0-fFwiZXBpc29kZSByZXdhcmRcInwgQ3VycmljdWx1bVxuICBDdXJyaWN1bHVtIC0tPnxcInByb21vdGUvZGVtb3RlXCJ8IFNjZW5lR2VuIiwgIm1lcm1haWQiOiB7InRoZW1lIjogImRlZmF1bHQifX0)
 
 ---
 
