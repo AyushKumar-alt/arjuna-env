@@ -46,6 +46,10 @@ PERSON_LABELS: Final[frozenset[str]] = frozenset(
     {"person", "man", "woman", "child", "pedestrian", "worker", "student", "hiker"}
 )
 
+ANIMAL_LABELS: Final[frozenset[str]] = frozenset(
+    {"dog", "cat", "bird", "bear", "horse", "sheep", "cow", "elephant", "zebra", "giraffe"}
+)
+
 
 def class_priority_rank(label: str) -> int:
     """
