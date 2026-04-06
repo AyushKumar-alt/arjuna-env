@@ -14,31 +14,12 @@ from .synthetic_data import (
     Task2Scene,
     Task3Scene,
     expected_low_confidence_action,
+    VEHICLE_LABELS,
+    PERSON_LABELS,
+    ANIMAL_LABELS,
 )
 
-VEHICLE_LABELS = {
-    "car",
-    "truck",
-    "bus",
-    "motorcycle",
-    "bicycle",
-    "airplane",
-    "train",
-    "boat",
-}
-PERSON_LABELS = {"person", "man", "woman", "child", "pedestrian"}
-ANIMAL_LABELS = {
-    "dog",
-    "cat",
-    "bird",
-    "horse",
-    "sheep",
-    "cow",
-    "elephant",
-    "bear",
-    "zebra",
-    "giraffe",
-}
+# Label sets are imported from synthetic_data.py to maintain a single source of truth.
 
 
 def _norm_label(s: str) -> str:

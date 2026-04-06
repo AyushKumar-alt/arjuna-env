@@ -58,9 +58,9 @@ TASK1_PROMPTS: dict[str, str] = {
     "easy": """Generate a Task 1 robot perception scene.
 Rules:
 - ONE object detected, confidence between 0.85-0.98
-- Object must be from thematic categories: person, car, truck (ambulance/forklift), bus,
-  bicycle, motorcycle, airplane, dog, bear, backpack, umbrella,
-  fire hydrant, stop sign, bench, chair, potted plant, laptop
+- Object must be from thematic categories: person (student/worker/hiker), car, truck (ambulance/forklift/excavator), bus,
+  bicycle, motorcycle, airplane, dog, bear, backpack, suitcase, umbrella,
+  fire hydrant, streetlight, stop sign, bench (wheelchair), chair, potted plant, laptop, helmet
 - Clear unambiguous scene description (daytime, good lighting)
 
 Return ONLY valid JSON, no other text:

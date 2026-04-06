@@ -88,18 +88,18 @@ Each bundle contains 3 scenes — one per task step — drawn from the same loca
 
 | # | Bundle | Task 1 Object | Task 2 Objects | Task 3 Confidence | Expected Action |
 |---|---|---|---|---|---|
-| 1 | **Urban Street** | person | car, bicycle, person | 0.24 | discard |
-| 2 | **Warehouse** | truck | person, truck, suitcase | 0.42 | request_rescan |
-| 3 | **Parking Lot** | car | car, person, parking meter | 0.65 | log_and_continue |
-| 4 | **School Zone** | bus | person, backpack, dog | 0.38 | request_rescan |
-| 5 | **Airport** | airplane | bus, person, suitcase | 0.19 | discard |
-| 6 | **Hospital Entrance** | truck | person, car, bench | 0.51 | log_and_continue |
-| 7 | **Construction Site** | truck | person, truck, stop sign | 0.44 | request_rescan |
-| 8 | **Night Street** | motorcycle | car, person, fire hydrant | 0.21 | discard |
-| 9 | **Forest Trail** | backpack | person, dog, bird | 0.28 | discard |
-| 10 | **Shopping Mall** | handbag | person, suitcase, chair | 0.46 | request_rescan |
-| 11 | **Office Lobby** | laptop | person, couch, potted plant | 0.54 | log_and_continue |
-| 12 | **Rainy Street** | umbrella | bus, car, umbrella | 0.38 | request_rescan |
+| 1 | **Urban Street** | person | car, bicycle, person, traffic light | 0.24 | discard |
+| 2 | **Warehouse** | forklift | worker, truck, forklift, carton | 0.42 | request_rescan |
+| 3 | **Parking Lot** | car | car, person, parking meter, CCTV camera | 0.31 | discard |
+| 4 | **School Zone** | bus | student, bicycle, backpack, bus | 0.38 | request_rescan |
+| 5 | **Airport** | airplane | airplane, suitcase, boarding gate, trolley | 0.19 | discard |
+| 6 | **Hospital Entrance** | ambulance | person, ambulance, wheelchair, stretcher | 0.51 | log_and_continue |
+| 7 | **Construction Site** | helmet | worker, excavator, crane, helmet | 0.44 | request_rescan |
+| 8 | **Night Street** | streetlight | motorcycle, person, fire hydrant, streetlight | 0.21 | discard |
+| 9 | **Forest Trail** | hiker | hiker, dog, backpack, tree | 0.28 | discard |
+| 10 | **Shopping Mall** | shopping bag | person, escalator, shopping bag, CCTV camera | 0.46 | request_rescan |
+| 11 | **Office Lobby** | laptop | person, couch, reception desk, potted plant | 0.54 | log_and_continue |
+| 12 | **Rainy Street** | raincoat | bus, car, person, umbrella | 0.38 | request_rescan |
 
 > **Task 3 Decision Bands:**
 > - `confidence < 0.35` → `discard`
@@ -155,18 +155,18 @@ The **12 themed bundles** ensure diverse training distributions across resets:
 
 | # | Bundle | Notable Objects |
 |---|---|---|
-| 1 | **Urban Street** | person, car, bicycle |
-| 2 | **Warehouse** | person, truck, suitcase (pallet) |
-| 3 | **Parking Lot** | car, person, parking meter |
-| 4 | **School Zone** | bus, person (student), backpack |
-| 5 | **Airport** | airplane, bus (shuttle), suitcase |
-| 6 | **Hospital Entrance** | truck (ambulance), person, bench (wheelchair) |
-| 7 | **Construction Site** | truck, person, stop sign |
-| 8 | **Night Street** | motorcycle, car, person, fire hydrant |
-| 9 | **Forest Trail** | backpack, dog, bear (Task 3) |
-| 10 | **Shopping Mall** | handbag, person, suitcase, chair |
-| 11 | **Office Lobby** | laptop, person, couch, potted plant |
-| 12 | **Rainy Street** | car, bus, umbrella, person |
+| 1 | **Urban Street** | person, car, bicycle, traffic light |
+| 2 | **Warehouse** | truck, forklift, carton, worker |
+| 3 | **Parking Lot** | car, parking meter, CCTV camera, person |
+| 4 | **School Zone** | bus, backpack, bicycle, student |
+| 5 | **Airport** | airplane, suitcase, boarding gate, trolley |
+| 6 | **Hospital Entrance** | ambulance, wheelchair, stretcher, person |
+| 7 | **Construction Site** | helmet, excavator, crane, worker |
+| 8 | **Night Street** | streetlight, fire hydrant, person, motorcycle |
+| 9 | **Forest Trail** | hiker, backpack, tree, dog |
+| 10 | **Shopping Mall** | person, escalator, shopping bag, CCTV camera |
+| 11 | **Office Lobby** | laptop, reception desk, couch, potted plant |
+| 12 | **Rainy Street** | umbrella, car, bus, raincoat |
 
 ---
 
