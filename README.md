@@ -561,104 +561,121 @@ python -m openenv.cli validate https://calpol500mg-arjuna-env.hf.space
 
 ---
 
-## Optional: LLM baseline (`inference.py`)
+## Optional: LLM Baseline (`inference.py`)
 
 Uses **network + API key** (HF token). Example (**PowerShell**):
 
+```powershell
 $env:HF_TOKEN="your_hf_token_here"
 python inference.py
 ```
 
 ---
 
-## Design notes
+## Design Notes
 
-- **AutoRL feedback loop:** The scene generator and curriculum form a closed loop — the agent's performance directly influences the difficulty of future scenes. This eliminates manual curriculum tuning.  
-- **Difficulty-aware prompting:** `scene_generator.py` uses **3 distinct prompt templates per task** (easy/medium/hard), controlling confidence ranges, object counts, and ambiguity levels at the prompt level.  
-- **Graceful fallback chain:** `LLM → validate → convert` or fall back to `synthetic_data.py`. The environment **never errors** due to LLM unavailability.  
-- **Stateless HTTP:** `episode_id` + module-level **`SESSIONS`** keeps **multi-step** episode state across requests (critical on HF Spaces).  
-- **Single action schema:** one **`ArjunaAction`** for all tasks; agents pick fields based on **`task_type`** on each observation.  
-- **Synthetic diversity:** **`EPISODE_BUNDLES`** tie three scenes to one theme; standalone **`TASK*_SCENES`** remain as fallback variety.  
-- **Sliding window curriculum:** Window clears on difficulty change, preventing stale data from influencing future promotions/demotions.  
-- **Playground UX:** `ranked_objects` string coercion and **`openenv_web_patch`** reduce friction for reviewers using **`/web`**.
+### System Architecture
+- **AutoRL Feedback Loop:** The scene generator and curriculum form a closed loop. The agent's performance directly influences the difficulty of future scenes, completely eliminating manual curriculum tuning.
+- **Graceful Fallback Chain:** The environment strictly uses `LLM → validate → convert` logic, but gracefully falls back to `synthetic_data.py`. The environment **never errors** due to LLM unavailability.
+- **Single Action Schema:** We use one unified `ArjunaAction` schema for all tasks. Agents easily select target fields based on the current `task_type`.
+
+### Curriculum & State
+- **Stateless HTTP:** An `episode_id` securely combined with module-level `SESSIONS` perfectly maps **multi-step** episode state across requests (critical for deployment on HF Spaces).
+- **Sliding Window Curriculum:** The history window clears entirely upon any difficulty change, strictly preventing stale data from improperly influencing future promotions or demotions.
+
+### Scene Generation & UX
+- **Difficulty-Aware Prompting:** `scene_generator.py` optimally uses **3 distinct prompt templates per task** (easy, medium, hard). This strictly sets confidence ranges, object counts, and precise ambiguity limits directly at the prompt level.
+- **Synthetic Diversity:** `EPISODE_BUNDLES` securely tie three unique scenes to one coherent theme, while standalone `TASK*_SCENES` logically persist as fallback variance.
+- **Playground UX:** Built-in `ranked_objects` string coercion, combined with our `openenv_web_patch`, greatly decreases friction for human reviewers interacting natively via `/web`.
 
 ---
 
 ## Troubleshooting
 
-| Issue | What to try |
-|--------|-------------|
-| `Call reset() before step()` | Call **`/reset`** (or **Reset** in UI) before **`step`**; send **`episode_id`** on HTTP; run **three** graded **Step** calls per episode (or **`Call reset()`** if the episode id expired). |
-| `only one usage of each socket address` | Another process uses the port; pick another `--port` or `taskkill` the old listener (see `netstat` / `findstr` on Windows). |
-| Docker `npipe` / cannot connect | Start **Docker Desktop** and wait until the engine is running. |
-| Playground `ranked_objects` validation | Use JSON array string or comma-separated labels (see [Gradio](#gradio-playground-web)). |
-| `/web` returns **404** | Start with **`ENABLE_WEB_INTERFACE=true`** **before** importing/running the app; rebuild/restart container if needed. |
-| HF `402` on `inference.py` | Inference quota exhausted; use smaller **`N_SEEDS`** / **`MAX_TOKENS`** or run **`demo.py`** offline. |
-| **`git push space` rejected (binary files)** | History may still contain binary blobs; use a **snapshot push** (see **`docs/PUSH_TO_HF_SPACE.md`**) or **[Hub Xet](https://huggingface.co/docs/hub/xet)**. |
-| **`sdk` must be one of [gradio, docker, …]** | README frontmatter must use **`sdk: docker`** (lowercase), with keys like **`title`**, **`colorFrom`**, not `Title` / `Sdk: Docker`. |
+### Connectivity & Ports
+- **Error:** `Call reset() before step()`
+  - **Solution:** Call `/reset` (or click **Reset** in UI) before `step`. Ensure you send the `episode_id` on HTTP, and gracefully run **three** graded Step calls per episode.
+- **Error:** `only one usage of each socket address`
+  - **Solution:** Another process is actively holding the port. Either switch using `--port` or securely `taskkill` the old listener (use `netstat` or `findstr` on Windows).
+- **Error:** Docker `npipe` / Cannot Connect
+  - **Solution:** Start **Docker Desktop** manually and wait until the core engine initializes.
+
+### Application & Deployment
+- **Error:** `/web` returns `404`
+  - **Solution:** You must start the environment with `$env:ENABLE_WEB_INTERFACE="true"` **before** importing/running the app. Rebuild/restart the container if needed.
+- **Error:** Playground `ranked_objects` validation failing
+  - **Solution:** Make sure to supply a standard JSON array string, or a securely comma-separated text list.
+- **Error:** HF `402` on `inference.py`
+  - **Solution:** LLM Inference quota exhausted! Rapidly supply smaller `N_SEEDS` or `MAX_TOKENS`, or pivot to relying on `demo.py` offline.
+
+### Hugging Face Ecosystem
+- **Error:** `git push space` rejected (binary files)
+  - **Solution:** Your Git history contains enormous binary blobs. Use a **snapshot push** (refer to `docs/PUSH_TO_HF_SPACE.md`) or explore integration with **Hub Xet**.
+- **Error:** `sdk` must be one of [gradio, docker, ...]
+  - **Solution:** The README frontmatter strictly requires you use `sdk: docker` (all lowercase). Supply valid parameters like `title` and `colorFrom` (never `Title`).
 
 ---
 
 ## FAQ
 
-**Q: Does the Space need my API key?**  
-A: The **environment** does not. Only **`inference.py`** (external LLM) needs a token.
+### 🔑 Authentication
+**Q: Does the Space itself require my API key?**  
+A: The environment does **not**. Only `inference.py` (which directly hits an external LLM) requires a live token.
 
-**Q: Where is the “source of truth” for correct answers?**  
-A: **`server/synthetic_data.py`** (expected labels, orderings, task 3 bands).
+### 📌 Development
+**Q: Where is the ultimate “source of truth” for correct answers?**  
+A: Examine `server/synthetic_data.py`. It holds the expected labels, rigorous priority orderings, and task 3 decision bands.
 
-**Q: Why is `episode_id` required on HTTP step?**  
-A: Workers may be stateless; **`SESSIONS[episode_id]`** ties **reset** and **step** together.
+**Q: Why is passing `episode_id` strictly required on HTTP step payloads?**  
+A: Server workers are technically stateless; therefore `SESSIONS[episode_id]` accurately links your initialization and graded steps.
 
-**Q: Is WebSocket supported?**  
-A: Yes via OpenEnv’s stack; **`inference.py`** can pass metadata consistently. HTTP remains the primary “curl-friendly” path.
-
----
-
-## Future improvements
-
-- Add a **`tests/`** package with parametrized grading and HTTP contract tests.  
-- Optional **`gradio_builder`** “Custom” tab with task-aware field visibility.
+**Q: Is full WebSocket transport supported natively?**  
+A: Yes, inherently via OpenEnv’s core system. That said, HTTP firmly remains the primary “curl-friendly” interaction path.
 
 ---
 
-## Visuals & architecture
+## Future Improvements
 
-**Try the live UI** (no installation required):
+- Add a robust `tests/` package strictly loaded with parametrically verified grading logic and HTTP contract tests.
+- Develop an optional `gradio_builder` “Custom” UI tab featuring state-aware parameter visibility to further mature UX.
 
-| What | Live URL |
-|------|----------|
-| **Gradio Playground** | [calpol500mg-arjuna-env.hf.space/web](https://calpol500mg-arjuna-env.hf.space/web) |
-| **Swagger / OpenAPI** | [calpol500mg-arjuna-env.hf.space/docs](https://calpol500mg-arjuna-env.hf.space/docs) |
-| **Curriculum Status** | [calpol500mg-arjuna-env.hf.space/curriculum](https://calpol500mg-arjuna-env.hf.space/curriculum) |
+---
 
-**Architecture (with autoRL loop):**
+## Visuals & Architecture
+
+**Try the live UI** (no local installation required to evaluate):
+
+- 🌐 **Gradio Playground:** [calpol500mg-arjuna-env.hf.space/web](https://calpol500mg-arjuna-env.hf.space/web)
+- 📖 **Swagger / OpenAPI:** [calpol500mg-arjuna-env.hf.space/docs](https://calpol500mg-arjuna-env.hf.space/docs)
+- 📊 **Curriculum Status:** [calpol500mg-arjuna-env.hf.space/curriculum](https://calpol500mg-arjuna-env.hf.space/curriculum)
+
+### Architecture (With AutoRL Loop)
 
 ![Architecture Diagram](https://mermaid.ink/img/eyJjb2RlIjogImZsb3djaGFydCBMUlxuICBzdWJncmFwaCBjbGllbnQgW0NsaWVudHNdXG4gICAgV2ViW1wiR3JhZGlvIC93ZWJcIl1cbiAgICBIVFRQW1wiSFRUUCAvcmVzZXQgL3N0ZXBcIl1cbiAgICBEZW1vW1wiZGVtby5weVwiXVxuICAgIEluZltcImluZmVyZW5jZS5weSBvcHRpb25hbFwiXVxuICBlbmRcbiAgc3ViZ3JhcGggc2VydmVyIFtTZXJ2ZXIgLSBBdXRvUkwgQ29yZV1cbiAgICBBcHBbXCJzZXJ2ZXIuYXBwIEZhc3RBUElcIl1cbiAgICBFbnZbXCJBcmp1bmFFbnZpcm9ubWVudFwiXVxuICAgIFNjZW5lR2VuW1wic2NlbmVfZ2VuZXJhdG9yLnB5IC0gTExNIFNjZW5lc1wiXVxuICAgIEN1cnJpY3VsdW1bXCJjdXJyaWN1bHVtLnB5IC0gQXV0by1DdXJyaWN1bHVtXCJdXG4gICAgRGF0YVtcInN5bnRoZXRpY19kYXRhLnB5IC0gRmFsbGJhY2tcIl1cbiAgICBHcmFkZVtcInRhc2tzLnB5IC8gZ3JhZGVyLnB5XCJdXG4gIGVuZFxuICBzdWJncmFwaCBsbG0gW0V4dGVybmFsIExMTV1cbiAgICBIRltcIkhGIFJvdXRlciAvIE9wZW5BSSBBUElcIl1cbiAgZW5kXG4gIFdlYiAtLT4gQXBwXG4gIEhUVFAgLS0-IEFwcFxuICBEZW1vIC0tPiBBcHBcbiAgSW5mIC0tPiBBcHBcbiAgQXBwIC0tPiBFbnZcbiAgRW52IC0tPnxcInJlc2V0KClcInwgU2NlbmVHZW5cbiAgU2NlbmVHZW4gLS0-fFwiZGlmZmljdWx0eVwifCBDdXJyaWN1bHVtXG4gIFNjZW5lR2VuIC0tPiBIRlxuICBTY2VuZUdlbiAtLT58XCJmYWxsYmFja1wifCBEYXRhXG4gIEVudiAtLT58XCJzdGVwKCkgZ3JhZGVcInwgR3JhZGVcbiAgR3JhZGUgLS0-fFwiZXBpc29kZSByZXdhcmRcInwgQ3VycmljdWx1bVxuICBDdXJyaWN1bHVtIC0tPnxcInByb21vdGUvZGVtb3RlXCJ8IFNjZW5lR2VuIiwgIm1lcm1haWQiOiB7InRoZW1lIjogImRlZmF1bHQifX0)
 
 ---
 
-## Credits and acknowledgements
+## Credits and Acknowledgements
 
 - **[OpenEnv](https://github.com/meta-pytorch/OpenEnv)** — Meta & Hugging Face, HTTP/WebSocket environment interface.  
 - **FastAPI**, **Pydantic**, **uvicorn**, **Gradio** (via OpenEnv UI).  
-- Synthetic scenes and grading authored for this **ARJUNA Perception** hackathon project.
+- Synthetic scenes and robust grading authored specifically for this **ARJUNA Perception** hackathon project.
 
 ---
 
 ## License
 
-This project is released under the **MIT License** — see the [`LICENSE`](LICENSE) file in the repository root.
+This architecture project is gracefully released under the **MIT License** — rigidly reference the [`LICENSE`](LICENSE) file reliably housed in your repository root.
 
 ---
 
-## Maintainer / contact
+## Maintainer / Contact
 
-- **Author:** Ayush Kumar  
-- **HF Space:** [Calpol500mg/arjuna-env](https://huggingface.co/spaces/Calpol500mg/arjuna-env)  
-- **Live app:** [calpol500mg-arjuna-env.hf.space](https://calpol500mg-arjuna-env.hf.space)
+- 👤 **Author:** Ayush Kumar  
+- 🚀 **HF Space:** [Calpol500mg/arjuna-env](https://huggingface.co/spaces/Calpol500mg/arjuna-env)  
+- 🌍 **Live App:** [calpol500mg-arjuna-env.hf.space](https://calpol500mg-arjuna-env.hf.space)
 
-For reviewer questions, use the Space **Community** tab or GitHub **Issues**: [github.com/AyushKumar-alt/arjuna-env/issues](https://github.com/AyushKumar-alt/arjuna-env/issues).
+For architecture issues or reviewer questions, please dynamically interact with the Space **Community** tab or GitHub **Issues** page: [github.com/AyushKumar-alt/arjuna-env/issues](https://github.com/AyushKumar-alt/arjuna-env/issues).
 
 ---
 
