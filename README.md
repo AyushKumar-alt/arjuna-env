@@ -9,8 +9,8 @@ pinned: false
 
 # ARJUNA Perception Environment
 
-**Name:** Arjuna Perception Environment (`arjuna-perception-env` in OpenEnv metadata)  
-**One-liner:** A simulated robot **vision / perception** environment where an agent reads YOLO-style scene descriptions and is scored on identification, triage, and low-confidence decisions—built on **OpenEnv**.
+Arjuna Perception Environment (`arjuna-perception-env` in OpenEnv metadata)  
+A simulated robot **vision / perception** environment where an agent reads YOLO-style scene descriptions and is scored on identification, triage, and low-confidence decisions—built on **OpenEnv**.
 
 ## What does this environment do?
 
