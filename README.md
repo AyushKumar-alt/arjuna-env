@@ -51,7 +51,7 @@ python demo.py
 | Environment server | server/app.py | HTTP endpoints |
 | Episode logic | server/arjuna_environment.py | reset/step/state |
 | Task graders | server/tasks.py, server/grader.py | reward logic |
-| Synthetic scenes | server/synthetic_data.py | 8 episode bundles |
+| Synthetic scenes | server/synthetic_data.py | **12 offline episode bundles** |
 | Data models | models.py | typed actions/observations |
 | Offline demo | demo.py | heuristic agent, no LLM |
 
@@ -78,6 +78,33 @@ All of these work with **zero network calls**:
 - `GET /schema` → returns typed schemas
 - `GET /metadata` → returns environment info
 - `python demo.py` → full 3-step episode, heuristic policy
+
+---
+
+## Episode Bundles — 12 Offline Scenarios
+
+All 12 bundles are hardcoded in `server/synthetic_data.py` and require **zero network calls**.
+Each bundle contains 3 scenes — one per task step — drawn from the same location theme.
+
+| # | Bundle | Task 1 Object | Task 2 Objects | Task 3 Confidence | Expected Action |
+|---|---|---|---|---|---|
+| 1 | **Urban Street** | person | person, car, bicycle, traffic light | 0.30 | discard |
+| 2 | **Warehouse** | truck | person, truck, suitcase, traffic cone | 0.42 | request_rescan |
+| 3 | **Parking Lot** | car | car, person, bicycle, traffic cone | 0.65 | log_and_continue |
+| 4 | **School Zone** | bus | bus, person, bicycle, dog | 0.38 | request_rescan |
+| 5 | **Airport** | airplane | airplane, person, truck, traffic cone | 0.19 | discard |
+| 6 | **Hospital Entrance** | person | truck, person, car, traffic cone | 0.51 | log_and_continue |
+| 7 | **Construction Site** | truck | person, truck, stop sign, traffic cone | 0.44 | request_rescan |
+| 8 | **Night Street** | bicycle | bicycle, person, car | 0.21 | discard |
+| 9 | **Forest Trail** | dog | person, dog, bird | 0.28 | discard |
+| 10 | **Shopping Mall** | umbrella | person, suitcase, chair | 0.46 | request_rescan |
+| 11 | **Office Lobby** | laptop | person, couch, bottle | 0.54 | log_and_continue |
+| 12 | **Rainy Street** | car | bus, person, umbrella | 0.38 | request_rescan |
+
+> **Task 3 Decision Bands:**
+> - `confidence < 0.35` → `discard`
+> - `0.35 ≤ confidence < 0.50` → `request_rescan`
+> - `confidence ≥ 0.50` → `log_and_continue`
 
 ---
 
