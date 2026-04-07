@@ -132,8 +132,30 @@ class ArjunaEnvironment(Environment):
         # Fallback: hardcoded synthetic_data.py bundles
         if seed is not None:
             self._rng.seed(seed)
-        bundle = self._rng.choice(sd.EPISODE_BUNDLES)
-        logger.debug("Using synthetic bundle: %s", bundle.bundle_id)
+            
+        # Map static bundles to matching offline curriculum tiers
+        from server.curriculum import get_current_difficulty
+        fallback_difficulty = get_current_difficulty()
+        
+        easy_names = {"Forest Trail", "Office Lobby", "Airport"}
+        medium_names = {"Urban Street", "Parking Lot", "School Zone", "Hospital Entrance"}
+        hard_names = {"Construction Site", "Night Street", "Rainy Street", "Shopping Mall", "Warehouse"}
+        
+        valid_bundles = []
+        for b in sd.EPISODE_BUNDLES:
+            if fallback_difficulty == "easy" and b.name in easy_names:
+                valid_bundles.append(b)
+            elif fallback_difficulty == "hard" and b.name in hard_names:
+                valid_bundles.append(b)
+            elif fallback_difficulty == "medium" and b.name in medium_names:
+                valid_bundles.append(b)
+                
+        # If something went wrong, failsafe to all bundles
+        if not valid_bundles:
+            valid_bundles = sd.EPISODE_BUNDLES
+            
+        bundle = self._rng.choice(valid_bundles)
+        logger.debug("Using synthetic bundle: %s mapped to tier: %s", bundle.bundle_id, fallback_difficulty)
         return bundle
 
     def _observation_for_active_step(self, bundle: sd.EpisodeBundle, active: int) -> tuple[str, str, int]:
