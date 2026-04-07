@@ -377,13 +377,27 @@ obs = await env.reset(seed=42)
 
 ## Auto-Curriculum Learning (Level 2)
 
-The environment **automatically adjusts difficulty** based on the agent's recent performance, completing the autoRL feedback loop. The `AutoCurriculum` class in `server/curriculum.py` uses a **sliding window** of the last 5 episode rewards:
+The environment **automatically adjusts difficulty** based on the agent's recent performance, completing the autoRL feedback loop. The `AutoCurriculum` class in `server/curriculum.py` uses a sliding window of recent episode rewards to decide when to increase or decrease difficulty.
+
+STABILITY NOTE: Window is cleared on every difficulty change to prevent "Policy Oscillation" and ensure the agent stabilizes at the new level.
 
 ```
 Agent mean reward ≥ 0.85 → PROMOTE to harder difficulty  (easy→medium→hard)
 Agent mean reward < 0.60 → DEMOTE  to easier difficulty  (hard→medium→easy)
 Otherwise                → STAY    at current difficulty
 ```
+
+### Automatic Complexity Scaling 
+
+The dual-axis plot below tracks a simulated agent. As the Agent's Reward climbs and stabilizes, the Environment seamlessly promotes the difficulty layer, preventing vanishing gradients while guaranteeing continuous mastery.
+
+![Curriculum Scaling](docs/curriculum_scaling.png)
+
+### Out-Of-Distribution (OOD) Generalization
+
+Because our Auto-Curriculum is intrinsically chained to **Dynamic Scene Generation**, our approach specifically targets OOD robustness—an explicit priority for the OpenEnv track. Instead of plateauing on static dataset memorization, the agent confronts an infinite array of dynamically scoped edge-cases that maintain challenge across its entire lifecycle.
+
+![OOD Robustness: Static vs Dynamic](docs/static_vs_dynamic.png)
 
 ### Curriculum internals
 
@@ -581,7 +595,19 @@ python inference.py
 
 ### Curriculum & State
 - **Stateless HTTP:** An `episode_id` securely combined with module-level `SESSIONS` perfectly maps **multi-step** episode state across requests (critical for deployment on HF Spaces).
-- **Sliding Window Curriculum:** The history window clears entirely upon any difficulty change, strictly preventing stale data from improperly influencing future promotions or demotions.
+- **Sliding window curriculum:** Window clears on difficulty change, preventing stale data from influencing future promotions/demotions.  
+- **Playground UX:** `ranked_objects` string coercion and **`openenv_web_patch`** reduce friction for reviewers using **`/web`**.
+
+### Design Rationale
+
+| Parameter | Choice | Justification |
+|-----------|--------|---------------|
+| **Window Size** | `5` | Balances noise reduction with responsiveness; prevents unearned spikes. |
+| **Min Episodes** | `3` | Ensures statistical significance before triggering a level change. |
+| **Promote/Demote**| `0.85 / 0.60` | High bar for "Mastery" (Hard level) vs. conservative safety floor (Easy). |
+| **Window Flushing**| `Enabled` | Prevents "Policy Oscillation" by requiring a fresh proof of skill at each new tier. |
+
+---
 
 ### Scene Generation & UX
 - **Difficulty-Aware Prompting:** `scene_generator.py` optimally uses **3 distinct prompt templates per task** (easy, medium, hard). This strictly sets confidence ranges, object counts, and precise ambiguity limits directly at the prompt level.

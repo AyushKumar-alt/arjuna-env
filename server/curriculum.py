@@ -11,6 +11,9 @@ Difficulty progression:
 
 Uses a sliding window of recent episode rewards to decide
 when to increase or decrease difficulty.
+
+STABILITY NOTE: Window is cleared on every difficulty change to prevent 
+"Policy Oscillation" and ensure the agent stabilizes at the new level.
 """
 
 from __future__ import annotations
