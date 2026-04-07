@@ -260,17 +260,16 @@ class ArjunaEnvironment(Environment):
         SESSIONS.pop(episode_id, None)
 
         # Level 2: record episode reward for auto-curriculum
-        if os.environ.get("ENABLE_DYNAMIC_SCENES", "false").lower() in ("true", "1", "yes"):
-            try:
-                from server.curriculum import record_episode
-                curriculum_result = record_episode(overall)
-                logger.info(
-                    "Curriculum update: %s → difficulty now: %s",
-                    curriculum_result["reason"],
-                    curriculum_result["difficulty_after"],
-                )
-            except Exception as exc:  # pragma: no cover
-                logger.warning("Curriculum record skipped: %s", exc)
+        try:
+            from server.curriculum import record_episode
+            curriculum_result = record_episode(overall)
+            logger.info(
+                "Curriculum update: %s → difficulty now: %s",
+                curriculum_result["reason"],
+                curriculum_result["difficulty_after"],
+            )
+        except Exception as exc:  # pragma: no cover
+            logger.warning("Curriculum record skipped: %s", exc)
 
         if sync_state and self._state.episode_id == episode_id:
             self._state.step_count += 1
