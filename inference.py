@@ -12,6 +12,8 @@ Optional:
 
 from __future__ import annotations
 
+import csv
+import datetime
 import json
 import os
 import random
@@ -276,6 +278,25 @@ def main() -> None:
             per_task[task].append(rw)
             print(f"STEP {sub}/3 reward={rw:.3f}")
 
+            # CSV Logger: Audit Trail for Environment Grading
+            try:
+                bundle_match = re.search(r"Bundle:\s*(.*?)(\n|$)", user_prompt)
+                bundle_name = bundle_match.group(1).strip() if bundle_match else "Unknown"
+                with open('inference_audit_log.csv', mode='a', newline='', encoding='utf-8') as f:
+                    writer = csv.writer(f)
+                    if f.tell() == 0:
+                        writer.writerow(["Timestamp", "Episode_ID", "Task_Type", "Bundle", "Agent_Action", "Reward"])
+                    writer.writerow([
+                        datetime.datetime.now().isoformat(sep=' ', timespec='seconds'),
+                        ep_meta.get("episode_id", "unknown"),
+                        f"Task {task}",
+                        bundle_name,
+                        action.model_dump_json(exclude_unset=True),
+                        f"{rw:.3f}"
+                    ])
+            except Exception as e:
+                print(f"  [Log Error] {e}")
+
             obs = step_out.observation
             if step_out.done:
                 overall = (
@@ -355,6 +376,7 @@ def main() -> None:
                     raise
             all_episode_means.append(overall)
             completed_episodes += 1
+            import time; time.sleep(3)  # Slow down to prevent Hugging Face free-tier rate limits
 
     print("---")
     for t in (1, 2, 3):
