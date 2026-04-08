@@ -4,6 +4,7 @@ Task definitions and grader functions for ARJUNA perception (scores in [0.0, 1.0
 
 from __future__ import annotations
 
+import difflib
 import json
 import re
 from typing import Any, Iterable
@@ -72,33 +73,23 @@ def grade_task1_identification(
 
 def grade_task2_triage(predicted_rank: list[str] | None, scene: Task2Scene) -> float:
     """
-    Granular reward by how many positions match ground truth (including tie-break order).
+    Grades the triage ranking using sequence alignment.
 
-    - all positions correct -> 1.0
-    - n-1 positions correct -> 0.85
-    - n-2 positions correct -> 0.65
-    - exactly 1 position correct -> 0.33
-    - none correct -> 0.0
-
-    Length must match ground truth or the score is 0.0.
+    Why this is better:
+    - Handles length mismatches (hallucinations/omissions) gracefully.
+    - Penalizes out-of-order items softly instead of binary failure.
+    - Returns a continuous gradient (0.0 to 1.0) for better RL convergence.
     """
     expected = _norm_list(scene.expected_priority)
+    if not expected:
+        return 1.0 if not predicted_rank else 0.0
     if not predicted_rank:
         return 0.0
+
     pred = _norm_list(predicted_rank)
-    if len(pred) != len(expected):
-        return 0.0
-    n = len(expected)
-    correct = sum(1 for i in range(n) if pred[i] == expected[i])
-    if correct == n:
-        return 1.0
-    if n >= 2 and correct == n - 1:
-        return 0.85
-    if n >= 3 and correct == n - 2:
-        return 0.65
-    if correct == 1:
-        return 0.33
-    return 0.0
+    matcher = difflib.SequenceMatcher(None, expected, pred)
+    score = matcher.ratio()
+    return float(score)
 
 
 def _normalize_decision(raw: str | None) -> LowConfidenceAction | None:

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arjuna-env"
+version = "1.0.0"
+description = "ARJUNA perception OpenEnv environment for sequential robot vision training."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+keywords = ["openenv", "reinforcement-learning", "robotics", "perception", "yolo"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Framework :: FastAPI",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "License :: OSI Approved :: MIT License",
+]
+authors = [
+  { name = "Ayush Kumar" },
+]
+dependencies = [
+  "openenv-core[core]>=0.2.2",
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.24.0",
+  "pydantic>=2.0.0",
+  "openai>=1.0.0",
+]
