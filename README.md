@@ -202,7 +202,7 @@ ARJUNA implements a **closed-loop, self-improving training environment** inspire
 
 | Principle | Implementation |
 |-----------|----------------|
-| **No memorization** | The LLM generates a **unique scene every `reset()`** — the agent can never memorize fixed scenarios |
+| **No memorization** | The LLM generates a **unique scene every `reset()`** — ensures Out-of-Distribution (OOD) robustness by preventing catastrophic overfitting to static datasets |
 | **Adaptive difficulty** | A sliding-window curriculum automatically **promotes/demotes** difficulty based on recent performance |
 | **Graceful degradation** | If the LLM is unavailable, the environment **falls back** to **12 hardcoded offline episode bundles** — it always works offline |
 | **Stateless scalability** | The `episode_id` + `SESSIONS` pattern lets the autoRL loop run across **stateless HTTP workers** (e.g., HF Spaces) |
