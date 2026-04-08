@@ -117,7 +117,7 @@ Unlike basic sparse-reward environments (where an agent receives a binary `1.0` 
 ## Zero-Shot Baseline & Environment Audit Logging
 
 To prove that the ARJUNA environment accurately evaluates edge cases without requiring a days-long backpropagation training loop, this repository includes a **Zero-Shot Baseline Agent** (`inference.py`).
-* **Baseline Validation:** We use an un-tuned LLM (Llama-3/Groq) to blindly attempt the environment. The LLM naturally gets "stuck" in the Medium difficulty tier because the environment rigorously enforces triage tie-breakers—proving the tier correctly demands a proper RL learning policy to beat.
+* **Baseline Validation:** We use an un-tuned LLM (Llama-3/Groq) to blindly attempt the environment. The LLM naturally gets "stuck" in the Medium difficulty tier because the environment rigorously enforces triage tie-breakers—confirming that higher tiers require policy-gradient optimization or fine-tuning beyond zero-shot capabilities.
 * **Audit Trail Logger:** The environment outputs a standardized `inference_audit_log.csv` of all interactions. This allows researchers to analyze agent failure points (incorrect sequence alignments, failed confidence thresholds) and evaluate the distribution of Dense Rewards over an RL training session.
 
 **Sample Audit Log Output (Active transition into the Hard Tier):**
