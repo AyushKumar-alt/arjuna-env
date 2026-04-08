@@ -7,10 +7,6 @@ sdk: docker
 pinned: false
 ---
 
-# ARJUNA: A Dynamic Auto-Curriculum Environment for training robust RL agents
-
-Arjuna Perception Environment (`arjuna-perception-env` in OpenEnv metadata)  
-A simulated robot **vision / perception training ground** where agents evaluate YOLO-style scene descriptions and are rigorously evaluated using mathematical Dense Rewards and Auto-Curriculum scaling.
 
 # ARJUNA: Dynamic Auto-Curriculum for Robust Perception
 ### An OpenEnv-Compliant Framework for Generalizable Reinforcement Learning
