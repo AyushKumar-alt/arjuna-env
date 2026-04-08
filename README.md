@@ -7,10 +7,10 @@ sdk: docker
 pinned: false
 ---
 
-# ARJUNA Perception Environment
+# ARJUNA: A Dynamic Auto-Curriculum Environment for training robust RL agents
 
 Arjuna Perception Environment (`arjuna-perception-env` in OpenEnv metadata)  
-A simulated robot **vision / perception** environment where an agent reads YOLO-style scene descriptions and is scored on identification, triage, and low-confidence decisions—built on **OpenEnv**.
+A simulated robot **vision / perception training ground** where agents evaluate YOLO-style scene descriptions and are rigorously evaluated using mathematical Dense Rewards and Auto-Curriculum scaling.
 
 ## What does this environment do?
 
@@ -105,6 +105,28 @@ Each bundle contains 3 scenes — one per task step — drawn from the same loca
 > - `confidence < 0.35` → `discard`
 > - `0.35 ≤ confidence < 0.50` → `request_rescan`
 > - `confidence ≥ 0.50` → `log_and_continue`
+
+## Dense Reward Mechanism (Sequence Alignment)
+
+Unlike basic sparse-reward environments (where an agent receives a binary `1.0` or `0.0`), ARJUNA uses **Dense Rewards** powered by Levenshtein Edit Distance (`SequenceMatcher`).
+* **Differentiable Feedback:** When an agent attempts the Multi-Object Triage task, sequence alignment provides a granular gradient of success (e.g. `0.50`, `0.83`, `1.00`).
+* **Accelerated Convergence:** Enabling the agent to learn from partial successes and severely penalizing verbosity (extra hallucinated objects) significantly accelerates RL convergence and mirrors modern Reward Model (RM) techniques.
+
+---
+
+## Zero-Shot Baseline & Environment Audit Logging
+
+To prove that the ARJUNA environment accurately evaluates edge cases without requiring a days-long backpropagation training loop, this repository includes a **Zero-Shot Baseline Agent** (`inference.py`).
+* **Baseline Validation:** We use an un-tuned LLM (Llama-3/Groq) to blindly attempt the environment. The LLM naturally gets "stuck" in the Medium difficulty tier because the environment rigorously enforces triage tie-breakers—proving the tier correctly demands a proper RL learning policy to beat.
+* **Audit Trail Logger:** The environment outputs a standardized `inference_audit_log.csv` of all interactions. This allows researchers to analyze agent failure points (incorrect sequence alignments, failed confidence thresholds) and evaluate the distribution of Dense Rewards over an RL training session.
+
+**Sample Audit Log Output (Active transition into the Hard Tier):**
+```csv
+Timestamp,Episode_ID,Task_Type,Bundle,Agent_Action,Reward
+2026-04-08 05:38:09,5c89a...,Task 3,Hospital Entrance,"{""decision"":""log_and_continue""}",1.000
+2026-04-08 05:38:12,21bba...,Task 2,Parking Lot,"{""ranked"":[""person"",""car"",""meter""]}",0.650
+2026-04-08 05:38:29,f7893...,Task 2,Rainy Street,"{""ranked"":[""bus"",""car"",""person"",""umbrella""]}",1.000
+```
 
 ---
 
