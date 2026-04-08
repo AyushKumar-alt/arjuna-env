@@ -12,6 +12,11 @@ pinned: false
 Arjuna Perception Environment (`arjuna-perception-env` in OpenEnv metadata)  
 A simulated robot **vision / perception training ground** where agents evaluate YOLO-style scene descriptions and are rigorously evaluated using mathematical Dense Rewards and Auto-Curriculum scaling.
 
+# ARJUNA: Dynamic Auto-Curriculum for Robust Perception
+### An OpenEnv-Compliant Framework for Generalizable Reinforcement Learning
+
+**ARJUNA** (`arjuna-perception-env`) is a simulated robot perception testbed designed to solve the **Generalization Gap** in RL. By integrating a **Rule-Based Auto-Curriculum** with **Dense Sequence Alignment Rewards**, it forces agents to master **Out-of-Distribution (OOD)** scenarios—from clean urban streets to chaotic, low-visibility edge cases—without manual tuning.
+
 ## What does this environment do?
 
 ARJUNA is an autonomous robot whose “eyes” are simulated here. Each **episode** is a **3-step sequence** (identify → triage → decide) over one **themed bundle** of scenes (see `EPISODE_BUNDLES` in `server/synthetic_data.py`). The agent receives **natural-language observations** with fake detections and must emit a structured **action** per step. The **grader** returns a **per-step reward in \[0, 1\]**, and after step 3 an **`overall_reward`** (mean of the three steps) plus **feedback**—without real cameras, cloud databases, or (for the env itself) any external API.
