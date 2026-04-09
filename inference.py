@@ -185,6 +185,27 @@ def episode_reward(step_result: StepResult[ArjunaObservation]) -> float:
     return float(step_result.observation.reward or 0.0)
 
 
+
+def log_start(task: str, env: str, model: str) -> None:
+    print(f"[START] task={task} env={env} model={model}", flush=True)
+
+def log_step(step: int, action: str, reward: float, done: bool, error=None) -> None:
+    error_val = error if error else "null"
+    done_val = str(done).lower()
+    print(
+        f"[STEP] step={step} action={action} reward={reward:.2f} "
+        f"done={done_val} error={error_val}",
+        flush=True
+    )
+
+def log_end(success: bool, steps: int, score: float, rewards: list) -> None:
+    rewards_str = ",".join(f"{r:.2f}" for r in rewards)
+    print(
+        f"[END] success={str(success).lower()} steps={steps} "
+        f"score={score:.3f} rewards={rewards_str}",
+        flush=True
+    )
+
 def main() -> None:
     if not HF_TOKEN:
         print("Error: HF_TOKEN is not set.")
@@ -197,142 +218,173 @@ def main() -> None:
     all_episode_means: list[float] = []
 
     def run_episode(env: ArjunaEnv, llm_client: OpenAI, seed: int, ep_idx: int) -> float:
-        reset_out = env.reset(seed=seed)
-        obs = reset_out.observation
-
-        print(f"START Episode {ep_idx} (seed={seed})")
-
-        ep_meta: dict[str, Any] = {}
-        if obs.episode_id:
-            ep_meta["episode_id"] = obs.episode_id
-
-
+        log_start(
+            task="arjuna-perception",
+            env="arjuna-perception-env",
+            model=MODEL_NAME
+        )
         step_rewards: list[float] = []
+        try:
+            reset_out = env.reset(seed=seed)
+            obs = reset_out.observation
 
-        for sub in (1, 2, 3):
-            scene_id = obs.scene_id
-            task = obs.task_type
-            user_prompt = obs.observation_text
-            print(f"\n--- [STEP {sub}/3] AI IS READING ---\n{user_prompt}")
+            print(f"START Episode {ep_idx} (seed={seed})")
 
-            if task == 1:
-                system_prompt = TASK1_SYSTEM
-            elif task == 2:
-                system_prompt = TASK2_SYSTEM
-            else:
-                system_prompt = TASK3_SYSTEM
+            ep_meta: dict[str, Any] = {}
+            if obs.episode_id:
+                ep_meta["episode_id"] = obs.episode_id
 
-            reply = _chat(llm_client, system_prompt, user_prompt)
-            print(f"\n--- [STEP {sub}/3] AI RAW REPLY ---\n{reply}")
 
-            action: ArjunaAction
-            if task == 1:
-                label = reply.strip().lower()
-                if not label:
-                    label = parse_task1_label(reply)
-                action = ArjunaAction(task1_label=label, metadata=ep_meta)
-            elif task == 2:
-                ranked: List[str] = []
-                array_block = _extract_first_json_array_block(reply)
-                parsed_any = False
-                if array_block is not None:
-                    try:
-                        parsed = json.loads(array_block)
-                        parsed_any = True
-                        if isinstance(parsed, list):
-                            for item in parsed:
-                                if isinstance(item, str):
-                                    label = item.strip().lower()
-                                    if label:
-                                        ranked.append(label)
-                                    continue
-                                if isinstance(item, dict) and "label" in item:
-                                    raw_label = item.get("label")
-                                    if raw_label is not None:
-                                        label = str(raw_label).strip().lower()
+            for sub in (1, 2, 3):
+                scene_id = obs.scene_id
+                task = obs.task_type
+                user_prompt = obs.observation_text
+                print(f"\n--- [STEP {sub}/3] AI IS READING ---\n{user_prompt}")
+
+                if task == 1:
+                    system_prompt = TASK1_SYSTEM
+                elif task == 2:
+                    system_prompt = TASK2_SYSTEM
+                else:
+                    system_prompt = TASK3_SYSTEM
+
+                reply = _chat(llm_client, system_prompt, user_prompt)
+                print(f"\n--- [STEP {sub}/3] AI RAW REPLY ---\n{reply}")
+
+                action: ArjunaAction
+                if task == 1:
+                    label = reply.strip().lower()
+                    if not label:
+                        label = parse_task1_label(reply)
+                    action = ArjunaAction(task1_label=label, metadata=ep_meta)
+                elif task == 2:
+                    ranked: List[str] = []
+                    array_block = _extract_first_json_array_block(reply)
+                    parsed_any = False
+                    if array_block is not None:
+                        try:
+                            parsed = json.loads(array_block)
+                            parsed_any = True
+                            if isinstance(parsed, list):
+                                for item in parsed:
+                                    if isinstance(item, str):
+                                        label = item.strip().lower()
                                         if label:
                                             ranked.append(label)
-                    except json.JSONDecodeError:
-                        parsed_any = False
+                                        continue
+                                    if isinstance(item, dict) and "label" in item:
+                                        raw_label = item.get("label")
+                                        if raw_label is not None:
+                                            label = str(raw_label).strip().lower()
+                                            if label:
+                                                ranked.append(label)
+                        except json.JSONDecodeError:
+                            parsed_any = False
 
-                if not ranked:
-                    if not parsed_any:
-                        labels = re.findall(r':\s*"([a-z_ ]+)"', reply, flags=re.IGNORECASE)
-                        if labels:
-                            ranked = [lbl.strip().lower() for lbl in labels if lbl.strip()]
                     if not ranked:
-                        ranked = parse_task2_ranking(reply)
-                action = ArjunaAction(ranked_objects=ranked, metadata=ep_meta)
-            else:
-                decision, reasoning = parse_task3_decision(reply)
-                action = ArjunaAction(
-                    decision=decision,
-                    reasoning=reasoning,
-                    metadata=ep_meta,
-                )
+                        if not parsed_any:
+                            labels = re.findall(r':\s*"([a-z_ ]+)"', reply, flags=re.IGNORECASE)
+                            if labels:
+                                ranked = [lbl.strip().lower() for lbl in labels if lbl.strip()]
+                        if not ranked:
+                            ranked = parse_task2_ranking(reply)
+                    action = ArjunaAction(ranked_objects=ranked, metadata=ep_meta)
+                else:
+                    decision, reasoning = parse_task3_decision(reply)
+                    action = ArjunaAction(
+                        decision=decision,
+                        reasoning=reasoning,
+                        metadata=ep_meta,
+                    )
 
-            print(f"\n--- [STEP {sub}/3] SUBMITTED ACTION ---\n{action.model_dump_json(indent=2)}\n")
-            step_out = env.step(action)
-            rw = episode_reward(step_out)
-            step_rewards.append(rw)
-            per_task[task].append(rw)
-            print(f"STEP {sub}/3 reward={rw:.3f}")
+                print(f"\n--- [STEP {sub}/3] SUBMITTED ACTION ---\n{action.model_dump_json(indent=2)}\n")
+                step_out = env.step(action)
+                rw = episode_reward(step_out)
+                step_rewards.append(rw)
+                per_task[task].append(rw)
+                print(f"STEP {sub}/3 reward={rw:.3f}")
 
-            # CSV Logger: Audit Trail for Environment Grading
-            try:
-                bundle_match = re.search(r"Bundle:\s*(.*?)(\n|$)", user_prompt)
-                bundle_name = bundle_match.group(1).strip() if bundle_match else "Unknown"
-                with open('inference_audit_log.csv', mode='a', newline='', encoding='utf-8') as f:
-                    writer = csv.writer(f)
-                    if f.tell() == 0:
-                        writer.writerow(["Timestamp", "Episode_ID", "Task_Type", "Bundle", "Agent_Action", "Reward"])
-                    writer.writerow([
-                        datetime.datetime.now().isoformat(sep=' ', timespec='seconds'),
-                        ep_meta.get("episode_id", "unknown"),
-                        f"Task {task}",
-                        bundle_name,
-                        action.model_dump_json(exclude_unset=True),
-                        f"{rw:.3f}"
-                    ])
-            except Exception as e:
-                print(f"  [Log Error] {e}")
-
-            obs = step_out.observation
-            if step_out.done:
-                overall = (
-                    obs.overall_reward
-                    if obs.overall_reward is not None
-                    else float(mean(step_rewards))
-                )
-                print(f"END Episode {ep_idx} reward={overall:.3f}")
+                # Build a short action string for logging
+                if task == 1:
+                    action_str = f"task1_label={action.task1_label}"
+                elif task == 2:
+                    action_str = f"ranked_objects={action.ranked_objects}"
+                else:
+                    action_str = f"decision={action.decision}"
                 
-                # Level 2: Fetch and print curriculum status
+                log_step(
+                    step=sub,
+                    action=action_str,
+                    reward=rw,
+                    done=step_out.done,
+                    error=None
+                )
+
+                # CSV Logger: Audit Trail for Environment Grading
                 try:
-                    import requests
-                    # Hack to parse base URL correctly if using standard format 
-                    # Note: this works when the server is local, but we don't assume `base_url` format strictly,
-                    # mostly used for local testing `http://127.0.0.1:7860/curriculum`
-                    curr_url = "http://127.0.0.1:7860/curriculum"
-                    if "localhost" in base_url or "127.0.0.1" in base_url:
-                        host_port = base_url.replace("http://", "").split("/")[0]
-                        curr_url = f"http://{host_port}/curriculum"
+                    bundle_match = re.search(r"Bundle:\s*(.*?)(\n|$)", user_prompt)
+                    bundle_name = bundle_match.group(1).strip() if bundle_match else "Unknown"
+                    with open('inference_audit_log.csv', mode='a', newline='', encoding='utf-8') as f:
+                        writer = csv.writer(f)
+                        if f.tell() == 0:
+                            writer.writerow(["Timestamp", "Episode_ID", "Task_Type", "Bundle", "Agent_Action", "Reward"])
+                        writer.writerow([
+                            datetime.datetime.now().isoformat(sep=' ', timespec='seconds'),
+                            ep_meta.get("episode_id", "unknown"),
+                            f"Task {task}",
+                            bundle_name,
+                            action.model_dump_json(exclude_unset=True),
+                            f"{rw:.3f}"
+                        ])
+                except Exception as e:
+                    print(f"  [Log Error] {e}")
+
+                obs = step_out.observation
+                if step_out.done:
+                    overall = (
+                        obs.overall_reward
+                        if obs.overall_reward is not None
+                        else float(mean(step_rewards))
+                    )
+                    print(f"END Episode {ep_idx} reward={overall:.3f}")
+                
+                    # Level 2: Fetch and print curriculum status
+                    try:
+                        import requests
+                        # Hack to parse base URL correctly if using standard format 
+                        # Note: this works when the server is local, but we don't assume `base_url` format strictly,
+                        # mostly used for local testing `http://127.0.0.1:7860/curriculum`
+                        curr_url = "http://127.0.0.1:7860/curriculum"
+                        if "localhost" in base_url or "127.0.0.1" in base_url:
+                            host_port = base_url.replace("http://", "").split("/")[0]
+                            curr_url = f"http://{host_port}/curriculum"
                         
-                    curr_resp = requests.get(curr_url, timeout=2)
-                    if curr_resp.status_code == 200:
-                        curr = curr_resp.json()
-                        print(
-                            f"  Curriculum: difficulty={curr['current_difficulty']} "
-                            f"| recent_mean={curr['recent_mean_reward']:.3f}"
-                        )
-                except Exception:
-                    pass  # curriculum endpoint optional or unreachable
+                        curr_resp = requests.get(curr_url, timeout=2)
+                        if curr_resp.status_code == 200:
+                            curr = curr_resp.json()
+                            print(
+                                f"  Curriculum: difficulty={curr['current_difficulty']} "
+                                f"| recent_mean={curr['recent_mean_reward']:.3f}"
+                            )
+                    except Exception:
+                        pass  # curriculum endpoint optional or unreachable
 
-                return float(overall)
+                    return float(overall)
 
-        overall = float(mean(step_rewards))
-        print(f"END Episode {ep_idx} reward={overall:.3f}")
-        return overall
+            overall = float(mean(step_rewards))
+            print(f"END Episode {ep_idx} reward={overall:.3f}")
+            return overall
 
+        finally:
+            steps_done = len(step_rewards)
+            score = overall if 'overall' in locals() else (mean(step_rewards) if step_rewards else 0.0)
+            success_val = score >= 0.5
+            log_end(
+                success=success_val,
+                steps=steps_done,
+                score=score,
+                rewards=step_rewards
+            )
     n_seeds = int(os.environ.get("N_SEEDS", "3"))
     seeds = random.sample(range(100), n_seeds)
     exhausted_quota = False
