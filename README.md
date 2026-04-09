@@ -7,43 +7,6 @@ sdk: docker
 pinned: false
 ---
 
-
-### Auto-Curriculum Architecture
-```mermaid
-graph TD
-    classDef primary fill:#1ABC9C,stroke:#16A085,stroke-width:2px,color:white,font-weight:bold;
-    classDef secondary fill:#34495E,stroke:#2C3E50,stroke-width:2px,color:white;
-    classDef logic fill:#F39C12,stroke:#E67E22,stroke-width:2px,color:white,font-weight:bold;
-
-    A[LLM Agent / User Interface] -->|Submits Action| B(ArjunaEnv Step)
-    B --> C{Tasks.py Grader}
-    C -->|Reward < 0.60| D[Curriculum: Demote]
-    C -->|Reward > 0.85| E[Curriculum: Promote]
-    D --> F[Synthetic_Data Scene Loader]
-    E --> F
-    F -->|Yields Next Dynamic Scene| A
-
-    class A secondary;
-    class B primary;
-    class C logic;
-    class D secondary;
-    class E secondary;
-    class F primary;
-```
-
-
----
-
-| title: Arjuna Perception Env |
-| emoji: 🤖 |
-| colorFrom: blue |
-| colorTo: green |
-| sdk: docker |
-| pinned: false |
-
----
-
-
 # ARJUNA: Dynamic Auto-Curriculum for Robust Perception
 ### An OpenEnv-Compliant Framework for Generalizable Reinforcement Learning
 
@@ -236,6 +199,29 @@ The **14 themed bundles** ensure diverse training distributions across resets:
 ## AutoRL approach — how it all fits together
 
 ARJUNA implements a **closed-loop, self-improving training environment** inspired by Automatic Reinforcement Learning (AutoRL) principles. The two subsystems — **Dynamic Scene Generation** and **Auto-Curriculum** — work together in a feedback loop:
+
+### Auto-Curriculum Architecture
+```mermaid
+graph TD
+    classDef primary fill:#1ABC9C,stroke:#16A085,stroke-width:2px,color:white,font-weight:bold;
+    classDef secondary fill:#34495E,stroke:#2C3E50,stroke-width:2px,color:white;
+    classDef logic fill:#F39C12,stroke:#E67E22,stroke-width:2px,color:white,font-weight:bold;
+
+    A[LLM Agent / User Interface] -->|Submits Action| B(ArjunaEnv Step)
+    B --> C{Tasks.py Grader}
+    C -->|Reward < 0.60| D[Curriculum: Demote]
+    C -->|Reward > 0.85| E[Curriculum: Promote]
+    D --> F[Synthetic_Data Scene Loader]
+    E --> F
+    F -->|Yields Next Dynamic Scene| A
+
+    class A secondary;
+    class B primary;
+    class C logic;
+    class D secondary;
+    class E secondary;
+    class F primary;
+```
 
 ![AutoRL Loop Diagram](https://mermaid.ink/img/eyJjb2RlIjogImZsb3djaGFydCBURFxuICBzdWJncmFwaCBBdXRvUkxfTG9vcCBbQXV0b1JMIExvb3BdXG4gICAgQVtcIkFnZW50IHN1Ym1pdHMgYWN0aW9uc1wiXSAtLT4gQltcIkdyYWRlciBzY29yZXMgZXBpc29kZVwiXVxuICAgIEIgLS0-IENbXCJBdXRvLUN1cnJpY3VsdW0gcmVjb3JkcyByZXdhcmRcIl1cbiAgICBDIC0tPiBEe1wiTWVhbiByZXdhcmQgdnMgdGhyZXNob2xkc1wifVxuICAgIEQgLS0gXCI-IDAuODVcIiAtLT4gRVtcIlBST01PVEUgZGlmZmljdWx0eVwiXVxuICAgIEQgLS0gXCI8IDAuNjBcIiAtLT4gRltcIkRFTU9URSBkaWZmaWN1bHR5XCJdXG4gICAgRCAtLSBcIjAuNjAtMC44NVwiIC0tPiBHW1wiU1RBWSBhdCBjdXJyZW50IGxldmVsXCJdXG4gICAgRSAtLT4gSFtcIlNjZW5lIEdlbmVyYXRvciB1c2VzIG5ldyBkaWZmaWN1bHR5XCJdXG4gICAgRiAtLT4gSFxuICAgIEcgLS0-IEhcbiAgICBIIC0tPiBJW1wiTExNIGdlbmVyYXRlcyBmcmVzaCBzY2VuZSBhdCBkaWZmaWN1bHR5IHRpZXJcIl1cbiAgICBJIC0tPiBKW1wiQWdlbnQgcmVjZWl2ZXMgbmV3IG9ic2VydmF0aW9uXCJdXG4gICAgSiAtLT4gQVxuICBlbmQiLCAibWVybWFpZCI6IHsidGhlbWUiOiAiZGVmYXVsdCJ9fQ)
 
