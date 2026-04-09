@@ -9,7 +9,7 @@ os.makedirs("docs", exist_ok=True)
 # Set basic styling
 sns.set_theme(style="darkgrid", context="talk")
 plt.rcParams["font.family"] = "sans-serif"
-sns.set_palette("husl")
+# sns.set_palette("husl")
 
 # -----------------------------------------------------------------------------
 # PLOT 1: THE AUTO-CURRICULUM IN ACTION
@@ -45,7 +45,7 @@ for ep in range(1, 31):
     rewards.append(np.clip(r, 0, 1.0))
     difficulties.append(diff)
 
-fig, ax1 = plt.subplots(figsize=(10, 5))
+fig, ax1 = plt.subplots(figsize=(14, 6))
 
 color = "#1ABC9C"
 ax1.set_xlabel('Training Episode (n)', fontweight='bold')
@@ -76,6 +76,7 @@ lines_1, labels_1 = ax1.get_legend_handles_labels()
 lines_2, labels_2 = ax2.get_legend_handles_labels()
 ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='lower right', frameon=True, shadow=True)
 
+fig.tight_layout(rect=[0, 0, 0.90, 1])
 plt.savefig("docs/curriculum_scaling.png", dpi=300, bbox_inches='tight')
 plt.close()
 
@@ -83,7 +84,7 @@ plt.close()
 # PLOT 2: STATIC VS DYNAMIC OVERFITTING (OOD ROBUSTNESS)
 # -----------------------------------------------------------------------------
 
-fig, ax = plt.subplots(figsize=(9, 5))
+fig, ax = plt.subplots(figsize=(14, 6))
 
 eval_steps = np.arange(0, 1000, 100)
 
@@ -106,6 +107,7 @@ plt.ylim(0, 1.05)
 plt.legend(loc="lower right", frameon=True, shadow=True, fontsize=11)
 plt.grid(True, linestyle=':', alpha=0.7)
 
+plt.tight_layout()
 plt.savefig("docs/static_vs_dynamic.png", dpi=300, bbox_inches='tight')
 plt.close()
 

@@ -111,7 +111,7 @@ All of these work with **zero network calls**:
 
 ## Episode Bundles — 14 Offline Scenarios
 
-All 12 bundles are hardcoded in `server/synthetic_data.py` and require **zero network calls**.
+All 14 bundles are hardcoded in `server/synthetic_data.py` and require **zero network calls**.
 Each bundle contains 3 scenes — one per task step — drawn from the same location theme.
 
 | # | Bundle | Task 1 Object | Task 2 Objects | Task 3 Confidence | Expected Action |
@@ -128,6 +128,8 @@ Each bundle contains 3 scenes — one per task step — drawn from the same loca
 | 10 | **Shopping Mall** | shopping bag | person, escalator, shopping bag, CCTV camera | 0.46 | request_rescan |
 | 11 | **Office Lobby** | laptop | person, couch, reception desk, potted plant | 0.54 | log_and_continue |
 | 12 | **Rainy Street** | raincoat | bus, car, person, umbrella | 0.38 | request_rescan |
+| 13 | **Blizzard Whiteout** | truck | person, car, stop sign | 0.22 | discard |
+| 14 | **Sensor Glare** | motorcycle | ambulance, person, traffic light | 0.46 | request_rescan |
 
 > **Task 3 Decision Bands:**
 > - `confidence < 0.35` → `discard`
@@ -201,7 +203,7 @@ A **single-step** environment gives RL agents one reward signal per reset — li
 | **Thematic coherence** | All 3 steps draw scenes from the same **location bundle** (e.g. "Warehouse"), so context carries across steps — closer to real-world perception pipelines. |
 | **Overall episode signal** | `overall_reward` = mean of 3 step rewards gives a clean episode-level metric for leaderboard comparison. |
 
-The **12 themed bundles** ensure diverse training distributions across resets:
+The **14 themed bundles** ensure diverse training distributions across resets:
 
 | # | Bundle | Notable Objects |
 |---|---|---|
@@ -217,6 +219,8 @@ The **12 themed bundles** ensure diverse training distributions across resets:
 | 10 | **Shopping Mall** | person, escalator, shopping bag, CCTV camera |
 | 11 | **Office Lobby** | laptop, reception desk, couch, potted plant |
 | 12 | **Rainy Street** | umbrella, car, bus, raincoat |
+| 13 | **Blizzard Whiteout** | truck, person, car, stop sign |
+| 14 | **Sensor Glare** | motorcycle, ambulance, person, traffic light |
 
 ---
 
