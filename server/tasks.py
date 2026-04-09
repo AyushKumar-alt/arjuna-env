@@ -41,6 +41,9 @@ def _task1_group(label: str) -> str | None:
     return None
 
 
+def _bound(score: float) -> float:
+    return max(0.01, min(0.99, float(score)))
+
 def grade_task1_identification(
     predicted: str | None,
     scene: Task1Scene,
@@ -56,19 +59,19 @@ def grade_task1_identification(
     """
     _ = metadata
     if predicted is None:
-        return 0.0
+        return _bound(0.0)
     pred = _norm_label(predicted)
     expected = _norm_label(scene.expected_label)
     if pred == expected:
-        return 1.0
+        return _bound(1.0)
 
     pred_group = _task1_group(pred)
     expected_group = _task1_group(expected)
     if pred_group is not None and pred_group == expected_group:
-        return 0.7
+        return _bound(0.7)
     if pred_group is not None and pred_group != expected_group:
-        return 0.2
-    return 0.0
+        return _bound(0.2)
+    return _bound(0.0)
 
 
 def grade_task2_triage(predicted_rank: list[str] | None, scene: Task2Scene) -> float:
@@ -82,14 +85,14 @@ def grade_task2_triage(predicted_rank: list[str] | None, scene: Task2Scene) -> f
     """
     expected = _norm_list(scene.expected_priority)
     if not expected:
-        return 1.0 if not predicted_rank else 0.0
+        return _bound(1.0 if not predicted_rank else 0.0)
     if not predicted_rank:
-        return 0.0
+        return _bound(0.0)
 
     pred = _norm_list(predicted_rank)
     matcher = difflib.SequenceMatcher(None, expected, pred)
     score = matcher.ratio()
-    return float(score)
+    return _bound(float(score))
 
 
 def _normalize_decision(raw: str | None) -> LowConfidenceAction | None:
@@ -152,23 +155,23 @@ def grade_task3_low_confidence(
     quality = _reasoning_quality(reasoning)
 
     if got is None:
-        return 0.0
+        return _bound(0.0)
 
     if got == correct:
         if quality == "strong":
-            return 1.0
+            return _bound(1.0)
         if quality == "weak":
-            return 0.85
-        return 0.7
+            return _bound(0.85)
+        return _bound(0.7)
 
     correct_idx = _decision_band_index(correct)
     got_idx = _decision_band_index(got)
     if correct_idx is None or got_idx is None:
-        return 0.0
+        return _bound(0.0)
 
     if abs(correct_idx - got_idx) == 1:
-        return 0.5 if quality == "strong" else 0.3
-    return 0.0
+        return _bound(0.5 if quality == "strong" else 0.3)
+    return _bound(0.0)
 
 
 def format_step_observation(bundle_name: str, step: int, inner_prompt: str) -> str:
