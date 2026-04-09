@@ -25,12 +25,12 @@ graph TD
 
 ---
 
-title: Arjuna Perception Env
-emoji: 🤖
-colorFrom: blue
-colorTo: green
-sdk: docker
-pinned: false
+| title: Arjuna Perception Env |
+| emoji: 🤖 |
+| colorFrom: blue |
+| colorTo: green |
+| sdk: docker |
+| pinned: false |
 
 ---
 
