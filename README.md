@@ -1,4 +1,29 @@
+
+### Auto-Curriculum Architecture
+```mermaid
+graph TD
+    classDef primary fill:#1ABC9C,stroke:#16A085,stroke-width:2px,color:white,font-weight:bold;
+    classDef secondary fill:#34495E,stroke:#2C3E50,stroke-width:2px,color:white;
+    classDef logic fill:#F39C12,stroke:#E67E22,stroke-width:2px,color:white,font-weight:bold;
+
+    A[LLM Agent / User Interface] -->|Submits Action| B(ArjunaEnv Step)
+    B --> C{Tasks.py Grader}
+    C -->|Reward < 0.60| D[Curriculum: Demote]
+    C -->|Reward > 0.85| E[Curriculum: Promote]
+    D --> F[Synthetic_Data Scene Loader]
+    E --> F
+    F -->|Yields Next Dynamic Scene| A
+
+    class A secondary;
+    class B primary;
+    class C logic;
+    class D secondary;
+    class E secondary;
+    class F primary;
+```
+
 ---
+
 title: Arjuna Perception Env
 emoji: 🤖
 colorFrom: blue
@@ -52,7 +77,7 @@ python demo.py
 | Environment server | server/app.py | HTTP endpoints |
 | Episode logic | server/arjuna_environment.py | reset/step/state |
 | Task graders | server/tasks.py, server/grader.py | reward logic |
-| Synthetic scenes | server/synthetic_data.py | **12 offline episode bundles** |
+| Synthetic scenes | server/synthetic_data.py | **14 offline episode bundles** |
 | Data models | models.py | typed actions/observations |
 | Offline demo | demo.py | heuristic agent, no LLM |
 
@@ -82,7 +107,7 @@ All of these work with **zero network calls**:
 
 ---
 
-## Episode Bundles — 12 Offline Scenarios
+## Episode Bundles — 14 Offline Scenarios
 
 All 12 bundles are hardcoded in `server/synthetic_data.py` and require **zero network calls**.
 Each bundle contains 3 scenes — one per task step — drawn from the same location theme.

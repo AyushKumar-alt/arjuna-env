@@ -52,10 +52,9 @@ Rank them from most to least important to act on. Rules:
 1. Higher confidence first (primary rule).
 2. If confidence is identical: person > vehicle (bicycle, car, bus, truck, motorcycle, airplane, train, boat) > other.
 
-Return ONLY a JSON array of label strings:
+First, print a brief 1-sentence Chain-of-Thought reasoning about the confidences.
+Then, output the JSON array of label strings:
 ["label_a", "label_b", "label_c"]
-
-MANDATORY: Answer with the list ONLY. No preamble, no explanation, no "To solve this..." text. Just the array.
 """.strip()
 
 TASK3_SYSTEM = """
@@ -73,7 +72,7 @@ Use the confidence score in the scene. Mandatory rules:
 - confidence >= 0.50: log_and_continue
 
 Return JSON only:
-{"decision": "<choice>", "reasoning": "<short sentence mentioning the numeric value>"}
+{"decision": "<choice>", "reasoning": "<mathematical Chain-of-Thought proving the confidence matches the threshold>"}
 No other text.
 """.strip()
 
@@ -86,7 +85,7 @@ def _client() -> OpenAI:
 
 
 def _chat(llm: OpenAI, system: str, user: str) -> str:
-    max_tokens = int(os.environ.get("MAX_TOKENS", "80"))
+    max_tokens = int(os.environ.get("MAX_TOKENS", "250"))
     resp = llm.chat.completions.create(
         model=MODEL_NAME,
         messages=[

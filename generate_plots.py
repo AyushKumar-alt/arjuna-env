@@ -7,8 +7,9 @@ import seaborn as sns
 os.makedirs("docs", exist_ok=True)
 
 # Set basic styling
-sns.set_theme(style="whitegrid")
+sns.set_theme(style="darkgrid", context="talk")
 plt.rcParams["font.family"] = "sans-serif"
+sns.set_palette("husl")
 
 # -----------------------------------------------------------------------------
 # PLOT 1: THE AUTO-CURRICULUM IN ACTION
@@ -46,10 +47,11 @@ for ep in range(1, 31):
 
 fig, ax1 = plt.subplots(figsize=(10, 5))
 
-color = 'tab:blue'
+color = "#1ABC9C"
 ax1.set_xlabel('Training Episode (n)', fontweight='bold')
 ax1.set_ylabel('Agent Rolling Mean Reward', color=color, fontweight='bold')
-ax1.plot(episodes, rewards, color=color, marker='o', linestyle='-', linewidth=2, label="Agent Reward", alpha=0.8)
+ax1.plot(episodes, rewards, color="#1ABC9C", marker='o', markersize=8, linestyle='-', linewidth=3, label="Agent Reward", alpha=0.9)
+ax1.fill_between(episodes, 0, rewards, color="#1ABC9C", alpha=0.1)
 ax1.tick_params(axis='y', labelcolor=color)
 ax1.axhline(0.85, color='green', linestyle='--', alpha=0.5, label="Promote Threshold (0.85)")
 ax1.axhline(0.60, color='red', linestyle='--', alpha=0.5, label="Demote Threshold (0.60)")
@@ -57,16 +59,16 @@ ax1.set_ylim(0, 1.1)
 
 ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
 
-color = 'tab:orange'
+color = "#F39C12"
 ax2.set_ylabel('Environment Difficulty Tier', color=color, fontweight='bold')  # we already handled the x-label with ax1
-ax2.step(episodes, difficulties, color=color, linewidth=3, where='mid', label="AutoRL Difficulty Layer")
+ax2.step(episodes, difficulties, color=color, linewidth=4, where='mid', alpha=0.8, label="AutoRL Difficulty Layer")
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.set_yticks([1, 2, 3])
 ax2.set_yticklabels(['Easy (High Conf)', 'Medium', 'Hard (Low Conf, Ambiguous)'])
 ax2.set_ylim(0.5, 3.5)
 
 # Adding some highlight text
-plt.title("ARJUNA AutoRL Loop: Dynamic Complexity Scaling", fontweight='bold', fontsize=14, pad=15)
+plt.title("ARJUNA AutoRL Loop: Dynamic Complexity Scaling", fontweight='bold', fontsize=16, pad=15)
 fig.tight_layout()  # otherwise the right y-label is slightly clipped
 
 # Collect legends
@@ -91,13 +93,13 @@ static_reward = 0.85 * (1 - np.exp(-eval_steps / 200))
 # Dynamic (AutoRL): Slower start due to infinite variations, but never plateaus and surpasses Static
 dynamic_reward = 0.95 * (1 - np.exp(-eval_steps / 350))
 
-plt.plot(eval_steps, static_reward, color='crimson', linestyle='--', linewidth=3, label="Static Curriculum (Memorization)")
-plt.plot(eval_steps, dynamic_reward, color='forestgreen', linestyle='-', linewidth=3, label="Dynamic AutoRL (OOD Robustness)")
+plt.plot(eval_steps, static_reward, color='#E74C3C', linestyle='--', linewidth=3, label="Static Curriculum (Memorization)")
+plt.plot(eval_steps, dynamic_reward, color='#2ECC71', linestyle='-', linewidth=3, label="Dynamic AutoRL (OOD Robustness)")
 
 # Highlight the divergence
-plt.fill_between(eval_steps[5:], static_reward[5:], dynamic_reward[5:], color='lightgreen', alpha=0.3, label="Zero-Shot Generalization Gap")
+plt.fill_between(eval_steps[5:], static_reward[5:], dynamic_reward[5:], color='#2ECC71', alpha=0.3, label="Zero-Shot Generalization Gap")
 
-plt.title("Expected Convergence: Static Training vs Dynamic AutoRL", fontweight='bold', fontsize=14, pad=15)
+plt.title("Expected Convergence: Static Training vs Dynamic AutoRL", fontweight='bold', fontsize=16, pad=15)
 plt.xlabel("Global Evaluated Steps", fontweight='bold')
 plt.ylabel("Test-Time Out-of-Distribution (OOD) Accuracy", fontweight='bold')
 plt.ylim(0, 1.05)
