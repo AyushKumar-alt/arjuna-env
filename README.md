@@ -1,3 +1,12 @@
+---
+title: Arjuna Perception Env
+emoji: 🤖
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+---
+
 
 ### Auto-Curriculum Architecture
 ```mermaid
