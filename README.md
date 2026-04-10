@@ -13,6 +13,9 @@ pinned: false
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Benchmark](https://img.shields.io/badge/Task-Robustness-red)](https://pytorch.org)
+[![API Docs](https://img.shields.io/badge/FastAPI-Swagger%20UI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://calpol500mg-arjuna-env.hf.space/docs)
+[![Curriculum State](https://img.shields.io/badge/System-Telemetry%20Endpoint-blueviolet?style=for-the-badge)](https://calpol500mg-arjuna-env.hf.space/curriculum)
+
 
 # ARJUNA: Dynamic Auto-Curriculum for Robust Perception
 ### An OpenEnv-Compliant Framework for Generalizable Reinforcement Learning
