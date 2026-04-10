@@ -7,6 +7,12 @@ sdk: docker
 pinned: false
 ---
 
+[![Open In Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/Calpol500mg/arjuna-env)
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
+[![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Benchmark](https://img.shields.io/badge/Task-Robustness-red)](https://pytorch.org)
+
 # ARJUNA: Dynamic Auto-Curriculum for Robust Perception
 ### An OpenEnv-Compliant Framework for Generalizable Reinforcement Learning
 

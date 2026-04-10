@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use the ARJUNA OpenEnv benchmark, please cite it as below."
+authors:
+  - family-names: "Kumar"
+    given-names: "Ayush"
+  - family-names: "Shinde"
+    given-names: "Pruthviraj"
+  - family-names: "Mule"
+    given-names: "Shivshankar"
+title: "ARJUNA: Adversarial Robustness Gym for Unstructured Natural Environments"
+version: 1.0.0
+date-released: 2026-04-10
+url: "https://github.com/AyushKumar-alt/arjuna-env"
