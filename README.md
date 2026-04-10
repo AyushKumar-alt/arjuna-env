@@ -6,15 +6,22 @@ colorTo: green
 sdk: docker
 pinned: false
 ---
+[![Open In Spaces](https://img.shields.io/badge/Hugging%20Face-Spaces-blue?style=for-the-badge&logo=huggingface)](https://huggingface.co/spaces/Calpol500mg/arjuna-env)
 
-[![Open In Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/Calpol500mg/arjuna-env)
-[![Arjuna Perception Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-yellow)](https://huggingface.co/datasets/Calpol500mg/arjuna-perception-dataset)
-[![Python](https://img.shields.io/badge/Python-3.11-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
-[![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Benchmark](https://img.shields.io/badge/Task-Robustness-red)](https://pytorch.org)
+[![Arjuna Perception Dataset](https://img.shields.io/badge/Hugging%20Face-Dataset-yellow?style=for-the-badge&logo=huggingface)](https://huggingface.co/datasets/Calpol500mg/arjuna-perception-dataset)
+
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
+
+[![Docker](https://img.shields.io/badge/Docker-Container-0db7ed?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
+[![Benchmark](https://img.shields.io/badge/Task-Robustness-red?style=for-the-badge)](https://pytorch.org)
+
 [![API Docs](https://img.shields.io/badge/FastAPI-Swagger%20UI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://calpol500mg-arjuna-env.hf.space/docs)
+
 [![Curriculum State](https://img.shields.io/badge/System-Telemetry%20Endpoint-blueviolet?style=for-the-badge)](https://calpol500mg-arjuna-env.hf.space/curriculum)
+
 
 
 # ARJUNA: Dynamic Auto-Curriculum for Robust Perception
