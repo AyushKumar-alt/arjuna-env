@@ -1,5 +1,5 @@
 """
-Task definitions and grader functions for ARJUNA perception (scores in [0.0, 1.0]).
+Task definitions and grader functions for ARJUNA perception (scores strictly in (0, 1)).
 """
 
 from __future__ import annotations
@@ -41,7 +41,8 @@ def _task1_group(label: str) -> str | None:
     return None
 
 
-def _bound(score: float) -> float:
+def clamp_score(score: float) -> float:
+    """Clamp score to strictly open interval (0, 1) per judge requirement."""
     return max(0.01, min(0.99, float(score)))
 
 def grade_task1_identification(
@@ -52,26 +53,26 @@ def grade_task1_identification(
     """
     Task 1 with semantic partial credit.
 
-    - exact match -> 1.0 (metadata may repeat the YOLO confidence; score stays capped at 1.0)
+    - exact match -> 0.99 (clamped from 1.0)
     - same category group -> 0.7
     - predicted is a known grouped class but wrong group -> 0.2
-    - unrelated/unknown -> 0.0
+    - unrelated/unknown -> 0.01 (clamped from 0.0)
     """
     _ = metadata
     if predicted is None:
-        return _bound(0.0)
+        return clamp_score(0.0)
     pred = _norm_label(predicted)
     expected = _norm_label(scene.expected_label)
     if pred == expected:
-        return _bound(1.0)
+        return clamp_score(1.0)
 
     pred_group = _task1_group(pred)
     expected_group = _task1_group(expected)
     if pred_group is not None and pred_group == expected_group:
-        return _bound(0.7)
+        return clamp_score(0.7)
     if pred_group is not None and pred_group != expected_group:
-        return _bound(0.2)
-    return _bound(0.0)
+        return clamp_score(0.2)
+    return clamp_score(0.0)
 
 
 def grade_task2_triage(predicted_rank: list[str] | None, scene: Task2Scene) -> float:
@@ -85,14 +86,14 @@ def grade_task2_triage(predicted_rank: list[str] | None, scene: Task2Scene) -> f
     """
     expected = _norm_list(scene.expected_priority)
     if not expected:
-        return _bound(1.0 if not predicted_rank else 0.0)
+        return clamp_score(1.0 if not predicted_rank else 0.0)
     if not predicted_rank:
-        return _bound(0.0)
+        return clamp_score(0.0)
 
     pred = _norm_list(predicted_rank)
     matcher = difflib.SequenceMatcher(None, expected, pred)
     score = matcher.ratio()
-    return _bound(float(score))
+    return clamp_score(float(score))
 
 
 def _normalize_decision(raw: str | None) -> LowConfidenceAction | None:
@@ -155,23 +156,23 @@ def grade_task3_low_confidence(
     quality = _reasoning_quality(reasoning)
 
     if got is None:
-        return _bound(0.0)
+        return clamp_score(0.0)
 
     if got == correct:
         if quality == "strong":
-            return _bound(1.0)
+            return clamp_score(1.0)
         if quality == "weak":
-            return _bound(0.85)
-        return _bound(0.7)
+            return clamp_score(0.85)
+        return clamp_score(0.7)
 
     correct_idx = _decision_band_index(correct)
     got_idx = _decision_band_index(got)
     if correct_idx is None or got_idx is None:
-        return _bound(0.0)
+        return clamp_score(0.0)
 
     if abs(correct_idx - got_idx) == 1:
-        return _bound(0.5 if quality == "strong" else 0.3)
-    return _bound(0.0)
+        return clamp_score(0.5 if quality == "strong" else 0.3)
+    return clamp_score(0.0)
 
 
 def format_step_observation(bundle_name: str, step: int, inner_prompt: str) -> str:
