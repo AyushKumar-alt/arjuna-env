@@ -464,13 +464,13 @@ Because our Auto-Curriculum is intrinsically chained to **Dynamic Scene Generati
 
 Using our **Zero-Shot Baseline (`inference.py`)**, we conducted a performance audit using **Meta’s Llama-3 (70B)**. These results highlight the "Perception Gap" that ARJUNA is designed to test:
 
-#### 🧠 The "Equipment vs. Identity" Blindspot
+####  The "Equipment vs. Identity" Blindspot
 In the *Rainy Street* bundle, the baseline agent frequently conflated "Person" and "Raincoat," failing to maintain object identity through OOD visual noise. This confirms ARJUNA’s value in testing **Symbol Grounding** for safety-critical robotics.
 
-#### 📈 The "Skill Ceiling" Discovery
+####  The "Skill Ceiling" Discovery
 Our **AutoRL Curriculum** successfully identified the model's skill ceiling. The Llama-3 baseline maintained a **1.0 reward on "Easy"** but consistently plateaued at **"Medium" difficulty** when complex triage tie-breakers (Person > Vehicle) were introduced. This proves our difficulty scaling is mathematically rigorous.
 
-#### ⚠️ Risk Threshold Fragility
+####  Risk Threshold Fragility
 The agent struggled to follow the **0.35/0.50 Decision Bands** when scenarios were ambiguous. ARJUNA’s **Dense Reward (Levenshtein)** captures these subtle reasoning failures that binary "Pass/Fail" metrics would miss.
 
 ---
