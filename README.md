@@ -750,6 +750,7 @@ A: Yes, inherently via OpenEnv’s core system. That said, HTTP firmly remains t
 -  **Gradio Playground:** [calpol500mg-arjuna-env.hf.space/web](https://calpol500mg-arjuna-env.hf.space/web)
 -  **Swagger / OpenAPI:** [calpol500mg-arjuna-env.hf.space/docs](https://calpol500mg-arjuna-env.hf.space/docs)
 -  **Curriculum Status:** [calpol500mg-arjuna-env.hf.space/curriculum](https://calpol500mg-arjuna-env.hf.space/curriculum)
+-  **Arjuna Demo:** [Google Drive Video](https://drive.google.com/file/d/152W8wxmJcUnMeeg1FXFkduSJnVKOoSa7/view?usp=sharing)
 
 ### Architecture (With AutoRL Loop)
 
