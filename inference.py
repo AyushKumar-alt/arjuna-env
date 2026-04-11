@@ -62,18 +62,19 @@ You are ARJUNA, an autonomous robot making real-time perception decisions.
 Your camera produced a low-confidence detection. You must decide what to do next.
 
 Your three options:
-- discard         — confidence is too low to trust; ignore this detection entirely
-- request_rescan  — borderline confidence; ask for another sensor pass before deciding
-- log_and_continue — confidence is acceptable; record and proceed with caution
+- discard         — confidence is too low to trust ( < 0.35 )
+- request_rescan  — borderline confidence ( 0.35 <= confidence < 0.50 )
+- log_and_continue — confidence is acceptable ( >= 0.50 )
 
-Use the confidence score in the scene. Mandatory rules:
-- confidence < 0.35: discard
-- 0.35 <= confidence < 0.50: request_rescan
-- confidence >= 0.50: log_and_continue
+MANDATORY RULES:
+1. If confidence is LESS THAN 0.35 (e.g., 0.24, 0.31) -> decision: "discard"
+2. If confidence is BETWEEN 0.35 and 0.50 (e.g., 0.38, 0.42, 0.44, 0.46) -> decision: "request_rescan"
+3. If confidence is GREATER THAN OR EQUAL TO 0.50 (e.g., 0.51, 0.54) -> decision: "log_and_continue"
+
+CRITICAL: 0.42 and 0.46 are strictly BELOW 0.50 and MUST NEVER be treated as "log_and_continue". You MUST choose "request_rescan" for these.
 
 Return JSON only:
-{"decision": "<choice>", "reasoning": "<mathematical Chain-of-Thought proving the confidence matches the threshold>"}
-No other text.
+{"decision": "request_rescan" | "discard" | "log_and_continue", "reasoning": "Brief proof: <score> matches threshold <rule>"}
 """.strip()
 
 
@@ -305,7 +306,7 @@ def main() -> None:
 
                 print(f"\n--- [STEP {sub}/3] SUBMITTED ACTION ---\n{action.model_dump_json(indent=2)}\n", flush=True)
                 step_out = env.step(action)
-                rw = episode_reward(step_out)
+                rw = max(0.01, min(0.99, episode_reward(step_out)))
                 step_rewards.append(rw)
                 per_task[task].append(rw)
                 print(f"STEP {sub}/3 reward={rw:.3f}", flush=True)
@@ -347,11 +348,11 @@ def main() -> None:
 
                 obs = step_out.observation
                 if step_out.done:
-                    overall = float(
+                    overall = max(0.01, min(0.99, float(
                         obs.overall_reward
                         if obs.overall_reward is not None
                         else mean(step_rewards)
-                    )
+                    )))
                     success = overall >= 0.5
                     print(f"END Episode {ep_idx} reward={overall:.3f}", flush=True)
                 
