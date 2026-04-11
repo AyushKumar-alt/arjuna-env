@@ -14,6 +14,8 @@ pinned: false
 [![Benchmark](https://img.shields.io/badge/Task-Robustness-red?style=for-the-badge)](https://pytorch.org)
 [![API Docs](https://img.shields.io/badge/FastAPI-Swagger%20UI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://calpol500mg-arjuna-env.hf.space/docs)
 [![Curriculum State](https://img.shields.io/badge/System-Telemetry%20Endpoint-blueviolet?style=for-the-badge)](https://calpol500mg-arjuna-env.hf.space/curriculum)
+[![Arjuna Demo](https://img.shields.io/badge/Arjuna-Demo%20Video-orange?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/152W8wxmJcUnMeeg1FXFkduSJnVKOoSa7/view?usp=sharing)
+
 
 
 
