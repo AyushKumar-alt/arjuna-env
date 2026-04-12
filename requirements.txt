@@ -1,13 +1,9 @@
-# Server (Docker / local uvicorn)
 openenv-core[core]>=0.2.2
 fastapi>=0.115.0
 uvicorn[standard]>=0.24.0
 pydantic>=2.0.0
-
-# LLM baseline (inference.py) + Streamlit dashboard (app.py)
 openai>=1.0.0
-
-# Streamlit dashboard (app.py)
 streamlit>=1.33.0
 plotly>=5.20.0
 pandas>=2.0.0
+requests>=2.31.0
