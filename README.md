@@ -55,27 +55,63 @@ python demo.py
 
 ---
 
-## Core vs Optional Features
+## 🤖 Visual Simulation Dashboard (Hackathon Demo)
+
+The standalone `app.py` provides a **full visual simulation** of the Auto-Curriculum in action — no server, no API key required.
+
+```bash
+pip install streamlit openai plotly
+python -m streamlit run app.py
+```
+
+### Features
+- **3-column canvas** showing all 14 scene bundles across Easy / Medium / Hard tiers
+- **Live episode feed** with per-task rewards as they happen
+- **Curriculum status bar** with sliding window and promotion threshold progress
+- **Real-time tier transitions**: `⬆️ PROMOTED TO MEDIUM TIER!` / `⬇️ DEMOTED to EASY TIER.`
+- **CoT Mistake Memory**: structured log of task-3 decision errors with the correct confidence band rule
+- **Final analytics chart**: reward curve colored by tier with tier-transition markers
+- **Live audit logging**: every agent action is appended to `inference_audit_log.csv` in real-time
+
+### Mock Agent Mode (No API Key Needed)
+Toggle **"🎭 Use Mock Agent"** in the sidebar to run a full simulation without any external API:
+- **Tier-aware performance**: Easy → high success rate, Medium → moderate, Hard → struggles (realistic)
+- **Realistic mistakes**: agent fails with tier-scaled probability, populating the CoT Mistake Log with genuine wrong decisions only
+- **Full AutoRL story in ~20 episodes**: Easy → Medium → Hard (with possible demotion/re-promotion)
+
+### Live LLM Mode
+Supports any OpenAI-compatible endpoint:
+| Preset | API Base URL | Notes |
+|--------|-------------|-------|
+| HuggingFace | `https://router.huggingface.co/v1` | Default |
+| Groq | `https://api.groq.com/openai/v1` | Fast, 100K TPD free |
+| Ollama | `http://localhost:11434/v1` | Local, no quota |
+| Custom | Any URL | Any compatible endpoint |
+
+---
 
 ### Core (offline, no API key needed)
 | Feature | File | Description |
 |---|---|---|
-| Environment server | server/app.py | HTTP endpoints |
-| Episode logic | server/arjuna_environment.py | reset/step/state |
-| Task graders | server/tasks.py, server/grader.py | reward logic |
+| Environment server | server/app.py | FastAPI HTTP endpoints (`/reset`, `/step`, `/curriculum`) |
+| Episode logic | server/arjuna_environment.py | reset/step/state + autoRL orchestration |
+| Task graders | server/tasks.py, server/grader.py | reward logic + re-exports |
 | Synthetic scenes | server/synthetic_data.py | **14 offline episode bundles** |
 | Data models | models.py | typed actions/observations |
 | Offline demo | demo.py | heuristic agent, no LLM |
+| **Streamlit Dashboard** | **app.py** | **AutoRL visual simulation + live audit logging** |
+| Audit trail | inference_audit_log.csv | Written by both `inference.py` and `app.py` at runtime |
 
 ### Optional (requires API key + network)
 | Feature | File | How to enable |
 |---|---|---|
-| LLM baseline agent | inference.py | Set API_BASE_URL + HF_TOKEN |
-| Dynamic scene generation | server/scene_generator.py | ENABLE_DYNAMIC_SCENES=true |
-| Auto-curriculum | server/curriculum.py | ENABLE_DYNAMIC_SCENES=true |
-| AutoRL loop | autorl.py | Set API_BASE_URL + HF_TOKEN |
+| LLM baseline agent | inference.py | Set `API_BASE_URL` + `HF_TOKEN` |
+| Dynamic scene generation | server/scene_generator.py | `ENABLE_DYNAMIC_SCENES=true` |
+| Auto-curriculum | server/curriculum.py | `ENABLE_DYNAMIC_SCENES=true` |
+| OOD performance plots | generate_plots.py | `python generate_plots.py` |
+| Dataset export | export_dataset.py | Exports audit log to HF Dataset format |
 
-The environment **always falls back to synthetic_data.py** 
+The environment **always falls back to synthetic_data.py**
 if dynamic scene generation is disabled or fails.
 
 ---
@@ -546,28 +582,38 @@ This project targets **OpenEnv** conventions:
 
 ```
 arjuna_env/
-├── README.md                 # This file (HF Space frontmatter at top)
-├── LICENSE                   # MIT
-├── openenv.yaml              # OpenEnv / Space metadata
+├── README.md                   # This file (HF Space frontmatter at top)
+├── LICENSE                     # MIT
+├── CITATION.cff                # Academic citation metadata
+├── openenv.yaml                # OpenEnv / Space metadata
+├── pyproject.toml
 ├── requirements.txt
 ├── Dockerfile
 ├── docs/
-│   ├── images/               # See docs/images/README.md (no image binaries in repo)
-│   └── PUSH_TO_HF_SPACE.md   # How to push to HF without binary-blob history errors
-├── demo.py                   # Offline-friendly heuristic demo (no LLM)
-├── inference.py              # Optional LLM baseline (uses HF router + API key)
-├── client.py                 # Thin HTTP client helper
-├── models.py                 # ArjunaAction, ArjunaObservation, ArjunaState
+│   ├── images/                 # Architecture / curriculum plots
+│   └── PUSH_TO_HF_SPACE.md    # How to push to HF without binary-blob history errors
+│
+├── app.py                      # ★ Streamlit AutoRL visual dashboard (no server needed)
+├── demo.py                     # Offline heuristic demo (no LLM, validates env)
+├── inference.py                # LLM baseline agent (HF router + API key required)
+├── local_inference.py          # Variant of inference.py for local/Ollama endpoints
+├── client.py                   # Thin HTTP client wrapper for ArjunaEnv
+├── models.py                   # ArjunaAction, ArjunaObservation, ArjunaState
+├── generate_plots.py           # Generates curriculum_scaling.png + OOD plots
+├── export_dataset.py           # Exports inference_audit_log.csv to HF Dataset format
+├── arjuna_ood_v1.csv           # Curated OOD evaluation dataset (v1)
+├── inference_audit_log.csv     # Runtime audit trail (written by inference.py & app.py)
 ├── __init__.py
+│
 └── server/
-    ├── app.py                # OpenEnv FastAPI app + /curriculum endpoint
-    ├── arjuna_environment.py # Core Environment: reset / step / state + autoRL orchestration
-    ├── scene_generator.py    # ★ Level 1: LLM-powered dynamic scene generation
-    ├── curriculum.py         # ★ Level 2: AutoCurriculum sliding-window tracker
-    ├── tasks.py              # Grading + prompt formatting
-    ├── grader.py             # Explicit re-exports of grading functions
-    ├── synthetic_data.py     # Fallback scenes (100% local, 12 offline bundles)
-    ├── openenv_web_patch.py  # Gradio: pass episode_id into step
+    ├── app.py                  # FastAPI app: /reset /step /curriculum /health /docs
+    ├── arjuna_environment.py   # Core Environment: reset / step / state + autoRL orchestration
+    ├── scene_generator.py      # ★ Level 1: LLM-powered dynamic scene generation
+    ├── curriculum.py           # ★ Level 2: AutoCurriculum sliding-window tracker
+    ├── tasks.py                # Task graders + prompt formatting
+    ├── grader.py               # Explicit re-exports of grading functions
+    ├── synthetic_data.py       # Fallback scenes (100% local, 14 offline bundles)
+    ├── openenv_web_patch.py    # Gradio: injects episode_id into /step calls
     └── __init__.py
 ```
 

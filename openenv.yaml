@@ -36,14 +36,14 @@ tasks:
     description: "Identify the primary object from a YOLO detection"
     difficulty: easy
     steps_per_episode: 1
-    reward_range: [0.0, 1.0]
+    reward_range: [0.01, 0.99]
   - id: multi_object_triage
     description: "Rank multiple detected objects by priority"
     difficulty: medium
     steps_per_episode: 1
-    reward_range: [0.0, 1.0]
+    reward_range: [0.01, 0.99]
   - id: low_confidence_decision
     description: "Decide action for a low-confidence detection"
     difficulty: hard
     steps_per_episode: 1
-    reward_range: [0.0, 1.0]
+    reward_range: [0.01, 0.99]

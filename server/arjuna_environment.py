@@ -137,17 +137,18 @@ class ArjunaEnvironment(Environment):
         from server.curriculum import get_current_difficulty
         fallback_difficulty = get_current_difficulty()
         
-        easy_names = {"Forest Trail", "Office Lobby", "Airport"}
-        medium_names = {"Urban Street", "Parking Lot", "School Zone", "Hospital Entrance"}
-        hard_names = {"Construction Site", "Night Street", "Rainy Street", "Shopping Mall", "Warehouse"}
+        # Tier Locking: Categorize every bundle correctly
+        easy_names = {"Forest Trail", "Office Lobby", "Airport", "Construction Site"}
+        medium_names = {"Urban Street", "Parking Lot", "School Zone", "Hospital Entrance", "Shopping Mall", "Warehouse"}
+        hard_names = {"Rainy Street", "Blizzard Whiteout", "Sensor Glare", "Night Street"}
         
         valid_bundles = []
         for b in sd.EPISODE_BUNDLES:
             if fallback_difficulty == "easy" and b.name in easy_names:
                 valid_bundles.append(b)
-            elif fallback_difficulty == "hard" and b.name in hard_names:
-                valid_bundles.append(b)
             elif fallback_difficulty == "medium" and b.name in medium_names:
+                valid_bundles.append(b)
+            elif fallback_difficulty == "hard" and b.name in hard_names:
                 valid_bundles.append(b)
                 
         # If something went wrong, failsafe to all bundles

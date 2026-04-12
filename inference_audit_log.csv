@@ -536,3 +536,318 @@ Timestamp,Episode_ID,Task_Type,Bundle,Agent_Action,Reward
 2026-04-12 02:29:36,689324fd-75a9-4e1b-8dbd-4ed937e1de37,Task 1,Rainy Street,"{""metadata"":{""episode_id"":""689324fd-75a9-4e1b-8dbd-4ed937e1de37""},""task1_label"":""person""}",0.200
 2026-04-12 02:29:36,689324fd-75a9-4e1b-8dbd-4ed937e1de37,Task 2,Rainy Street,"{""metadata"":{""episode_id"":""689324fd-75a9-4e1b-8dbd-4ed937e1de37""},""ranked_objects"":[""bus"",""car"",""person"",""umbrella""]}",0.990
 2026-04-12 02:29:39,689324fd-75a9-4e1b-8dbd-4ed937e1de37,Task 3,Rainy Street,"{""metadata"":{""episode_id"":""689324fd-75a9-4e1b-8dbd-4ed937e1de37""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.380 matches threshold 0.35 <= confidence < 0.50""}",0.990
+2026-04-12 07:32:42,6114cae9-c179-4adf-9fa3-b243b9ac6845,Task 1,Rainy Street,"{""metadata"":{""episode_id"":""6114cae9-c179-4adf-9fa3-b243b9ac6845""},""task1_label"":""person""}",0.200
+2026-04-12 07:32:42,6114cae9-c179-4adf-9fa3-b243b9ac6845,Task 2,Rainy Street,"{""metadata"":{""episode_id"":""6114cae9-c179-4adf-9fa3-b243b9ac6845""},""ranked_objects"":[""bus"",""car"",""person"",""umbrella""]}",0.990
+2026-04-12 07:32:42,6114cae9-c179-4adf-9fa3-b243b9ac6845,Task 3,Rainy Street,"{""metadata"":{""episode_id"":""6114cae9-c179-4adf-9fa3-b243b9ac6845""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.380 matches threshold 0.35 <= confidence < 0.50""}",0.990
+2026-04-12 07:32:46,319eb11b-7f2b-46f3-a2d8-620be14ea2f9,Task 1,Construction Site,"{""metadata"":{""episode_id"":""319eb11b-7f2b-46f3-a2d8-620be14ea2f9""},""task1_label"":""helmet""}",0.990
+2026-04-12 07:32:46,319eb11b-7f2b-46f3-a2d8-620be14ea2f9,Task 2,Construction Site,"{""metadata"":{""episode_id"":""319eb11b-7f2b-46f3-a2d8-620be14ea2f9""},""ranked_objects"":[""worker"",""excavator"",""crane"",""helmet""]}",0.990
+2026-04-12 07:32:46,319eb11b-7f2b-46f3-a2d8-620be14ea2f9,Task 3,Construction Site,"{""metadata"":{""episode_id"":""319eb11b-7f2b-46f3-a2d8-620be14ea2f9""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.440 matches threshold 0.35 <= confidence < 0.50""}",0.990
+2026-04-12 07:32:49,d450c2c0-2501-4b74-a443-72a4b7d5f85b,Task 1,Warehouse,"{""metadata"":{""episode_id"":""d450c2c0-2501-4b74-a443-72a4b7d5f85b""},""task1_label"":""forklift""}",0.990
+2026-04-12 07:32:50,d450c2c0-2501-4b74-a443-72a4b7d5f85b,Task 2,Warehouse,"{""metadata"":{""episode_id"":""d450c2c0-2501-4b74-a443-72a4b7d5f85b""},""ranked_objects"":[""worker"",""truck"",""forklift"",""carton""]}",0.990
+2026-04-12 07:32:50,d450c2c0-2501-4b74-a443-72a4b7d5f85b,Task 3,Warehouse,"{""metadata"":{""episode_id"":""d450c2c0-2501-4b74-a443-72a4b7d5f85b""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.42 matches threshold 0.35 <= confidence < 0.50""}",0.990
+2026-04-12 07:32:53,89239d28-3d44-44fb-951a-a416d03e9702,Task 1,Rainy Street,"{""metadata"":{""episode_id"":""89239d28-3d44-44fb-951a-a416d03e9702""},""task1_label"":""person""}",0.200
+2026-04-12 07:32:54,89239d28-3d44-44fb-951a-a416d03e9702,Task 2,Rainy Street,"{""metadata"":{""episode_id"":""89239d28-3d44-44fb-951a-a416d03e9702""},""ranked_objects"":[""bus"",""car"",""person"",""umbrella""]}",0.990
+2026-04-12 07:32:54,89239d28-3d44-44fb-951a-a416d03e9702,Task 3,Rainy Street,"{""metadata"":{""episode_id"":""89239d28-3d44-44fb-951a-a416d03e9702""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.380 matches threshold 0.35 <= confidence < 0.50""}",0.990
+2026-04-12 07:32:57,b63a82da-150c-4eec-a244-d86cf4ff3a50,Task 1,Shopping Mall,"{""metadata"":{""episode_id"":""b63a82da-150c-4eec-a244-d86cf4ff3a50""},""task1_label"":""shopping bag""}",0.990
+2026-04-12 07:32:58,b63a82da-150c-4eec-a244-d86cf4ff3a50,Task 2,Shopping Mall,"{""metadata"":{""episode_id"":""b63a82da-150c-4eec-a244-d86cf4ff3a50""},""ranked_objects"":[""person"",""escalator"",""shopping bag"",""cctv camera""]}",0.990
+2026-04-12 07:32:58,b63a82da-150c-4eec-a244-d86cf4ff3a50,Task 3,Shopping Mall,"{""metadata"":{""episode_id"":""b63a82da-150c-4eec-a244-d86cf4ff3a50""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.46 matches threshold rule 2, confidence is between 0.35 and 0.50""}",0.990
+2026-04-12 07:33:01,6d251d72-6c96-4623-a8a2-4e013fd0c990,Task 1,Shopping Mall,"{""metadata"":{""episode_id"":""6d251d72-6c96-4623-a8a2-4e013fd0c990""},""task1_label"":""shopping bag""}",0.990
+2026-04-12 07:33:01,6d251d72-6c96-4623-a8a2-4e013fd0c990,Task 2,Shopping Mall,"{""metadata"":{""episode_id"":""6d251d72-6c96-4623-a8a2-4e013fd0c990""},""ranked_objects"":[""person"",""escalator"",""shopping bag"",""cctv camera""]}",0.990
+2026-04-12 07:33:01,6d251d72-6c96-4623-a8a2-4e013fd0c990,Task 3,Shopping Mall,"{""metadata"":{""episode_id"":""6d251d72-6c96-4623-a8a2-4e013fd0c990""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.46 matches threshold 0.35 <= confidence < 0.50""}",0.990
+2026-04-12 07:33:05,2fa54976-dfa6-4932-b4ec-210f97c3c40d,Task 1,Night Street,"{""metadata"":{""episode_id"":""2fa54976-dfa6-4932-b4ec-210f97c3c40d""},""task1_label"":""streetlight""}",0.990
+2026-04-12 07:33:05,2fa54976-dfa6-4932-b4ec-210f97c3c40d,Task 2,Night Street,"{""metadata"":{""episode_id"":""2fa54976-dfa6-4932-b4ec-210f97c3c40d""},""ranked_objects"":[""motorcycle"",""person"",""fire hydrant"",""streetlight""]}",0.990
+2026-04-12 07:33:05,2fa54976-dfa6-4932-b4ec-210f97c3c40d,Task 3,Night Street,"{""metadata"":{""episode_id"":""2fa54976-dfa6-4932-b4ec-210f97c3c40d""},""decision"":""discard"",""reasoning"":""Brief proof: 0.210 matches threshold < 0.35, indicating low confidence that requires discarding the detection to prioritize safety and accuracy.""}",0.990
+2026-04-12 07:33:09,37d7000b-a2e9-4414-acd9-bc4c68e34495,Task 1,Shopping Mall,"{""metadata"":{""episode_id"":""37d7000b-a2e9-4414-acd9-bc4c68e34495""},""task1_label"":""shopping bag""}",0.990
+2026-04-12 07:33:09,37d7000b-a2e9-4414-acd9-bc4c68e34495,Task 2,Shopping Mall,"{""metadata"":{""episode_id"":""37d7000b-a2e9-4414-acd9-bc4c68e34495""},""ranked_objects"":[""person"",""escalator"",""shopping bag"",""cctv camera""]}",0.990
+2026-04-12 07:33:09,37d7000b-a2e9-4414-acd9-bc4c68e34495,Task 3,Shopping Mall,"{""metadata"":{""episode_id"":""37d7000b-a2e9-4414-acd9-bc4c68e34495""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.46 matches threshold 0.35 <= confidence < 0.50""}",0.990
+2026-04-12 07:33:12,d13d4159-fe50-41f7-ab5f-7ff731806e74,Task 1,Shopping Mall,"{""metadata"":{""episode_id"":""d13d4159-fe50-41f7-ab5f-7ff731806e74""},""task1_label"":""shopping bag""}",0.990
+2026-04-12 07:33:13,d13d4159-fe50-41f7-ab5f-7ff731806e74,Task 2,Shopping Mall,"{""metadata"":{""episode_id"":""d13d4159-fe50-41f7-ab5f-7ff731806e74""},""ranked_objects"":[""person"",""escalator"",""shopping bag"",""cctv camera""]}",0.990
+2026-04-12 07:33:13,d13d4159-fe50-41f7-ab5f-7ff731806e74,Task 3,Shopping Mall,"{""metadata"":{""episode_id"":""d13d4159-fe50-41f7-ab5f-7ff731806e74""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.46 matches threshold rule 2, confidence is between 0.35 and 0.50""}",0.990
+2026-04-12 07:33:16,ceccae35-5fc1-4694-8ef2-265f8ef658b7,Task 1,Warehouse,"{""metadata"":{""episode_id"":""ceccae35-5fc1-4694-8ef2-265f8ef658b7""},""task1_label"":""forklift""}",0.990
+2026-04-12 07:33:17,ceccae35-5fc1-4694-8ef2-265f8ef658b7,Task 2,Warehouse,"{""metadata"":{""episode_id"":""ceccae35-5fc1-4694-8ef2-265f8ef658b7""},""ranked_objects"":[""worker"",""truck"",""forklift"",""carton""]}",0.990
+2026-04-12 07:33:17,ceccae35-5fc1-4694-8ef2-265f8ef658b7,Task 3,Warehouse,"{""metadata"":{""episode_id"":""ceccae35-5fc1-4694-8ef2-265f8ef658b7""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.42 matches threshold rule 2, confidence is between 0.35 and 0.50""}",0.990
+2026-04-12 07:33:21,dbbe00b8-99c1-4236-a00e-1234474db0f6,Task 1,Night Street,"{""metadata"":{""episode_id"":""dbbe00b8-99c1-4236-a00e-1234474db0f6""},""task1_label"":""streetlight""}",0.990
+2026-04-12 07:33:21,dbbe00b8-99c1-4236-a00e-1234474db0f6,Task 2,Night Street,"{""metadata"":{""episode_id"":""dbbe00b8-99c1-4236-a00e-1234474db0f6""},""ranked_objects"":[""motorcycle"",""person"",""fire hydrant"",""streetlight""]}",0.990
+2026-04-12 07:33:21,dbbe00b8-99c1-4236-a00e-1234474db0f6,Task 3,Night Street,"{""metadata"":{""episode_id"":""dbbe00b8-99c1-4236-a00e-1234474db0f6""},""decision"":""discard"",""reasoning"":""Brief proof: 0.210 matches threshold < 0.35""}",0.990
+2026-04-12 07:33:24,4ac32ac5-9d27-4fba-88a3-7d07a3ce1e36,Task 1,Shopping Mall,"{""metadata"":{""episode_id"":""4ac32ac5-9d27-4fba-88a3-7d07a3ce1e36""},""task1_label"":""shopping bag""}",0.990
+2026-04-12 07:33:25,4ac32ac5-9d27-4fba-88a3-7d07a3ce1e36,Task 2,Shopping Mall,"{""metadata"":{""episode_id"":""4ac32ac5-9d27-4fba-88a3-7d07a3ce1e36""},""ranked_objects"":[""person"",""escalator"",""shopping bag"",""cctv camera""]}",0.990
+2026-04-12 07:33:25,4ac32ac5-9d27-4fba-88a3-7d07a3ce1e36,Task 3,Shopping Mall,"{""metadata"":{""episode_id"":""4ac32ac5-9d27-4fba-88a3-7d07a3ce1e36""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.46 matches threshold 0.35 <= confidence < 0.50""}",0.990
+2026-04-12 07:33:28,10730bab-5a51-4ac1-8467-cebb9efdf5d0,Task 1,Shopping Mall,"{""metadata"":{""episode_id"":""10730bab-5a51-4ac1-8467-cebb9efdf5d0""},""task1_label"":""shopping bag""}",0.990
+2026-04-12 07:33:29,10730bab-5a51-4ac1-8467-cebb9efdf5d0,Task 2,Shopping Mall,"{""metadata"":{""episode_id"":""10730bab-5a51-4ac1-8467-cebb9efdf5d0""},""ranked_objects"":[""person"",""escalator"",""shopping bag"",""cctv camera""]}",0.990
+2026-04-12 07:33:29,10730bab-5a51-4ac1-8467-cebb9efdf5d0,Task 3,Shopping Mall,"{""metadata"":{""episode_id"":""10730bab-5a51-4ac1-8467-cebb9efdf5d0""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.46 matches threshold rule 2, where confidence is BETWEEN 0.35 and 0.50""}",0.990
+2026-04-12 07:33:32,79104287-bc00-40bc-8825-2c776d11e9fe,Task 1,Night Street,"{""metadata"":{""episode_id"":""79104287-bc00-40bc-8825-2c776d11e9fe""},""task1_label"":""streetlight""}",0.990
+2026-04-12 07:33:33,79104287-bc00-40bc-8825-2c776d11e9fe,Task 2,Night Street,"{""metadata"":{""episode_id"":""79104287-bc00-40bc-8825-2c776d11e9fe""},""ranked_objects"":[""motorcycle"",""person"",""fire hydrant"",""streetlight""]}",0.990
+2026-04-12 07:33:33,79104287-bc00-40bc-8825-2c776d11e9fe,Task 3,Night Street,"{""metadata"":{""episode_id"":""79104287-bc00-40bc-8825-2c776d11e9fe""},""decision"":""discard"",""reasoning"":""Brief proof: 0.210 matches threshold < 0.35""}",0.990
+2026-04-12 07:33:36,c6d585ea-aecc-4610-80fc-262037695a2f,Task 1,Shopping Mall,"{""metadata"":{""episode_id"":""c6d585ea-aecc-4610-80fc-262037695a2f""},""task1_label"":""shopping bag""}",0.990
+2026-04-12 07:33:36,c6d585ea-aecc-4610-80fc-262037695a2f,Task 2,Shopping Mall,"{""metadata"":{""episode_id"":""c6d585ea-aecc-4610-80fc-262037695a2f""},""ranked_objects"":[""person"",""escalator"",""shopping bag"",""cctv camera""]}",0.990
+2026-04-12 07:33:39,c6d585ea-aecc-4610-80fc-262037695a2f,Task 3,Shopping Mall,"{""metadata"":{""episode_id"":""c6d585ea-aecc-4610-80fc-262037695a2f""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.46 matches threshold rule 2, where confidence is BETWEEN 0.35 and 0.50""}",0.990
+2026-04-12 07:33:42,d66e99e8-673d-489e-822e-cf2d01cd4e83,Task 1,Warehouse,"{""metadata"":{""episode_id"":""d66e99e8-673d-489e-822e-cf2d01cd4e83""},""task1_label"":""forklift""}",0.990
+2026-04-12 07:33:45,d66e99e8-673d-489e-822e-cf2d01cd4e83,Task 2,Warehouse,"{""metadata"":{""episode_id"":""d66e99e8-673d-489e-822e-cf2d01cd4e83""},""ranked_objects"":[""worker"",""truck"",""forklift"",""carton""]}",0.990
+2026-04-12 07:33:47,d66e99e8-673d-489e-822e-cf2d01cd4e83,Task 3,Warehouse,"{""metadata"":{""episode_id"":""d66e99e8-673d-489e-822e-cf2d01cd4e83""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.42 matches threshold rule 2, confidence is between 0.35 and 0.50""}",0.990
+2026-04-12 07:33:50,2cd42425-4693-4570-9183-9cfbd92a1337,Task 1,Rainy Street,"{""metadata"":{""episode_id"":""2cd42425-4693-4570-9183-9cfbd92a1337""},""task1_label"":""person""}",0.200
+2026-04-12 07:33:53,2cd42425-4693-4570-9183-9cfbd92a1337,Task 2,Rainy Street,"{""metadata"":{""episode_id"":""2cd42425-4693-4570-9183-9cfbd92a1337""},""ranked_objects"":[""bus"",""car"",""person"",""umbrella""]}",0.990
+2026-04-12 07:33:55,2cd42425-4693-4570-9183-9cfbd92a1337,Task 3,Rainy Street,"{""metadata"":{""episode_id"":""2cd42425-4693-4570-9183-9cfbd92a1337""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.380 matches threshold 0.35 <= confidence < 0.50""}",0.990
+2026-04-12 07:33:58,cfa1394d-dde4-46fa-8e21-2acf60a72796,Task 1,Rainy Street,"{""metadata"":{""episode_id"":""cfa1394d-dde4-46fa-8e21-2acf60a72796""},""task1_label"":""person""}",0.200
+2026-04-12 07:34:01,cfa1394d-dde4-46fa-8e21-2acf60a72796,Task 2,Rainy Street,"{""metadata"":{""episode_id"":""cfa1394d-dde4-46fa-8e21-2acf60a72796""},""ranked_objects"":[""bus"",""car"",""person"",""umbrella""]}",0.990
+2026-04-12 07:34:03,cfa1394d-dde4-46fa-8e21-2acf60a72796,Task 3,Rainy Street,"{""metadata"":{""episode_id"":""cfa1394d-dde4-46fa-8e21-2acf60a72796""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.380 matches threshold 0.35 <= confidence < 0.50""}",0.990
+2026-04-12 07:34:06,8b246540-92f3-4b85-a451-0bb2e8f5e4c5,Task 1,Warehouse,"{""metadata"":{""episode_id"":""8b246540-92f3-4b85-a451-0bb2e8f5e4c5""},""task1_label"":""forklift""}",0.990
+2026-04-12 07:34:09,8b246540-92f3-4b85-a451-0bb2e8f5e4c5,Task 2,Warehouse,"{""metadata"":{""episode_id"":""8b246540-92f3-4b85-a451-0bb2e8f5e4c5""},""ranked_objects"":[""worker"",""truck"",""forklift"",""carton""]}",0.990
+2026-04-12 07:34:11,8b246540-92f3-4b85-a451-0bb2e8f5e4c5,Task 3,Warehouse,"{""metadata"":{""episode_id"":""8b246540-92f3-4b85-a451-0bb2e8f5e4c5""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.42 matches threshold rule 2, confidence is between 0.35 and 0.50""}",0.990
+2026-04-12 07:34:15,b2f943c4-cb51-447d-839c-f268fd615008,Task 1,Warehouse,"{""metadata"":{""episode_id"":""b2f943c4-cb51-447d-839c-f268fd615008""},""task1_label"":""forklift""}",0.990
+2026-04-12 07:34:17,b2f943c4-cb51-447d-839c-f268fd615008,Task 2,Warehouse,"{""metadata"":{""episode_id"":""b2f943c4-cb51-447d-839c-f268fd615008""},""ranked_objects"":[""worker"",""truck"",""forklift"",""carton""]}",0.990
+2026-04-12 07:34:19,b2f943c4-cb51-447d-839c-f268fd615008,Task 3,Warehouse,"{""metadata"":{""episode_id"":""b2f943c4-cb51-447d-839c-f268fd615008""},""decision"":""request_rescan"",""reasoning"":""Brief proof: 0.42 matches threshold rule 2, confidence is between 0.35 and 0.50""}",0.990
+2026-04-12 20:44:33,1,Task 1,Airport,"{""task1_label"": ""airplane"", ""metadata"": {""episode_id"": ""1""}}",0.990
+2026-04-12 20:44:33,1,Task 2,Airport,"{""ranked_objects"": [""airplane"", ""suitcase"", ""boarding gate"", ""trolley""], ""metadata"": {""episode_id"": ""1""}}",0.850
+2026-04-12 20:44:33,1,Task 3,Airport,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""1""}}",0.879
+2026-04-12 20:44:34,2,Task 1,Airport,"{""task1_label"": ""airplane"", ""metadata"": {""episode_id"": ""2""}}",0.990
+2026-04-12 20:44:34,2,Task 2,Airport,"{""ranked_objects"": [""airplane"", ""suitcase"", ""boarding gate"", ""trolley""], ""metadata"": {""episode_id"": ""2""}}",0.990
+2026-04-12 20:44:35,2,Task 3,Airport,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""2""}}",0.228
+2026-04-12 20:44:36,3,Task 1,Construction Site,"{""task1_label"": ""helmet"", ""metadata"": {""episode_id"": ""3""}}",0.990
+2026-04-12 20:44:36,3,Task 2,Construction Site,"{""ranked_objects"": [""worker"", ""excavator"", ""crane"", ""helmet""], ""metadata"": {""episode_id"": ""3""}}",0.990
+2026-04-12 20:44:37,3,Task 3,Construction Site,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""3""}}",0.184
+2026-04-12 20:44:37,4,Task 1,Warehouse,"{""task1_label"": ""worker"", ""metadata"": {""episode_id"": ""4""}}",0.990
+2026-04-12 20:44:38,4,Task 2,Warehouse,"{""ranked_objects"": [""worker"", ""truck"", ""forklift"", ""carton""], ""metadata"": {""episode_id"": ""4""}}",0.850
+2026-04-12 20:44:38,4,Task 3,Warehouse,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""4""}}",0.852
+2026-04-12 20:44:39,5,Task 1,Warehouse,"{""task1_label"": ""truck"", ""metadata"": {""episode_id"": ""5""}}",0.750
+2026-04-12 20:44:39,5,Task 2,Warehouse,"{""ranked_objects"": [""worker"", ""truck"", ""forklift"", ""carton""], ""metadata"": {""episode_id"": ""5""}}",0.850
+2026-04-12 20:44:40,5,Task 3,Warehouse,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""5""}}",0.530
+2026-04-12 20:44:41,6,Task 1,School Zone,"{""task1_label"": ""student"", ""metadata"": {""episode_id"": ""6""}}",0.750
+2026-04-12 20:44:41,6,Task 2,School Zone,"{""ranked_objects"": [""bus"", ""student"", ""bicycle"", ""backpack""], ""metadata"": {""episode_id"": ""6""}}",0.850
+2026-04-12 20:44:42,6,Task 3,School Zone,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""6""}}",0.243
+2026-04-12 20:44:42,7,Task 1,Shopping Mall,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""7""}}",0.990
+2026-04-12 20:44:43,7,Task 2,Shopping Mall,"{""ranked_objects"": [""cctv camera"", ""shopping bag"", ""escalator"", ""person""], ""metadata"": {""episode_id"": ""7""}}",0.330
+2026-04-12 20:44:43,7,Task 3,Shopping Mall,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""7""}}",0.170
+2026-04-12 20:44:44,8,Task 1,School Zone,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""8""}}",0.200
+2026-04-12 20:44:44,8,Task 2,School Zone,"{""ranked_objects"": [""bus"", ""student"", ""bicycle"", ""backpack""], ""metadata"": {""episode_id"": ""8""}}",0.990
+2026-04-12 20:44:45,8,Task 3,School Zone,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""8""}}",0.916
+2026-04-12 20:44:46,9,Task 1,Urban Street,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""9""}}",0.990
+2026-04-12 20:44:46,9,Task 2,Urban Street,"{""ranked_objects"": [""person"", ""car"", ""bicycle"", ""traffic light""], ""metadata"": {""episode_id"": ""9""}}",0.850
+2026-04-12 20:44:47,9,Task 3,Urban Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""9""}}",0.964
+2026-04-12 20:44:47,10,Task 1,School Zone,"{""task1_label"": ""bus"", ""metadata"": {""episode_id"": ""10""}}",0.990
+2026-04-12 20:44:48,10,Task 2,School Zone,"{""ranked_objects"": [""bus"", ""student"", ""bicycle"", ""backpack""], ""metadata"": {""episode_id"": ""10""}}",0.850
+2026-04-12 20:44:48,10,Task 3,School Zone,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""10""}}",0.519
+2026-04-12 20:44:49,11,Task 1,Night Street,"{""task1_label"": ""streetlight"", ""metadata"": {""episode_id"": ""11""}}",0.990
+2026-04-12 20:44:49,11,Task 2,Night Street,"{""ranked_objects"": [""motorcycle"", ""person"", ""fire hydrant"", ""streetlight""], ""metadata"": {""episode_id"": ""11""}}",0.850
+2026-04-12 20:44:50,11,Task 3,Night Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""11""}}",0.910
+2026-04-12 20:44:51,12,Task 1,Sensor Glare,"{""task1_label"": ""ambulance"", ""metadata"": {""episode_id"": ""12""}}",0.750
+2026-04-12 20:44:51,12,Task 2,Sensor Glare,"{""ranked_objects"": [""ambulance"", ""person"", ""traffic light""], ""metadata"": {""episode_id"": ""12""}}",0.850
+2026-04-12 20:44:52,12,Task 3,Sensor Glare,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""12""}}",0.461
+2026-04-12 20:44:52,13,Task 1,Night Street,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""13""}}",0.200
+2026-04-12 20:44:53,13,Task 2,Night Street,"{""ranked_objects"": [""motorcycle"", ""person"", ""fire hydrant"", ""streetlight""], ""metadata"": {""episode_id"": ""13""}}",0.850
+2026-04-12 20:44:53,13,Task 3,Night Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""13""}}",0.211
+2026-04-12 20:44:54,14,Task 1,Sensor Glare,"{""task1_label"": ""traffic light"", ""metadata"": {""episode_id"": ""14""}}",0.750
+2026-04-12 20:44:54,14,Task 2,Sensor Glare,"{""ranked_objects"": [""traffic light"", ""person"", ""ambulance""], ""metadata"": {""episode_id"": ""14""}}",0.330
+2026-04-12 20:44:55,14,Task 3,Sensor Glare,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""14""}}",0.961
+2026-04-12 20:44:56,15,Task 1,Warehouse,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""15""}}",0.200
+2026-04-12 20:44:56,15,Task 2,Warehouse,"{""ranked_objects"": [""worker"", ""truck"", ""forklift"", ""carton""], ""metadata"": {""episode_id"": ""15""}}",0.850
+2026-04-12 20:44:56,15,Task 3,Warehouse,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""15""}}",0.884
+2026-04-12 20:44:57,16,Task 1,Urban Street,"{""task1_label"": ""bicycle"", ""metadata"": {""episode_id"": ""16""}}",0.750
+2026-04-12 20:44:58,16,Task 2,Urban Street,"{""ranked_objects"": [""person"", ""car"", ""bicycle"", ""traffic light""], ""metadata"": {""episode_id"": ""16""}}",0.990
+2026-04-12 20:44:58,16,Task 3,Urban Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""16""}}",0.457
+2026-04-12 20:44:59,17,Task 1,Hospital Entrance,"{""task1_label"": ""wheelchair"", ""metadata"": {""episode_id"": ""17""}}",0.750
+2026-04-12 20:44:59,17,Task 2,Hospital Entrance,"{""ranked_objects"": [""person"", ""ambulance"", ""wheelchair"", ""stretcher""], ""metadata"": {""episode_id"": ""17""}}",0.850
+2026-04-12 20:45:00,17,Task 3,Hospital Entrance,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""17""}}",0.212
+2026-04-12 20:45:01,18,Task 1,Urban Street,"{""task1_label"": ""bicycle"", ""metadata"": {""episode_id"": ""18""}}",0.990
+2026-04-12 20:45:01,18,Task 2,Urban Street,"{""ranked_objects"": [""person"", ""car"", ""bicycle"", ""traffic light""], ""metadata"": {""episode_id"": ""18""}}",0.850
+2026-04-12 20:45:01,18,Task 3,Urban Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""18""}}",0.904
+2026-04-12 20:45:02,19,Task 1,Sensor Glare,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""19""}}",0.200
+2026-04-12 20:45:02,19,Task 2,Sensor Glare,"{""ranked_objects"": [""ambulance"", ""person"", ""traffic light""], ""metadata"": {""episode_id"": ""19""}}",0.850
+2026-04-12 20:45:03,19,Task 3,Sensor Glare,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""19""}}",0.899
+2026-04-12 20:45:04,20,Task 1,Blizzard Whiteout,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""20""}}",0.200
+2026-04-12 20:45:04,20,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""truck"", ""person"", ""car"", ""stop sign""], ""metadata"": {""episode_id"": ""20""}}",0.990
+2026-04-12 20:45:05,20,Task 3,Blizzard Whiteout,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""20""}}",0.167
+2026-04-12 20:45:05,21,Task 1,Sensor Glare,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""21""}}",0.200
+2026-04-12 20:45:06,21,Task 2,Sensor Glare,"{""ranked_objects"": [""ambulance"", ""person"", ""traffic light""], ""metadata"": {""episode_id"": ""21""}}",0.850
+2026-04-12 20:45:06,21,Task 3,Sensor Glare,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""21""}}",0.163
+2026-04-12 20:45:07,22,Task 1,Shopping Mall,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""22""}}",0.990
+2026-04-12 20:45:07,22,Task 2,Shopping Mall,"{""ranked_objects"": [""person"", ""escalator"", ""shopping bag"", ""cctv camera""], ""metadata"": {""episode_id"": ""22""}}",0.850
+2026-04-12 20:45:08,22,Task 3,Shopping Mall,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""22""}}",0.864
+2026-04-12 20:45:09,23,Task 1,School Zone,"{""task1_label"": ""student"", ""metadata"": {""episode_id"": ""23""}}",0.990
+2026-04-12 20:45:09,23,Task 2,School Zone,"{""ranked_objects"": [""backpack"", ""bicycle"", ""student"", ""bus""], ""metadata"": {""episode_id"": ""23""}}",0.330
+2026-04-12 20:45:10,23,Task 3,School Zone,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""23""}}",0.944
+2026-04-12 20:45:10,24,Task 1,Warehouse,"{""task1_label"": ""worker"", ""metadata"": {""episode_id"": ""24""}}",0.750
+2026-04-12 20:45:11,24,Task 2,Warehouse,"{""ranked_objects"": [""worker"", ""truck"", ""forklift"", ""carton""], ""metadata"": {""episode_id"": ""24""}}",0.990
+2026-04-12 20:45:11,24,Task 3,Warehouse,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""24""}}",0.490
+2026-04-12 20:45:12,25,Task 1,Rainy Street,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""25""}}",0.200
+2026-04-12 20:45:12,25,Task 2,Rainy Street,"{""ranked_objects"": [""bus"", ""car"", ""person"", ""umbrella""], ""metadata"": {""episode_id"": ""25""}}",0.850
+2026-04-12 20:45:13,25,Task 3,Rainy Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""25""}}",0.249
+2026-04-12 20:45:14,26,Task 1,Blizzard Whiteout,"{""task1_label"": ""car"", ""metadata"": {""episode_id"": ""26""}}",0.990
+2026-04-12 20:45:14,26,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""stop sign"", ""car"", ""person"", ""truck""], ""metadata"": {""episode_id"": ""26""}}",0.330
+2026-04-12 20:45:15,26,Task 3,Blizzard Whiteout,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""26""}}",0.202
+2026-04-12 20:45:15,27,Task 1,Rainy Street,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""27""}}",0.200
+2026-04-12 20:45:16,27,Task 2,Rainy Street,"{""ranked_objects"": [""bus"", ""car"", ""person"", ""umbrella""], ""metadata"": {""episode_id"": ""27""}}",0.990
+2026-04-12 20:45:16,27,Task 3,Rainy Street,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""27""}}",0.880
+2026-04-12 20:45:17,28,Task 1,Parking Lot,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""28""}}",0.990
+2026-04-12 20:45:17,28,Task 2,Parking Lot,"{""ranked_objects"": [""car"", ""person"", ""parking meter"", ""cctv camera""], ""metadata"": {""episode_id"": ""28""}}",0.850
+2026-04-12 20:45:18,28,Task 3,Parking Lot,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""28""}}",0.934
+2026-04-12 20:45:19,29,Task 1,Parking Lot,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""29""}}",0.750
+2026-04-12 20:45:19,29,Task 2,Parking Lot,"{""ranked_objects"": [""car"", ""person"", ""parking meter"", ""cctv camera""], ""metadata"": {""episode_id"": ""29""}}",0.990
+2026-04-12 20:45:19,29,Task 3,Parking Lot,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""29""}}",0.879
+2026-04-12 20:45:20,30,Task 1,School Zone,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""30""}}",0.200
+2026-04-12 20:45:21,30,Task 2,School Zone,"{""ranked_objects"": [""bus"", ""student"", ""bicycle"", ""backpack""], ""metadata"": {""episode_id"": ""30""}}",0.990
+2026-04-12 20:45:21,30,Task 3,School Zone,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""30""}}",0.478
+2026-04-12 20:48:54,1,Task 1,Forest Trail,"{""task1_label"": ""tree"", ""metadata"": {""episode_id"": ""1""}}",0.990
+2026-04-12 20:48:54,1,Task 2,Forest Trail,"{""ranked_objects"": [""hiker"", ""dog"", ""backpack"", ""tree""], ""metadata"": {""episode_id"": ""1""}}",0.990
+2026-04-12 20:48:55,1,Task 3,Forest Trail,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""1""}}",0.965
+2026-04-12 20:48:56,2,Task 1,Forest Trail,"{""task1_label"": ""hiker"", ""metadata"": {""episode_id"": ""2""}}",0.990
+2026-04-12 20:48:56,2,Task 2,Forest Trail,"{""ranked_objects"": [""hiker"", ""dog"", ""backpack"", ""tree""], ""metadata"": {""episode_id"": ""2""}}",0.990
+2026-04-12 20:48:56,2,Task 3,Forest Trail,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""2""}}",0.886
+2026-04-12 20:48:57,3,Task 1,Office Lobby,"{""task1_label"": ""reception desk"", ""metadata"": {""episode_id"": ""3""}}",0.990
+2026-04-12 20:48:58,3,Task 2,Office Lobby,"{""ranked_objects"": [""person"", ""couch"", ""reception desk"", ""potted plant""], ""metadata"": {""episode_id"": ""3""}}",0.850
+2026-04-12 20:48:58,3,Task 3,Office Lobby,"{""decision"": ""log_and_continue"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""3""}}",0.915
+2026-04-12 20:48:59,4,Task 1,Urban Street,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""4""}}",0.990
+2026-04-12 20:48:59,4,Task 2,Urban Street,"{""ranked_objects"": [""person"", ""car"", ""bicycle"", ""traffic light""], ""metadata"": {""episode_id"": ""4""}}",0.990
+2026-04-12 20:49:00,4,Task 3,Urban Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""4""}}",0.946
+2026-04-12 20:49:01,5,Task 1,Parking Lot,"{""task1_label"": ""car"", ""metadata"": {""episode_id"": ""5""}}",0.990
+2026-04-12 20:49:01,5,Task 2,Parking Lot,"{""ranked_objects"": [""car"", ""person"", ""parking meter"", ""cctv camera""], ""metadata"": {""episode_id"": ""5""}}",0.850
+2026-04-12 20:49:01,5,Task 3,Parking Lot,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""5""}}",0.470
+2026-04-12 20:49:02,6,Task 1,Warehouse,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""6""}}",0.200
+2026-04-12 20:49:03,6,Task 2,Warehouse,"{""ranked_objects"": [""worker"", ""truck"", ""forklift"", ""carton""], ""metadata"": {""episode_id"": ""6""}}",0.850
+2026-04-12 20:49:03,6,Task 3,Warehouse,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""6""}}",0.855
+2026-04-12 20:49:04,7,Task 1,Night Street,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""7""}}",0.200
+2026-04-12 20:49:04,7,Task 2,Night Street,"{""ranked_objects"": [""motorcycle"", ""person"", ""fire hydrant"", ""streetlight""], ""metadata"": {""episode_id"": ""7""}}",0.990
+2026-04-12 20:49:05,7,Task 3,Night Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""7""}}",0.481
+2026-04-12 20:49:06,8,Task 1,Rainy Street,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""8""}}",0.990
+2026-04-12 20:49:06,8,Task 2,Rainy Street,"{""ranked_objects"": [""bus"", ""car"", ""person"", ""umbrella""], ""metadata"": {""episode_id"": ""8""}}",0.990
+2026-04-12 20:49:06,8,Task 3,Rainy Street,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""8""}}",0.503
+2026-04-12 20:49:07,9,Task 1,Night Street,"{""task1_label"": ""motorcycle"", ""metadata"": {""episode_id"": ""9""}}",0.750
+2026-04-12 20:49:07,9,Task 2,Night Street,"{""ranked_objects"": [""motorcycle"", ""person"", ""fire hydrant"", ""streetlight""], ""metadata"": {""episode_id"": ""9""}}",0.990
+2026-04-12 20:49:08,9,Task 3,Night Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""9""}}",0.856
+2026-04-12 20:49:09,10,Task 1,Sensor Glare,"{""task1_label"": ""ambulance"", ""metadata"": {""episode_id"": ""10""}}",0.750
+2026-04-12 20:49:09,10,Task 2,Sensor Glare,"{""ranked_objects"": [""ambulance"", ""person"", ""traffic light""], ""metadata"": {""episode_id"": ""10""}}",0.850
+2026-04-12 20:49:10,10,Task 3,Sensor Glare,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""10""}}",0.518
+2026-04-12 20:49:10,11,Task 1,Blizzard Whiteout,"{""task1_label"": ""car"", ""metadata"": {""episode_id"": ""11""}}",0.990
+2026-04-12 20:49:11,11,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""stop sign"", ""car"", ""person"", ""truck""], ""metadata"": {""episode_id"": ""11""}}",0.330
+2026-04-12 20:49:11,11,Task 3,Blizzard Whiteout,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""11""}}",0.965
+2026-04-12 20:49:12,12,Task 1,Night Street,"{""task1_label"": ""streetlight"", ""metadata"": {""episode_id"": ""12""}}",0.990
+2026-04-12 20:49:12,12,Task 2,Night Street,"{""ranked_objects"": [""motorcycle"", ""person"", ""fire hydrant"", ""streetlight""], ""metadata"": {""episode_id"": ""12""}}",0.850
+2026-04-12 20:49:13,12,Task 3,Night Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""12""}}",0.909
+2026-04-12 20:49:14,13,Task 1,Blizzard Whiteout,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""13""}}",0.200
+2026-04-12 20:49:14,13,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""stop sign"", ""car"", ""person"", ""truck""], ""metadata"": {""episode_id"": ""13""}}",0.330
+2026-04-12 20:49:15,13,Task 3,Blizzard Whiteout,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""13""}}",0.494
+2026-04-12 20:49:15,14,Task 1,Sensor Glare,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""14""}}",0.990
+2026-04-12 20:49:16,14,Task 2,Sensor Glare,"{""ranked_objects"": [""traffic light"", ""person"", ""ambulance""], ""metadata"": {""episode_id"": ""14""}}",0.330
+2026-04-12 20:49:16,14,Task 3,Sensor Glare,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""14""}}",0.215
+2026-04-12 20:49:17,15,Task 1,Parking Lot,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""15""}}",0.200
+2026-04-12 20:49:17,15,Task 2,Parking Lot,"{""ranked_objects"": [""car"", ""person"", ""parking meter"", ""cctv camera""], ""metadata"": {""episode_id"": ""15""}}",0.850
+2026-04-12 20:49:18,15,Task 3,Parking Lot,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""15""}}",0.934
+2026-04-12 20:49:19,16,Task 1,School Zone,"{""task1_label"": ""backpack"", ""metadata"": {""episode_id"": ""16""}}",0.990
+2026-04-12 20:49:19,16,Task 2,School Zone,"{""ranked_objects"": [""bus"", ""student"", ""bicycle"", ""backpack""], ""metadata"": {""episode_id"": ""16""}}",0.990
+2026-04-12 20:49:20,16,Task 3,School Zone,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""16""}}",0.457
+2026-04-12 20:49:20,17,Task 1,School Zone,"{""task1_label"": ""backpack"", ""metadata"": {""episode_id"": ""17""}}",0.750
+2026-04-12 20:49:21,17,Task 2,School Zone,"{""ranked_objects"": [""backpack"", ""bicycle"", ""student"", ""bus""], ""metadata"": {""episode_id"": ""17""}}",0.330
+2026-04-12 20:49:21,17,Task 3,School Zone,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""17""}}",0.859
+2026-04-12 20:49:22,18,Task 1,Parking Lot,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""18""}}",0.990
+2026-04-12 20:49:22,18,Task 2,Parking Lot,"{""ranked_objects"": [""car"", ""person"", ""parking meter"", ""cctv camera""], ""metadata"": {""episode_id"": ""18""}}",0.990
+2026-04-12 20:49:23,18,Task 3,Parking Lot,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""18""}}",0.954
+2026-04-12 20:49:24,19,Task 1,Blizzard Whiteout,"{""task1_label"": ""truck"", ""metadata"": {""episode_id"": ""19""}}",0.750
+2026-04-12 20:49:24,19,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""truck"", ""person"", ""car"", ""stop sign""], ""metadata"": {""episode_id"": ""19""}}",0.990
+2026-04-12 20:49:25,19,Task 3,Blizzard Whiteout,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""19""}}",0.958
+2026-04-12 20:49:25,20,Task 1,Blizzard Whiteout,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""20""}}",0.990
+2026-04-12 20:49:26,20,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""stop sign"", ""car"", ""person"", ""truck""], ""metadata"": {""episode_id"": ""20""}}",0.330
+2026-04-12 20:49:26,20,Task 3,Blizzard Whiteout,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""20""}}",0.219
+2026-04-12 20:49:27,21,Task 1,Sensor Glare,"{""task1_label"": ""traffic light"", ""metadata"": {""episode_id"": ""21""}}",0.750
+2026-04-12 20:49:27,21,Task 2,Sensor Glare,"{""ranked_objects"": [""ambulance"", ""person"", ""traffic light""], ""metadata"": {""episode_id"": ""21""}}",0.850
+2026-04-12 20:49:28,21,Task 3,Sensor Glare,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""21""}}",0.235
+2026-04-12 20:49:29,22,Task 1,Rainy Street,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""22""}}",0.200
+2026-04-12 20:49:29,22,Task 2,Rainy Street,"{""ranked_objects"": [""bus"", ""car"", ""person"", ""umbrella""], ""metadata"": {""episode_id"": ""22""}}",0.850
+2026-04-12 20:49:29,22,Task 3,Rainy Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""22""}}",0.222
+2026-04-12 20:49:30,23,Task 1,Warehouse,"{""task1_label"": ""truck"", ""metadata"": {""episode_id"": ""23""}}",0.750
+2026-04-12 20:49:31,23,Task 2,Warehouse,"{""ranked_objects"": [""worker"", ""truck"", ""forklift"", ""carton""], ""metadata"": {""episode_id"": ""23""}}",0.850
+2026-04-12 20:49:31,23,Task 3,Warehouse,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""23""}}",0.968
+2026-04-12 20:49:32,24,Task 1,Shopping Mall,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""24""}}",0.200
+2026-04-12 20:49:32,24,Task 2,Shopping Mall,"{""ranked_objects"": [""person"", ""escalator"", ""shopping bag"", ""cctv camera""], ""metadata"": {""episode_id"": ""24""}}",0.850
+2026-04-12 20:49:33,24,Task 3,Shopping Mall,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""24""}}",0.965
+2026-04-12 20:49:34,25,Task 1,School Zone,"{""task1_label"": ""backpack"", ""metadata"": {""episode_id"": ""25""}}",0.990
+2026-04-12 20:49:34,25,Task 2,School Zone,"{""ranked_objects"": [""bus"", ""student"", ""bicycle"", ""backpack""], ""metadata"": {""episode_id"": ""25""}}",0.990
+2026-04-12 20:49:34,25,Task 3,School Zone,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""25""}}",0.875
+2026-04-12 20:49:35,26,Task 1,Rainy Street,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""26""}}",0.990
+2026-04-12 20:49:36,26,Task 2,Rainy Street,"{""ranked_objects"": [""bus"", ""car"", ""person"", ""umbrella""], ""metadata"": {""episode_id"": ""26""}}",0.850
+2026-04-12 20:49:36,26,Task 3,Rainy Street,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""26""}}",0.924
+2026-04-12 20:49:37,27,Task 1,Rainy Street,"{""task1_label"": ""car"", ""metadata"": {""episode_id"": ""27""}}",0.990
+2026-04-12 20:49:37,27,Task 2,Rainy Street,"{""ranked_objects"": [""umbrella"", ""person"", ""car"", ""bus""], ""metadata"": {""episode_id"": ""27""}}",0.330
+2026-04-12 20:49:38,27,Task 3,Rainy Street,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""27""}}",0.509
+2026-04-12 20:49:39,28,Task 1,Night Street,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""28""}}",0.990
+2026-04-12 20:49:39,28,Task 2,Night Street,"{""ranked_objects"": [""streetlight"", ""fire hydrant"", ""person"", ""motorcycle""], ""metadata"": {""episode_id"": ""28""}}",0.330
+2026-04-12 20:49:40,28,Task 3,Night Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""28""}}",0.522
+2026-04-12 20:49:40,29,Task 1,Night Street,"{""task1_label"": ""person"", ""metadata"": {""episode_id"": ""29""}}",0.750
+2026-04-12 20:49:41,29,Task 2,Night Street,"{""ranked_objects"": [""motorcycle"", ""person"", ""fire hydrant"", ""streetlight""], ""metadata"": {""episode_id"": ""29""}}",0.850
+2026-04-12 20:49:41,29,Task 3,Night Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""29""}}",0.511
+2026-04-12 20:49:42,30,Task 1,Rainy Street,"{""task1_label"": ""car"", ""metadata"": {""episode_id"": ""30""}}",0.750
+2026-04-12 20:49:42,30,Task 2,Rainy Street,"{""ranked_objects"": [""umbrella"", ""person"", ""car"", ""bus""], ""metadata"": {""episode_id"": ""30""}}",0.330
+2026-04-12 20:49:43,30,Task 3,Rainy Street,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""30""}}",0.902
+2026-04-12 20:54:47,1,Task 1,Airport,"{""task1_label"": ""boarding gate"", ""metadata"": {""episode_id"": ""1""}}",0.750
+2026-04-12 20:54:48,1,Task 2,Airport,"{""ranked_objects"": [""airplane"", ""suitcase"", ""boarding gate"", ""trolley""], ""metadata"": {""episode_id"": ""1""}}",0.990
+2026-04-12 20:54:48,1,Task 3,Airport,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""1""}}",0.243
+2026-04-12 20:54:49,2,Task 1,Office Lobby,"{""task1_label"": ""potted plant"", ""metadata"": {""episode_id"": ""2""}}",0.990
+2026-04-12 20:54:49,2,Task 2,Office Lobby,"{""ranked_objects"": [""person"", ""couch"", ""reception desk"", ""potted plant""], ""metadata"": {""episode_id"": ""2""}}",0.990
+2026-04-12 20:54:50,2,Task 3,Office Lobby,"{""decision"": ""log_and_continue"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""2""}}",0.876
+2026-04-12 20:54:51,3,Task 1,Office Lobby,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""3""}}",0.200
+2026-04-12 20:54:51,3,Task 2,Office Lobby,"{""ranked_objects"": [""person"", ""couch"", ""reception desk"", ""potted plant""], ""metadata"": {""episode_id"": ""3""}}",0.990
+2026-04-12 20:54:52,3,Task 3,Office Lobby,"{""decision"": ""log_and_continue"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""3""}}",0.866
+2026-04-12 20:54:52,4,Task 1,Shopping Mall,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""4""}}",0.200
+2026-04-12 20:54:53,4,Task 2,Shopping Mall,"{""ranked_objects"": [""cctv camera"", ""shopping bag"", ""escalator"", ""person""], ""metadata"": {""episode_id"": ""4""}}",0.330
+2026-04-12 20:54:53,4,Task 3,Shopping Mall,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""4""}}",0.883
+2026-04-12 20:54:54,5,Task 1,Hospital Entrance,"{""task1_label"": ""ambulance"", ""metadata"": {""episode_id"": ""5""}}",0.990
+2026-04-12 20:54:54,5,Task 2,Hospital Entrance,"{""ranked_objects"": [""person"", ""ambulance"", ""wheelchair"", ""stretcher""], ""metadata"": {""episode_id"": ""5""}}",0.990
+2026-04-12 20:54:55,5,Task 3,Hospital Entrance,"{""decision"": ""log_and_continue"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""5""}}",0.906
+2026-04-12 20:54:56,6,Task 1,Hospital Entrance,"{""task1_label"": ""stretcher"", ""metadata"": {""episode_id"": ""6""}}",0.750
+2026-04-12 20:54:56,6,Task 2,Hospital Entrance,"{""ranked_objects"": [""person"", ""ambulance"", ""wheelchair"", ""stretcher""], ""metadata"": {""episode_id"": ""6""}}",0.850
+2026-04-12 20:54:57,6,Task 3,Hospital Entrance,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""6""}}",0.472
+2026-04-12 20:54:57,7,Task 1,Hospital Entrance,"{""task1_label"": ""ambulance"", ""metadata"": {""episode_id"": ""7""}}",0.750
+2026-04-12 20:54:58,7,Task 2,Hospital Entrance,"{""ranked_objects"": [""person"", ""ambulance"", ""wheelchair"", ""stretcher""], ""metadata"": {""episode_id"": ""7""}}",0.850
+2026-04-12 20:54:58,7,Task 3,Hospital Entrance,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""7""}}",0.485
+2026-04-12 20:54:59,8,Task 1,Sensor Glare,"{""task1_label"": ""ambulance"", ""metadata"": {""episode_id"": ""8""}}",0.990
+2026-04-12 20:54:59,8,Task 2,Sensor Glare,"{""ranked_objects"": [""ambulance"", ""person"", ""traffic light""], ""metadata"": {""episode_id"": ""8""}}",0.850
+2026-04-12 20:55:00,8,Task 3,Sensor Glare,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""8""}}",0.240
+2026-04-12 20:55:01,9,Task 1,Rainy Street,"{""task1_label"": ""car"", ""metadata"": {""episode_id"": ""9""}}",0.750
+2026-04-12 20:55:01,9,Task 2,Rainy Street,"{""ranked_objects"": [""bus"", ""car"", ""person"", ""umbrella""], ""metadata"": {""episode_id"": ""9""}}",0.850
+2026-04-12 20:55:02,9,Task 3,Rainy Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""9""}}",0.200
+2026-04-12 20:55:02,10,Task 1,Rainy Street,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""10""}}",0.200
+2026-04-12 20:55:03,10,Task 2,Rainy Street,"{""ranked_objects"": [""bus"", ""car"", ""person"", ""umbrella""], ""metadata"": {""episode_id"": ""10""}}",0.850
+2026-04-12 20:55:03,10,Task 3,Rainy Street,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""10""}}",0.528
+2026-04-12 20:55:04,11,Task 1,Night Street,"{""task1_label"": ""motorcycle"", ""metadata"": {""episode_id"": ""11""}}",0.990
+2026-04-12 20:55:04,11,Task 2,Night Street,"{""ranked_objects"": [""motorcycle"", ""person"", ""fire hydrant"", ""streetlight""], ""metadata"": {""episode_id"": ""11""}}",0.850
+2026-04-12 20:55:05,11,Task 3,Night Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""11""}}",0.172
+2026-04-12 20:55:06,12,Task 1,Warehouse,"{""task1_label"": ""worker"", ""metadata"": {""episode_id"": ""12""}}",0.990
+2026-04-12 20:55:06,12,Task 2,Warehouse,"{""ranked_objects"": [""worker"", ""truck"", ""forklift"", ""carton""], ""metadata"": {""episode_id"": ""12""}}",0.850
+2026-04-12 20:55:07,12,Task 3,Warehouse,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""12""}}",0.458
+2026-04-12 20:55:08,13,Task 1,Shopping Mall,"{""task1_label"": ""escalator"", ""metadata"": {""episode_id"": ""13""}}",0.990
+2026-04-12 20:55:08,13,Task 2,Shopping Mall,"{""ranked_objects"": [""person"", ""escalator"", ""shopping bag"", ""cctv camera""], ""metadata"": {""episode_id"": ""13""}}",0.850
+2026-04-12 20:55:08,13,Task 3,Shopping Mall,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""13""}}",0.202
+2026-04-12 20:55:09,14,Task 1,Urban Street,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""14""}}",0.200
+2026-04-12 20:55:10,14,Task 2,Urban Street,"{""ranked_objects"": [""person"", ""car"", ""bicycle"", ""traffic light""], ""metadata"": {""episode_id"": ""14""}}",0.990
+2026-04-12 20:55:10,14,Task 3,Urban Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""14""}}",0.949
+2026-04-12 20:55:11,15,Task 1,Parking Lot,"{""task1_label"": ""car"", ""metadata"": {""episode_id"": ""15""}}",0.990
+2026-04-12 20:55:11,15,Task 2,Parking Lot,"{""ranked_objects"": [""car"", ""person"", ""parking meter"", ""cctv camera""], ""metadata"": {""episode_id"": ""15""}}",0.990
+2026-04-12 20:55:12,15,Task 3,Parking Lot,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""15""}}",0.153
+2026-04-12 20:55:13,16,Task 1,School Zone,"{""task1_label"": ""student"", ""metadata"": {""episode_id"": ""16""}}",0.990
+2026-04-12 20:55:13,16,Task 2,School Zone,"{""ranked_objects"": [""bus"", ""student"", ""bicycle"", ""backpack""], ""metadata"": {""episode_id"": ""16""}}",0.990
+2026-04-12 20:55:13,16,Task 3,School Zone,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""16""}}",0.504
+2026-04-12 20:55:14,17,Task 1,Blizzard Whiteout,"{""task1_label"": ""truck"", ""metadata"": {""episode_id"": ""17""}}",0.750
+2026-04-12 20:55:15,17,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""truck"", ""person"", ""car"", ""stop sign""], ""metadata"": {""episode_id"": ""17""}}",0.850
+2026-04-12 20:55:15,17,Task 3,Blizzard Whiteout,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""17""}}",0.180
+2026-04-12 20:55:16,18,Task 1,Blizzard Whiteout,"{""task1_label"": ""stop sign"", ""metadata"": {""episode_id"": ""18""}}",0.990
+2026-04-12 20:55:16,18,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""stop sign"", ""car"", ""person"", ""truck""], ""metadata"": {""episode_id"": ""18""}}",0.330
+2026-04-12 20:55:17,18,Task 3,Blizzard Whiteout,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""18""}}",0.900
+2026-04-12 20:55:18,19,Task 1,Rainy Street,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""19""}}",0.200
+2026-04-12 20:55:18,19,Task 2,Rainy Street,"{""ranked_objects"": [""umbrella"", ""person"", ""car"", ""bus""], ""metadata"": {""episode_id"": ""19""}}",0.330
+2026-04-12 20:55:18,19,Task 3,Rainy Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""19""}}",0.214
+2026-04-12 20:55:19,20,Task 1,Urban Street,"{""task1_label"": ""car"", ""metadata"": {""episode_id"": ""20""}}",0.750
+2026-04-12 20:55:20,20,Task 2,Urban Street,"{""ranked_objects"": [""person"", ""car"", ""bicycle"", ""traffic light""], ""metadata"": {""episode_id"": ""20""}}",0.990
+2026-04-12 20:55:20,20,Task 3,Urban Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""20""}}",0.163
+2026-04-12 20:55:21,21,Task 1,Urban Street,"{""task1_label"": ""car"", ""metadata"": {""episode_id"": ""21""}}",0.750
+2026-04-12 20:55:21,21,Task 2,Urban Street,"{""ranked_objects"": [""person"", ""car"", ""bicycle"", ""traffic light""], ""metadata"": {""episode_id"": ""21""}}",0.990
+2026-04-12 20:55:22,21,Task 3,Urban Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""21""}}",0.858
+2026-04-12 20:55:23,22,Task 1,Parking Lot,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""22""}}",0.200
+2026-04-12 20:55:23,22,Task 2,Parking Lot,"{""ranked_objects"": [""car"", ""person"", ""parking meter"", ""cctv camera""], ""metadata"": {""episode_id"": ""22""}}",0.990
+2026-04-12 20:55:23,22,Task 3,Parking Lot,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""22""}}",0.851
+2026-04-12 20:55:24,23,Task 1,Warehouse,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""23""}}",0.200
+2026-04-12 20:55:25,23,Task 2,Warehouse,"{""ranked_objects"": [""worker"", ""truck"", ""forklift"", ""carton""], ""metadata"": {""episode_id"": ""23""}}",0.990
+2026-04-12 20:55:25,23,Task 3,Warehouse,"{""decision"": ""request_rescan"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""23""}}",0.944
+2026-04-12 20:55:26,24,Task 1,Blizzard Whiteout,"{""task1_label"": ""unknown"", ""metadata"": {""episode_id"": ""24""}}",0.200
+2026-04-12 20:55:26,24,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""truck"", ""person"", ""car"", ""stop sign""], ""metadata"": {""episode_id"": ""24""}}",0.850
+2026-04-12 20:55:27,24,Task 3,Blizzard Whiteout,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""24""}}",0.956
+2026-04-12 20:55:28,25,Task 1,Rainy Street,"{""task1_label"": ""car"", ""metadata"": {""episode_id"": ""25""}}",0.750
+2026-04-12 20:55:28,25,Task 2,Rainy Street,"{""ranked_objects"": [""umbrella"", ""person"", ""car"", ""bus""], ""metadata"": {""episode_id"": ""25""}}",0.330
+2026-04-12 20:55:28,25,Task 3,Rainy Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""25""}}",0.210

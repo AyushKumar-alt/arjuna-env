@@ -674,14 +674,12 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_construction",
-            description="Excavation area: a construction worker, an excavator, and a massive crane.",
+            description="Excavation area: a construction worker stands safely near an excavator.",
             detections=(
                 SyntheticDetection("worker", 0.88, (280.0, 130.0, 360.0, 400.0)),
                 SyntheticDetection("excavator", 0.86, (40.0, 170.0, 420.0, 380.0)),
-                SyntheticDetection("crane", 0.75, (600.0, 50.0, 680.0, 500.0)),
-                SyntheticDetection("helmet", 0.65, (300.0, 120.0, 320.0, 140.0)),
             ),
-            expected_priority=("worker", "excavator", "crane", "helmet"),
+            expected_priority=("worker", "excavator"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_construction",
@@ -814,14 +812,15 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_rainy",
-            description="Downtown curb: a car splashing, a bus approaching, and a person with an umbrella.",
+            description="Downtown curb: heavy rain, multiple detections near a crosswalk.",
             detections=(
                 SyntheticDetection("bus", 0.90, (50.0, 50.0, 650.0, 380.0)),
                 SyntheticDetection("car", 0.88, (100.0, 220.0, 500.0, 400.0)),
-                SyntheticDetection("person", 0.86, (400.0, 150.0, 520.0, 280.0)),
+                SyntheticDetection("person", 0.88, (400.0, 150.0, 520.0, 280.0)),  # Tie with car
                 SyntheticDetection("umbrella", 0.75, (380.0, 100.0, 450.0, 250.0)),
+                SyntheticDetection("backpack", 0.60, (410.0, 280.0, 440.0, 340.0)),
             ),
-            expected_priority=("bus", "car", "person", "umbrella"),
+            expected_priority=("bus", "person", "car", "umbrella", "backpack"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_rainy",
@@ -842,20 +841,23 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_blizzard",
-            description="Frozen intersection: a pedestrian bracing against the wind, a snow-covered car, and a stop sign.",
+            description="Frozen intersection: severe visibility issues with six distinct objects.",
             detections=(
                 SyntheticDetection("person", 0.89, (350.0, 150.0, 450.0, 400.0)),
                 SyntheticDetection("car", 0.82, (100.0, 200.0, 500.0, 400.0)),
+                SyntheticDetection("ambulance", 0.82, (150.0, 180.0, 550.0, 350.0)), # Tie with car
                 SyntheticDetection("stop sign", 0.70, (600.0, 100.0, 650.0, 150.0)),
+                SyntheticDetection("bench", 0.70, (200.0, 300.0, 300.0, 350.0)),      # Tie with stop sign
+                SyntheticDetection("potted plant", 0.50, (400.0, 350.0, 450.0, 450.0)),
             ),
-            expected_priority=("person", "car", "stop sign"),
+            expected_priority=("person", "car", "ambulance", "stop sign", "bench", "potted plant"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_blizzard",
-            description="Complete whiteout: an extremely faint blob barely registers against the snow; potential bus.",
-            primary_detection=SyntheticDetection("bus", 0.22, (200.0, 150.0, 550.0, 400.0)),
+            description="Complete whiteout: an extremely faint blob barely registers; precision required.",
+            primary_detection=SyntheticDetection("bus", 0.349, (200.0, 150.0, 550.0, 400.0)),
             expected_action="discard",
-            notes="0.22 < 0.35 discard due to blizzard.",
+            notes="0.349 is strictly < 0.35 threshold.",
         ),
     ),
     EpisodeBundle(
@@ -869,20 +871,22 @@ EPISODE_BUNDLES: tuple[EpisodeBundle, ...] = (
         ),
         task2=Task2Scene(
             scene_id="t2_bnd_glare",
-            description="Glare zone: an ambulance with sirens, a pedestrian, and a traffic light blinded by sun.",
+            description="Glare zone: complex scene with lighting noise and multiple actors.",
             detections=(
                 SyntheticDetection("ambulance", 0.91, (120.0, 150.0, 450.0, 420.0)),
-                SyntheticDetection("person", 0.87, (500.0, 180.0, 560.0, 400.0)),
+                SyntheticDetection("person", 0.91, (500.0, 180.0, 560.0, 400.0)), # Tie with ambulance
+                SyntheticDetection("truck", 0.85, (300.0, 200.0, 500.0, 400.0)),
                 SyntheticDetection("traffic light", 0.65, (450.0, 50.0, 490.0, 120.0)),
+                SyntheticDetection("bicycle", 0.50, (600.0, 300.0, 650.0, 400.0)),
             ),
-            expected_priority=("ambulance", "person", "traffic light"),
+            expected_priority=("person", "ambulance", "truck", "traffic light", "bicycle"),
         ),
         task3=Task3Scene(
             scene_id="t3_bnd_glare",
-            description="Adversarial glare: camera lens flare creates an ambiguous phantom shape on the road.",
-            primary_detection=SyntheticDetection("car", 0.46, (380.0, 250.0, 440.0, 380.0)),
+            description="Adversarial glare: camera lens flare creates an ambiguous phantom shape; boundary test.",
+            primary_detection=SyntheticDetection("car", 0.499, (380.0, 250.0, 440.0, 380.0)),
             expected_action="request_rescan",
-            notes="0.46 in 0.35-0.50 band.",
+            notes="0.499 is strictly < 0.50 threshold.",
         ),
     ),
 )

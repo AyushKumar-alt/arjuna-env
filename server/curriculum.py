@@ -24,11 +24,11 @@ from typing import Deque
 
 logger = logging.getLogger(__name__)
 
-# Thresholds for difficulty transitions
+# Thresholds for difficulty transitions (FAST-TRACK FOR HACKATHON)
 PROMOTE_THRESHOLD = 0.85   # above this → increase difficulty
 DEMOTE_THRESHOLD  = 0.60   # below this → decrease difficulty
-WINDOW_SIZE       = 5      # episodes to consider
-MIN_EPISODES      = 3      # minimum before adjusting
+WINDOW_SIZE       = 3      # episodes to consider (faster progression)
+MIN_EPISODES      = 2      # minimum before adjusting (snappy demo)
 
 DIFFICULTY_LEVELS = ["easy", "medium", "hard"]
 
@@ -73,6 +73,7 @@ class AutoCurriculum:
         self.promotions:     int       = 0
         self.demotions:      int       = 0
         self.history:        list[dict] = []
+        self._override:      str | None = None
 
     # ── read-only properties ───────────────────────────────
 
@@ -81,8 +82,17 @@ class AutoCurriculum:
         return self._difficulty
 
     def get_difficulty(self) -> str:
-        """Return current difficulty level."""
+        """Return current difficulty level (manual override takes precedence)."""
+        if self._override:
+            return self._override
         return self._difficulty
+
+    def set_override(self, difficulty: str | None) -> None:
+        """Set or clear a manual difficulty override."""
+        if difficulty is not None and difficulty not in DIFFICULTY_LEVELS:
+            raise ValueError(f"Invalid difficulty: {difficulty}")
+        self._override = difficulty
+        logger.info("Curriculum override set to: %s", difficulty)
 
     def get_recent_mean(self) -> float:
         """Return mean reward over recent window (0.0 if no data)."""
@@ -227,4 +237,11 @@ def record_episode(reward: float) -> dict:
 
 def get_curriculum_stats() -> dict:
     """Shortcut: stats from the global curriculum."""
-    return _global_curriculum.get_stats()
+    stats = _global_curriculum.get_stats()
+    stats["override"] = _global_curriculum._override
+    return stats
+
+
+def set_curriculum_override(difficulty: str | None) -> None:
+    """Shortcut: set manual override on global curriculum."""
+    _global_curriculum.set_override(difficulty)

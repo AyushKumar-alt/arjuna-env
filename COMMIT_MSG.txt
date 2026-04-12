@@ -1,2 +1,0 @@
-fix: redirect root to docs for HF UI
-

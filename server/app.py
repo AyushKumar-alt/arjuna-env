@@ -19,7 +19,13 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.responses import RedirectResponse
 from openenv.core.env_server import create_app
 
-from models import ArjunaAction, ArjunaObservation
+try:
+    from models import ArjunaAction, ArjunaObservation
+except ImportError:
+    import sys
+    import os
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+    from models import ArjunaAction, ArjunaObservation
 from server.arjuna_environment import ArjunaEnvironment
 from server.openenv_web_patch import apply as _apply_openenv_web_patch
 
@@ -155,6 +161,7 @@ async def get_curriculum_endpoint():
         return {
             "enabled": True,
             "current_difficulty": stats["current_difficulty"],
+            "override": stats.get("override"),
             "recent_mean_reward": stats["recent_mean"],
             "total_episodes": stats["total_episodes"],
             "promotions": stats["promotions"],
@@ -171,6 +178,22 @@ async def get_curriculum_endpoint():
             "error": str(e),
             "message": "Curriculum module error"
         }
+
+@app.post("/curriculum/difficulty", tags=["curriculum"])
+async def set_difficulty_endpoint(difficulty: str | None = None):
+    """
+    Manually override the curriculum difficulty tier.
+    difficulty: 'easy', 'medium', 'hard', or null (to return to auto).
+    """
+    try:
+        from server.curriculum import set_curriculum_override
+        # Handle "auto" or empty string as None
+        if difficulty in ("auto", ""):
+            difficulty = None
+        set_curriculum_override(difficulty)
+        return {"status": "success", "difficulty": difficulty or "auto"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 
 def main() -> None:
