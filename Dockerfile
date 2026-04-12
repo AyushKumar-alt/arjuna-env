@@ -10,6 +10,7 @@ ENV ENABLE_WEB_INTERFACE=true
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir "openenv-core[core]>=0.2.2" fastapi uvicorn[standard] pydantic
 
 COPY . .
 
