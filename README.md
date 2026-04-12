@@ -64,6 +64,8 @@ pip install streamlit openai plotly
 python -m streamlit run app.py
 ```
 
+**Live Demo**: [ARJUNA AutoRL Dashboard](https://arjuna-env-jqilgjjcvwpk2vux2iadbw.streamlit.app/)
+
 ### Features
 - **3-column canvas** showing all 14 scene bundles across Easy / Medium / Hard tiers
 - **Live episode feed** with per-task rewards as they happen
