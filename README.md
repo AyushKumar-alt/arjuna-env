@@ -7,6 +7,7 @@ sdk: docker
 pinned: false
 ---
 [![Open In Spaces](https://img.shields.io/badge/Hugging%20Face-Spaces-blue?style=for-the-badge&logo=huggingface)](https://huggingface.co/spaces/Calpol500mg/arjuna-env)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit%20App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://arjuna-env-jqilgjjcvwpk2vux2iadbw.streamlit.app/)
 [![Arjuna Perception Dataset](https://img.shields.io/badge/Hugging%20Face-Dataset-yellow?style=for-the-badge&logo=huggingface)](https://huggingface.co/datasets/Calpol500mg/arjuna-perception-dataset)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
 [![Docker](https://img.shields.io/badge/Docker-Container-0db7ed?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
@@ -15,7 +16,6 @@ pinned: false
 [![API Docs](https://img.shields.io/badge/FastAPI-Swagger%20UI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://calpol500mg-arjuna-env.hf.space/docs)
 [![Curriculum State](https://img.shields.io/badge/System-Telemetry%20Endpoint-blueviolet?style=for-the-badge)](https://calpol500mg-arjuna-env.hf.space/curriculum)
 [![Arjuna Demo](https://img.shields.io/badge/Arjuna-Demo%20Video-orange?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/152W8wxmJcUnMeeg1FXFkduSJnVKOoSa7/view?usp=sharing)
-
 
 
 
