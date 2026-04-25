@@ -1,0 +1,2 @@
+algorithm,total_episodes,final_avg_reward,final_epsilon,difficulty_override,model_path
+Q-Learning,10000,0.9422333333333334,0.00998645168764533,hard,models/q_learning_q_learning_hard_only.npz

@@ -1,0 +1,2 @@
+algorithm,total_timesteps,final_avg_reward,total_episodes,difficulty_override,device,model_path
+DQN,10000,0.9340666666666664,10000,,cuda,models/dqn_curriculum

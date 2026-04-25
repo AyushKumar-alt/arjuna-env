@@ -1,0 +1,7 @@
+experiment_name,total_timesteps,final_avg_reward,total_episodes,learning_rate,network_arch,device,difficulty_override,algorithm,model_path,final_epsilon
+curriculum,10000.0,0.9378333333333332,10112,0.001,"[64, 64]",cuda,,,,
+hard_only,10000.0,0.9414999999999998,10112,0.001,"[64, 64]",cuda,hard,,,
+,10000.0,0.9340666666666664,10000,,,cuda,,DQN,models/dqn_curriculum,
+,10000.0,0.9414999999999998,10000,,,cuda,hard,DQN,models/dqn_hard_only,
+,,0.8956666666666665,10000,,,,,Q-Learning,models/q_learning_q_learning_curriculum.npz,0.0099864516876453
+,,0.9422333333333334,10000,,,,hard,Q-Learning,models/q_learning_q_learning_hard_only.npz,0.0099864516876453

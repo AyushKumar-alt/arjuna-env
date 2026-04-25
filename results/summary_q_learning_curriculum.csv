@@ -1,0 +1,2 @@
+algorithm,total_episodes,final_avg_reward,final_epsilon,difficulty_override,model_path
+Q-Learning,10000,0.8956666666666665,0.00998645168764533,,models/q_learning_q_learning_curriculum.npz

@@ -1,0 +1,2 @@
+experiment_name,total_timesteps,final_avg_reward,total_episodes,learning_rate,network_arch,device,difficulty_override
+curriculum,10000,0.9378333333333332,10112,0.001,"[64, 64]",cuda,
