@@ -7,3 +7,10 @@ __pycache__/
 dist/
 build/
 autorl_log.json
+
+# Local Python environment and generated outputs
+arjuna_venv/
+models/
+results/
+*.npz
+*.zip
