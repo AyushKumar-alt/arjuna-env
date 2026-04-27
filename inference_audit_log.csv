@@ -851,3 +851,63 @@ Timestamp,Episode_ID,Task_Type,Bundle,Agent_Action,Reward
 2026-04-12 20:55:28,25,Task 1,Rainy Street,"{""task1_label"": ""car"", ""metadata"": {""episode_id"": ""25""}}",0.750
 2026-04-12 20:55:28,25,Task 2,Rainy Street,"{""ranked_objects"": [""umbrella"", ""person"", ""car"", ""bus""], ""metadata"": {""episode_id"": ""25""}}",0.330
 2026-04-12 20:55:28,25,Task 3,Rainy Street,"{""decision"": ""discard"", ""reasoning"": ""Mocking decision reasoning"", ""metadata"": {""episode_id"": ""25""}}",0.210
+2026-04-27 18:14:43,1,Task 1,Airport,"{""task1_label"": ""trolley"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""1""}}",0.990
+2026-04-27 18:14:44,1,Task 2,Airport,"{""ranked_objects"": [""airplane"", ""suitcase"", ""boarding gate"", ""trolley""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""1""}}",0.990
+2026-04-27 18:14:44,1,Task 3,Airport,"{""decision"": ""discard"", ""reasoning"": ""PPO Model Output 0"", ""metadata"": {""episode_id"": ""1""}}",0.990
+2026-04-27 18:14:45,2,Task 1,Construction Site,"{""task1_label"": ""crane"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""2""}}",0.990
+2026-04-27 18:14:45,2,Task 2,Construction Site,"{""ranked_objects"": [""worker"", ""excavator"", ""crane"", ""helmet""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""2""}}",0.990
+2026-04-27 18:14:45,2,Task 3,Construction Site,"{""decision"": ""request_rescan"", ""reasoning"": ""PPO Model Output 1"", ""metadata"": {""episode_id"": ""2""}}",0.990
+2026-04-27 18:14:45,3,Task 1,Construction Site,"{""task1_label"": ""excavator"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""3""}}",0.990
+2026-04-27 18:14:46,3,Task 2,Construction Site,"{""ranked_objects"": [""worker"", ""excavator"", ""crane"", ""helmet""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""3""}}",0.990
+2026-04-27 18:14:46,3,Task 3,Construction Site,"{""decision"": ""request_rescan"", ""reasoning"": ""PPO Model Output 1"", ""metadata"": {""episode_id"": ""3""}}",0.990
+2026-04-27 18:14:46,4,Task 1,School Zone,"{""task1_label"": ""bicycle"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""4""}}",0.990
+2026-04-27 18:14:47,4,Task 2,School Zone,"{""ranked_objects"": [""bus"", ""student"", ""bicycle"", ""backpack""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""4""}}",0.990
+2026-04-27 18:14:47,4,Task 3,School Zone,"{""decision"": ""request_rescan"", ""reasoning"": ""PPO Model Output 1"", ""metadata"": {""episode_id"": ""4""}}",0.990
+2026-04-27 18:14:47,5,Task 1,Warehouse,"{""task1_label"": ""worker"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""5""}}",0.990
+2026-04-27 18:14:47,5,Task 2,Warehouse,"{""ranked_objects"": [""worker"", ""truck"", ""forklift"", ""carton""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""5""}}",0.990
+2026-04-27 18:14:48,5,Task 3,Warehouse,"{""decision"": ""discard"", ""reasoning"": ""PPO Model Output 0"", ""metadata"": {""episode_id"": ""5""}}",0.300
+2026-04-27 18:14:48,6,Task 1,Parking Lot,"{""task1_label"": ""person"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""6""}}",0.990
+2026-04-27 18:14:48,6,Task 2,Parking Lot,"{""ranked_objects"": [""car"", ""person"", ""parking meter"", ""cctv camera""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""6""}}",0.990
+2026-04-27 18:14:49,6,Task 3,Parking Lot,"{""decision"": ""discard"", ""reasoning"": ""PPO Model Output 0"", ""metadata"": {""episode_id"": ""6""}}",0.990
+2026-04-27 18:14:49,7,Task 1,Sensor Glare,"{""task1_label"": ""person"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""7""}}",0.990
+2026-04-27 18:14:49,7,Task 2,Sensor Glare,"{""ranked_objects"": [""ambulance"", ""person"", ""traffic light""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""7""}}",0.990
+2026-04-27 18:14:50,7,Task 3,Sensor Glare,"{""decision"": ""request_rescan"", ""reasoning"": ""PPO Model Output 1"", ""metadata"": {""episode_id"": ""7""}}",0.990
+2026-04-27 18:14:50,8,Task 1,Sensor Glare,"{""task1_label"": ""ambulance"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""8""}}",0.990
+2026-04-27 18:14:50,8,Task 2,Sensor Glare,"{""ranked_objects"": [""ambulance"", ""person"", ""traffic light""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""8""}}",0.990
+2026-04-27 18:14:51,8,Task 3,Sensor Glare,"{""decision"": ""request_rescan"", ""reasoning"": ""PPO Model Output 1"", ""metadata"": {""episode_id"": ""8""}}",0.990
+2026-04-27 18:14:51,9,Task 1,Sensor Glare,"{""task1_label"": ""person"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""9""}}",0.990
+2026-04-27 18:14:51,9,Task 2,Sensor Glare,"{""ranked_objects"": [""ambulance"", ""person"", ""traffic light""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""9""}}",0.990
+2026-04-27 18:14:51,9,Task 3,Sensor Glare,"{""decision"": ""request_rescan"", ""reasoning"": ""PPO Model Output 1"", ""metadata"": {""episode_id"": ""9""}}",0.990
+2026-04-27 18:14:52,10,Task 1,Rainy Street,"{""task1_label"": ""bus"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""10""}}",0.990
+2026-04-27 18:14:52,10,Task 2,Rainy Street,"{""ranked_objects"": [""bus"", ""car"", ""person"", ""umbrella""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""10""}}",0.990
+2026-04-27 18:14:52,10,Task 3,Rainy Street,"{""decision"": ""discard"", ""reasoning"": ""PPO Model Output 0"", ""metadata"": {""episode_id"": ""10""}}",0.300
+2026-04-27 18:14:53,11,Task 1,Blizzard Whiteout,"{""task1_label"": ""car"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""11""}}",0.990
+2026-04-27 18:14:53,11,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""truck"", ""person"", ""car"", ""stop sign""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""11""}}",0.990
+2026-04-27 18:14:53,11,Task 3,Blizzard Whiteout,"{""decision"": ""request_rescan"", ""reasoning"": ""PPO Model Output 1"", ""metadata"": {""episode_id"": ""11""}}",0.300
+2026-04-27 18:14:54,12,Task 1,Blizzard Whiteout,"{""task1_label"": ""person"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""12""}}",0.990
+2026-04-27 18:14:54,12,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""truck"", ""person"", ""car"", ""stop sign""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""12""}}",0.990
+2026-04-27 18:14:54,12,Task 3,Blizzard Whiteout,"{""decision"": ""discard"", ""reasoning"": ""PPO Model Output 0"", ""metadata"": {""episode_id"": ""12""}}",0.990
+2026-04-27 18:14:55,13,Task 1,Night Street,"{""task1_label"": ""streetlight"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""13""}}",0.990
+2026-04-27 18:14:55,13,Task 2,Night Street,"{""ranked_objects"": [""motorcycle"", ""person"", ""fire hydrant"", ""streetlight""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""13""}}",0.990
+2026-04-27 18:14:55,13,Task 3,Night Street,"{""decision"": ""discard"", ""reasoning"": ""PPO Model Output 0"", ""metadata"": {""episode_id"": ""13""}}",0.990
+2026-04-27 18:14:56,14,Task 1,Sensor Glare,"{""task1_label"": ""ambulance"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""14""}}",0.990
+2026-04-27 18:14:56,14,Task 2,Sensor Glare,"{""ranked_objects"": [""ambulance"", ""person"", ""traffic light""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""14""}}",0.990
+2026-04-27 18:14:56,14,Task 3,Sensor Glare,"{""decision"": ""request_rescan"", ""reasoning"": ""PPO Model Output 1"", ""metadata"": {""episode_id"": ""14""}}",0.990
+2026-04-27 18:14:57,15,Task 1,Rainy Street,"{""task1_label"": ""bus"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""15""}}",0.990
+2026-04-27 18:14:57,15,Task 2,Rainy Street,"{""ranked_objects"": [""bus"", ""car"", ""person"", ""umbrella""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""15""}}",0.990
+2026-04-27 18:14:57,15,Task 3,Rainy Street,"{""decision"": ""discard"", ""reasoning"": ""PPO Model Output 0"", ""metadata"": {""episode_id"": ""15""}}",0.300
+2026-04-27 18:14:58,16,Task 1,Blizzard Whiteout,"{""task1_label"": ""car"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""16""}}",0.990
+2026-04-27 18:14:58,16,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""truck"", ""person"", ""car"", ""stop sign""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""16""}}",0.990
+2026-04-27 18:14:58,16,Task 3,Blizzard Whiteout,"{""decision"": ""discard"", ""reasoning"": ""PPO Model Output 0"", ""metadata"": {""episode_id"": ""16""}}",0.990
+2026-04-27 18:14:59,17,Task 1,Night Street,"{""task1_label"": ""motorcycle"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""17""}}",0.990
+2026-04-27 18:14:59,17,Task 2,Night Street,"{""ranked_objects"": [""motorcycle"", ""person"", ""fire hydrant"", ""streetlight""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""17""}}",0.990
+2026-04-27 18:14:59,17,Task 3,Night Street,"{""decision"": ""discard"", ""reasoning"": ""PPO Model Output 0"", ""metadata"": {""episode_id"": ""17""}}",0.990
+2026-04-27 18:15:00,18,Task 1,Night Street,"{""task1_label"": ""motorcycle"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""18""}}",0.990
+2026-04-27 18:15:00,18,Task 2,Night Street,"{""ranked_objects"": [""motorcycle"", ""person"", ""fire hydrant"", ""streetlight""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""18""}}",0.990
+2026-04-27 18:15:00,18,Task 3,Night Street,"{""decision"": ""discard"", ""reasoning"": ""PPO Model Output 0"", ""metadata"": {""episode_id"": ""18""}}",0.990
+2026-04-27 18:15:01,19,Task 1,Sensor Glare,"{""task1_label"": ""traffic light"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""19""}}",0.990
+2026-04-27 18:15:01,19,Task 2,Sensor Glare,"{""ranked_objects"": [""ambulance"", ""person"", ""traffic light""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""19""}}",0.990
+2026-04-27 18:15:01,19,Task 3,Sensor Glare,"{""decision"": ""request_rescan"", ""reasoning"": ""PPO Model Output 1"", ""metadata"": {""episode_id"": ""19""}}",0.990
+2026-04-27 18:15:02,20,Task 1,Blizzard Whiteout,"{""task1_label"": ""truck"", ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""20""}}",0.990
+2026-04-27 18:15:02,20,Task 2,Blizzard Whiteout,"{""ranked_objects"": [""truck"", ""person"", ""car"", ""stop sign""], ""note"": ""RL Fast-Forward"", ""metadata"": {""episode_id"": ""20""}}",0.990
+2026-04-27 18:15:02,20,Task 3,Blizzard Whiteout,"{""decision"": ""discard"", ""reasoning"": ""PPO Model Output 0"", ""metadata"": {""episode_id"": ""20""}}",0.990
